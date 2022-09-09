@@ -1,0 +1,71 @@
+---
+title: "data_exploration"
+author: "Catarina Pien"
+date: '2022-09-08'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+library(dplyr)
+require(discretewq)
+```
+
+```{r}
+getwd()
+```
+
+# WQ
+## USGS
+```{r}
+Data <- wq(Sources = c("USGS_CAWSC"))
+unique(Data$Station)
+```
+
+```{r}
+hab_nutr_chla_mvi <- read_csv("../data/hab_nutr_chla_mvi.csv")
+# Pull out station coordinates from hab_nutr_chla_mvi data frame
+df_coord_all <- hab_nutr_chla_mvi %>% distinct(Source, Station, Latitude, Longitude)
+
+cawsc_sta <- df_coord_all %>% 
+  filter(Source == "USGS_CAWSC") %>% 
+  pull(Station)
+print(cawsc_sta)
+```
+## EMP
+```{r}
+load("../data/WQ.daily.RData")
+unique(WQ.daily$Site)
+```
+
+
+# Cyanotoxins
+## DWR
+```{r}
+hab_samples <- read_excel("../data/HABs/DWR_DFD_Cyanotoxin_results_2021 - JG.xlsx")
+print(unique(hab_samples$Station))
+```
+
+## USGS
+```{r}
+#This is the data from the whole-water grab samples taken with the spats
+SpattWater = read_csv("data/HABs/USGS_DWR_fixed_station_WW_cyanotoxins_Rexport.csv")%>%
+  mutate(NWIS_site_no = as.character(NWIS_site_no))
+
+#This is data from teh spats themselves
+Spatt = read_csv("data/HABs/USGS_DWR_fixed_station_SPATT_cyanotoxins_Rexport.csv")%>%
+  mutate(NWIS_site_no = as.character(NWIS_site_no))
+```
+
+```{r}
+print(unique(SpattWater$NWIS_site_no))
+print(unique(SpattWater$Site))
+
+Stations <- SpattWater %>%
+  select(NWIS_site_no, Site) %>%
+  distinct() 
+
+```
+

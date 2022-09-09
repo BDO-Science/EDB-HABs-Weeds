@@ -30,8 +30,8 @@ The following interactive map and sampling effort table only includes stations w
 # Load packages
 library(tidyverse)
 library(lubridate)
-# install.packages("devtools")
-# devtools::install_github("mountaindboz/EDBdata", ref = "v0.3.0)
+#install.packages("devtools")
+# devtools::install_github("mountaindboz/EDBdata", ref = "v0.3.0")
 library(EDBdata)
 library(sf)
 library(leaflet)
@@ -42,13 +42,14 @@ library(knitr)
 library(kableExtra)
 
 # Check if we are in the correct working directory
-i_am("EDB/nutr_chla_survey_summary.Rmd")
+i_am("EDB-HABs-Weeds/nutr_chla_survey_summary.Rmd")
 ```
 
 
 # Import and Prepare Data
 
 ```{r import data, message = FALSE}
+hab_nutr_chla_mvi <- read_csv("data/hab_nutr_chla_mvi.csv")
 # Pull out station coordinates from hab_nutr_chla_mvi data frame
 df_coord_all <- hab_nutr_chla_mvi %>% distinct(Source, Station, Latitude, Longitude)
 

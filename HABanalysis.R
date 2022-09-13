@@ -371,7 +371,7 @@ SoDelta = mutate(SoDelta, day = yday(Date), Outscale = scale(OUT),
                  Exscale = scale(EXPORTS), SJRs = scale(SJR), Tempscale = scale(Temperature), Secchs = scale(Secchi)) %>%
   filter(!is.na(Outscale), !is.na(Tempscale), !is.na(SJRs), !is.na(Exscale), !is.na(Secchs), Month %in% c(6:10))
 
-ggplot(SoDelta, aes(x = Date, y = Secchi, color = Source))+ geom_point()
+hggplot(SoDelta, aes(x = Date, y = Secchi, color = Source))+ geom_point()
 
 #now let's look at all possible combinations of temperature, outflow, exports, and secchi depth.
 #San Joaquin flow is too highly correlated with Outflow to use.

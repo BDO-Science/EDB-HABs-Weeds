@@ -1,0 +1,98 @@
+---
+title: "get_continuous_wq"
+author: "Catarina Pien"
+date: '2022-09-29'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(data.table) #rbindlist()
+library(lubridate) #today()
+library(CDECRetrieve) #cdec_datasets
+library(readr)
+```
+
+# Download CDEC
+
+Based on df_WQ_daily.RData:
+  * Stations: **CDEC: FAL, FRK, HLT, HOL, MDM, ORQ, OSJ**
+  * Parameters: **Chl.a, DO, SpCond, Temp, Turb, pH, Flow**
+
+NCRO: FAL, HLT, HOL, ORQ, OSJ, MDM
+EMP: FRK
+
+
+## Define cdec stations, time period
+```{r}
+### Define list of stations ----------------------------------
+stations <- c("FAL", "FRK", "HLT", "HOL", "MDM", "ORQ", "OSJ")
+
+# Define start and end dates - these will remain the same throughout
+start <- "2022-01-01"
+end <- "2022-08-31"
+```
+
+## get flow data
+```{r}
+interval <- "E" # Event = every 15 minutes, H = Hourly, A = Annual
+### Download data, bind, write --------------------------------------------
+flow <- lapply(stations, 
+                 function(x){
+                   cdec_query(station = x,
+                              sensor_num = 20,
+                              dur_code = interval,
+                              start_date = start,
+                              end_date = end)
+                   
+                 })
+flow_df <- bind_rows(flow) # bind rows into data frame
+flow_clean <- flow_df %>%
+  select(station = location_id,
+         datetime,
+         flow = parameter_value) %>%
+  filter(!is.na(flow),
+         !is.na(station))
+flow_sum <- flow_clean %>%
+  group_by(station) %>%
+  summarize(n = n())
+```
+
+## get velocity data
+```{r}
+interval <- "E" # Event = every 15 minutes, H = Hourly, A = Annual
+### Download data, bind, write --------------------------------------------
+vel <- lapply(stations, 
+                 function(x){
+                   cdec_query(station = x,
+                              sensor_num = 21,
+                              dur_code = interval,
+                              start_date = start,
+                              end_date = end)
+                 })
+velocity_df <- bind_rows(vel) # bind rows into data frame
+vel_clean <- velocity_df %>%
+  select(station = location_id,
+         datetime,
+         velocity = parameter_value) %>%
+  filter(!is.na(velocity),
+         !is.na(station))
+velocity_sum <- vel_clean %>%
+  group_by(station) %>%
+  summarize(n = n())
+```
+
+# Read in other data
+* NCRO
+* EMP
+```{r}
+
+```
+
+
+
+

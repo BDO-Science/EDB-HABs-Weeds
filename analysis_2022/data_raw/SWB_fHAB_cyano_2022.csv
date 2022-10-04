@@ -1,0 +1,17 @@
+Station,Datetime,Sample ID,Method,Target,Result,"Quantitation
+Limit",Units
+Buckley Cove,8/24/22 12:50,SWPJC220824 20,ELISA,Anatoxin-a,ND,0.15,µg/L
+Buckley Cove,8/24/22 12:50,SWPJC220824 20,ELISA,Cylindrospermopsin,ND,0.05,µg/L
+Buckley Cove,8/24/22 12:50,SWPJC220824 20,ELISA,Microcystin/Nod.,ND,0.15,µg/L
+Buckley Cove,8/24/22 12:50,SWPJC220824 20,ELISA,Saxitoxin,ND,0.02,µg/L
+SJR @ Stockton GC,8/24/22 12:25,SWPJC220824 21,ELISA,Anatoxin-a,ND,0.15,µg/L
+SJR @ Stockton GC,8/24/22 12:25,SWPJC220824 21,ELISA,Cylindrospermopsin,ND,0.05,µg/L
+SJR @ Stockton GC,8/24/22 12:25,SWPJC220824 21,ELISA,Microcystin/Nod.,0.4,0.15,µg/L
+SJR @ Stockton GC,8/24/22 12:25,SWPJC220824 21,ELISA,Saxitoxin,ND,0.02,µg/L
+McLeod Lake,8/24/22 10:50,SWPJC220824 22,ELISA,Anatoxin-a,ND,0.15,µg/L
+McLeod Lake,8/24/22 10:50,SWPJC220824 22,ELISA,Cylindrospermopsin,ND,0.05,µg/L
+McLeod Lake,8/24/22 10:50,SWPJC220824 22,ELISA,Microcystin/Nod.,8.63,3,µg/L
+McLeod Lake,8/24/22 10:50,SWPJC220824 22,ELISA,Saxitoxin,ND,0.02,µg/L
+,,,,,,,
+,,,,,,,
+,,, ,,,,

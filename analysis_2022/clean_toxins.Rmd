@@ -1,0 +1,168 @@
+---
+title: "clean_toxins"
+author: "Catarina Pien"
+date: '2022-10-03'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Packages
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(readxl)
+#library(DroughtData)
+library(RColorBrewer)
+library(deltamapr)
+library(ggmap)
+library(ggsn)
+
+library(here)
+
+root <- "analysis_2022/" # this is to tell here where to start
+```
+
+Color palette
+```{r}
+HABcol = data.frame(Color = brewer.pal(7, "Dark2"),
+                    Genus = c( "Anabaenopsis", "Aphanizomenon","Cylindrospermopsis", "Dolichospermum" ,
+                               "Microcystis","Oscillatoria","Planktothrix"))
+```
+
+**Data Sources: **
+
+* DWR - SWP
+* Water Board - fHAB Stockton Waterfront Labor Day
+* EB Parks - Big Break
+* Water Board/Nautilus - Stockton
+* Prop 1 water samples
+* USGS Water Samples
+* USGS Spatt
+
+# Read in files 
+```{r}
+ct_swp0 <- read_excel(here(root, "data_raw", "DFD_SWP_cyano_data_2022.xlsx"))
+ct_wb0 <- read_csv(here(root, "data_raw", "SWB_fHAB_cyano_2022.csv")) %>%
+  filter(!is.na(Result)) # data originally in pdf and imported into csv
+ct_eb0 <- read_excel(here(root, "data_raw", "EBParks_BigBreak_Cyanotoxin_2022.xlsx"), skip = 1) %>%
+  filter(!is.na(Park))
+# Note: Danger Advisory posted 7/14/22
+```
+
+# Format
+
+## SWP
+```{r}
+#Get the species into a consistent format
+unique(ct_swp$`PTOX Species 1`)
+ct_swp = mutate(ct_swp0, 
+                Species = case_when(
+  `PTOX Species 1` %in% c("Aphanizomenon cf. flos-aquae/klebahnii",
+                        "Aphanizomenon flos-aquae/klebahnii", "cf. Aphanizomenon") ~ "Aphanizomenon",
+  `PTOX Species 1` %in% c("Oscillatoria cf. perornata", "Oscillatorialean filament(s)") ~ "Oscillatoria",
+  `PTOX Species 1` %in% c("cf. Phormidium", "Phormidium/Microcoleus") ~ "Phormidium",
+  `PTOX Species 1` == "cf. Planktothrix" ~ "Planktothrix",
+  TRUE ~ `PTOX Species 1`
+), Concentration = parse_number(`Result (ng/mL)`))
+unique(ct_swp$Species)
+
+#Now pivot wider then longer so I can add in zeros
+habs2 = pivot_wider(ct_swp, id_cols = c(Station, Date), names_from = Species,
+                       values_from = Concentration, values_fill = 0, values_fn = sum) %>%
+  dplyr::select(!`none observed`) %>%
+  pivot_longer(cols = "Aphanizomenon":"cf. Chrysosporum", names_to = "Species") %>%
+  filter(!is.na(value))
+
+#quick plot
+ggplot(habs2, aes(x = as.factor(Date), y = value, fill = Species)) + geom_bar(stat = "identity")
+```
+
+## Water Board
+```{r}
+
+# Add lat/lon based on COC_20220824.pdf
+ct_wb <- ct_wb0 %>%
+  mutate(Latitude = case_when(Station == "Buckley Cove" ~ 37.97717,
+                              Station == "SJR @ Stockton GC" ~ 37.95416,
+                              Station == "McLeod Lake" ~ 37.9536),
+         Longitude = case_when(Station == "Buckley Cove" ~ -121.37543,
+                              Station == "SJR @ Stockton GC" ~ -121.34397,
+                              Station == "McLeod Lake" ~ -121.293),
+         Station_Code = case_when(Station == "Buckley Cove" ~ "Buckley",
+                              Station == "SJR @ Stockton GC" ~ "SJR_StocktonGC",
+                              Station == "McLeod Lake" ~ "McLeadLake"),
+         Result = ifelse(Result == "ND", 0, Result),
+         Result = as.numeric(Result),
+         Comments = "NA",
+         Datetime = mdy_hm(Datetime),
+         Date = date(Datetime)) %>%
+  select(Station_Code, Site_Name = Station, Latitude, Longitude, Result, Comments, SampleDate = Date)
+```
+
+
+## EB Parks
+
+* Used lat/lon from old data
+* Used some of the naming from old data
+* Unfortunately lots of dates with no actual data. Left comments in in case we can use that in the text to indicate there was probably Microcystis.
+
+```{r}
+EastBay2 = ct_eb0 %>%
+  mutate(Station_Code = "07BBkayaklaun",
+         Latitude = 38.01245,
+         Longitude = -121.7282,
+         Date = as.Date(as.numeric(Date), origin = "1899-12-30"))%>%
+  mutate(Result = case_when(`Toxin Result (ppb)` == "ND" ~ 0,
+                            `Toxin Result (ppb)` == " > 50" ~ 50,
+                            `Toxin Result (ppb)` == "0.01 ppb" ~ 0.01,
+                            `Toxin Result (ppb)` == "> 10 ppb" ~ 10,
+                            TRUE ~ as.numeric(`Toxin Result (ppb)`)),
+         SampleID = NA,
+         Analyte = "Microcystins", Station = "BigBreak") %>%
+  select(Station_Code, Site_Name = Site, Latitude, Longitude, Result, Comments = Commments, SampleDate = Date)
+```
+
+# Combine data
+
+* SWP, Spatt, Stockton, Prop1, Nautilus, EastBay
+
+```{r}
+# Use bind_rows()
+```
+
+
+# Add warning levels 
+
+```{r}
+Alltox3 = mutate(Alltoxsf, Advisory = case_when(Analyte == "Microcystins" & result > 0.8 & result < 6 ~ "Caution",
+                                                 Analyte == "Microcystins"  & result >= 6 & result < 20 ~ "Warning",
+                                                 Analyte == "Microcystins"  & result >= 20 ~ "Danger",
+                                                 Analyte == "Microcystins"  & result < 0.8 ~ "No Advisory",
+                                               Analyte == "Anatoxins" & result > 20 & result <90 ~ "Warning",
+                                               Analyte == "Anatoxins"  & result > 0 & result < 20 ~ "Caution",
+                                               Analyte == "Anatoxins"  & result == 0 ~ "No Advisory"))
+```
+
+
+# Combine with last year's dataset 
+
+```{r}
+ct_2021 <- read.csv(here("data", "Alltoxindata.csv")) %>%
+  select(-1)
+
+glimpse(ct_2021)
+```
+
+
+
+# Write data
+```{r}
+
+```
+

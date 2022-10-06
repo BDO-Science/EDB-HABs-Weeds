@@ -15,6 +15,9 @@ library(data.table) #rbindlist()
 library(lubridate) #today()
 library(CDECRetrieve) #cdec_datasets
 library(readr)
+library(here)
+
+data_root = "analysis_2022/data_raw/"
 ```
 
 # Download CDEC
@@ -89,8 +92,60 @@ velocity_sum <- vel_clean %>%
 # Read in other data
 * NCRO
 * EMP
-```{r}
 
+
+## NCRO 
+
+450 – Water Temperature in degrees Celsius
+630 – Depth in Meters
+810 – Turbidity in Formazin Nephelometric Units
+821 – Specific Conductance in microSiemens per centimeter
+865 – Dissolved Oxygen in percent Saturation
+2351 – Dissolved Oxygen concentration in milligrams per Liter
+7004 – Chlorophyll in micrograms per Liter
+
+```{r}
+data_FAL <- read.csv(here(data_root, "NCRO_Continuous_WQ_FAL_20220101-20220926.CSV"), skip = 1) %>%
+  rename(datetime = and,
+         wtemp = X450,
+         depth = X630,
+         turbidity = X810,
+         spc = X821,
+         do_percent = X865,
+         do = X2351,
+         chl = X7004) %>%
+  mutate(across(.cols = contains("X"), as.numeric)) 
+summary(data_FAL)   
+
+
+
+data_FAL <- read.csv(here(data_root, "NCRO_Continuous_WQ_FAL_20220101-20220926.CSV"), skip = 1) %>%
+  rename(datetime = and,
+         p_wtemp = X450,
+         p_depth = X630,
+         p_turbidity = X810,
+         p_spc = X821,
+         p_do_percent = X865,
+         p_do = X2351,
+         p_chl = X7004,
+         X.0 = X) %>%
+  mutate(across(p_wtemp:X.6, as.numeric))
+
+data_FAL <- data_FAL[-1,]
+colnames(data_FAL) = gsub("X.", "X_", colnames(data_FAL))
+
+glimpse(data_FAL)  
+
+
+
+
+FAL_long <- data_FAL %>%
+  pivot_longer(cols = !datetime, 
+               names_to = c("type", "parameter"),
+               names_sep = "_",
+               values_to = "value")
+
+glimpse(data_FAL)
 ```
 
 

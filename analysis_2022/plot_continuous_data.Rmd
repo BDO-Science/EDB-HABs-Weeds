@@ -1,0 +1,38 @@
+---
+title: "plot_continuous_data"
+author: "Catarina Pien"
+date: '2022-10-08'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(lubridate) #today()
+library(readr)
+library(here)
+
+data_root = "analysis_2022/"
+```
+
+
+```{r}
+wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds"))
+```
+
+2022 only
+```{r}
+wq_2022 <- filter(wq_data, Year == 2022)
+ggplot(wq_2022) + geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + facet_wrap(~Analyte, scales = "free", nrow = 7) + theme_bw()
+```
+
+Across year, by parameter
+```{r}
+ggplot(wq_data) + geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + facet_wrap(~Analyte, scales = "free")
+```
+

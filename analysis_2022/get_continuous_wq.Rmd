@@ -36,11 +36,11 @@ USGS: MDM USGS 11312676, ORQ = USGS 11313434
 ## Define cdec stations, time period
 ```{r}
 ### Define list of stations ----------------------------------
-stations <- c("FAL", "FRK", "HLT", "HOL", "MDM", "ORQ", "OSJ")
+stations <- c("FAL", "FRK", "HLT", "HOL", "OSJ")
 
 # Define start and end dates - these will remain the same throughout
-start <- "2022-01-01"
-end <- "2022-08-31"
+start <- "2015-01-01"
+end <- "2022-10-01"
 ```
 
 ## get flow data
@@ -277,7 +277,7 @@ https://help.waterdata.usgs.gov/codes-and-parameters/parameters
 https://help.waterdata.usgs.gov/code/parameter_cd_query?fmt=rdb&group_cd=PHY&inline=true
 
 ```{r}
-f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '00095', '00400', '00300', '32316', '00060'), startDate = "2022-01-01", endDate = "2022-09-01", tz = "Etc/GMT+8"){
+f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '00095', '00400', '00300', '32316'), startDate = "2022-01-01", endDate = "2022-10-01", tz = "Etc/GMT+8"){
 
   # get data
   print("Downloading data...")
@@ -299,15 +299,41 @@ f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '0
   print("Data saved in data_raw")
 }
 
+f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), startDate = "2015-01-01", endDate = "2022-10-01", tz = "Etc/GMT+8"){
+
+  # get data
+  print("Downloading data...")
+  data <- dataRetrieval::readNWISuv(siteNumbers, parameterCd, startDate, endDate, tz)
+
+  # fix names
+
+  data2 <- dataRetrieval::renameNWISColumns(data)
+
+  print("Data downloaded!")
+
+  # clean names
+  data2 <- janitor::clean_names(data2)
+
+  # write out
+  saveRDS(data2, paste0("analysis_2022/data_raw/USGS_NWIS_", siteNumbers, "_flow.rds"))
+
+  # print message!
+  print("Data saved in data_raw")
+}
 ```
 
 MDM: Latitude 37°56'34",   Longitude 121°31'59"   NAD27
 ORQ: Latitude 38°01'38",   Longitude 121°33'52"   NAD83
 ```{r}
-#f_get_NWIS(siteNumbers = 11312676)
-#f_get_NWIS(siteNumbers = 11313434)
+f_get_NWIS(siteNumbers = 11312676)
+f_get_NWIS_flow(siteNumbers=11312676)
 
-MDM <- read_csv(here(data_root, "USGS_NWIS_11312676_WQ.csv")) %>%
+f_get_NWIS_flow(siteNumbers=11313434)
+
+MDM <- read_csv(here(data_root, "USGS_NWIS_11312676_WQ.csv"))
+MDMf <- readRDS(here(data_root, "USGS_NWIS_11312676_flow.rds")) %>%
+  mutate(site_no = as.numeric(site_no)) 
+MDM_comb <- left_join(MDMf, MDM) %>%
   rename(Datetime = date_time, 
          wtemp = wtemp_inst,
          flow = flow_inst,
@@ -323,7 +349,8 @@ MDM <- read_csv(here(data_root, "USGS_NWIS_11312676_WQ.csv")) %>%
   pivot_longer(cols = wtemp:chl,
                names_to = "parameter",
                values_to = "value")
-ORQ <- read_csv(here(data_root, "USGS_NWIS_11313434_WQ.csv"))%>%
+
+ORQ <- read_csv(here(data_root, "USGS_NWIS_11313434_WQ.csv")) %>%
   rename(Datetime = date_time, 
          flow = flow_inst)%>%
   mutate(station = "ORQ",
@@ -334,7 +361,7 @@ ORQ <- read_csv(here(data_root, "USGS_NWIS_11313434_WQ.csv"))%>%
                names_to = "parameter",
                values_to = "value")
 
-data_USGS <- rbind(MDM, ORQ) 
+data_USGS <- rbind(MDM_comb, ORQ) 
 ```
 
 ### Combine data from different programs
@@ -375,6 +402,7 @@ unique(wq_2022_daily$Analyte)
 
 ### Combine with previous year data
 ```{r}
+load(here("data", "WQ.daily.RData"))
 wq_all <- rbind(wq_2022_daily, WQ.daily)
 ```
 

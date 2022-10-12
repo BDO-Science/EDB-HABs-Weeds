@@ -16,6 +16,8 @@ library(tidyverse)
 library(lubridate) #today()
 library(readr)
 library(here)
+library(Polychrome)
+library(viridis)
 
 data_root = "analysis_2022/"
 ```
@@ -28,11 +30,42 @@ wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds"))
 2022 only
 ```{r}
 wq_2022 <- filter(wq_data, Year == 2022)
-ggplot(wq_2022) + geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + facet_wrap(~Analyte, scales = "free", nrow = 7) + theme_bw()
+pal36 <- palette36.colors(36)
+pal36 <- as.vector(t(pal36))
+
+(plot_cont_2022 <- ggplot(wq_2022) + 
+  geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + 
+  geom_point(aes(x = Date, y = Daily.Mean, color = Site), size = 0.6) + 
+  facet_wrap(~Analyte, scales = "free_y", nrow = 7, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    theme(strip.background = element_rect(fill="White", color = "White"),
+          strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+  scale_x_date(breaks = "month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Daily Mean Value") +
+  theme_bw())
 ```
 
 Across year, by parameter
 ```{r}
-ggplot(wq_data) + geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + facet_wrap(~Analyte, scales = "free")
+(plot_cont_allyears <- ggplot(wq_data) + 
+   geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + 
+  facet_wrap(~Analyte, scales = "free_y", nrow = 7, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    theme(strip.background = element_rect(fill="White", color = "White"),
+          strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+  scale_x_date(breaks = "3 months", date_labels = "%b", expand = c(0,0))+ 
+  labs(y = "Daily Mean Value") + 
+  theme_bw())
+```
+
+```{r}
+png(filename = here("analysis_2022", "figures", "plot_cont_2022.png"), width = 10, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_cont_2022
+dev.off()
+
+
+png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022.png"), width = 10, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_cont_allyears
+dev.off()
 ```
 

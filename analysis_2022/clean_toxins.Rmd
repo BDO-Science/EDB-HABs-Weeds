@@ -48,16 +48,23 @@ HABcol = data.frame(Color = brewer.pal(7, "Dark2"),
 # Read in files 
 ```{r}
 ct_swp0 <- read_excel(here(root, "data_raw", "DFD_SWP_cyano_data_2022.xlsx"))
+site_swp <- read_excel(here(root, "data_raw", "DWR_SWP_Cyanotoxin_results_2022.xlsx"), sheet = "Sample Location Info") %>%
+  janitor::clean_names(case = "big_camel") %>%
+  rename(Site_Name = Name)
 ct_wb0 <- read_csv(here(root, "data_raw", "SWB_fHAB_cyano_2022.csv")) %>%
   filter(!is.na(Result)) # data originally in pdf and imported into csv
 ct_eb0 <- read_excel(here(root, "data_raw", "EBParks_BigBreak_Cyanotoxin_2022.xlsx"), skip = 1) %>%
   filter(!is.na(Park))
 # Note: Danger Advisory posted 7/14/22
+ct_naut0 = read_excel(here(root, "data_raw", "Nautilus_HAB_Chlorophyll_2022.xlsx"))
+ct_usgs0 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_WW.tsv"))
+site_usgs0 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_SiteLatLon.tsv"))
 ```
 
 # Format
 
 ## SWP
+There is some method information in the DWR_SWP_cyano_data_2022.xlsx file that can be extracted if needed.
 ```{r}
 #Get the species into a consistent format
 unique(ct_swp$`PTOX Species 1`)
@@ -73,21 +80,40 @@ ct_swp = mutate(ct_swp0,
 unique(ct_swp$Species)
 
 #Now pivot wider then longer so I can add in zeros
-habs2 = pivot_wider(ct_swp, id_cols = c(Station, Date), names_from = Species,
+swp = pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Species,
                        values_from = Concentration, values_fill = 0, values_fn = sum) %>%
   dplyr::select(!`none observed`) %>%
-  pivot_longer(cols = "Aphanizomenon":"cf. Chrysosporum", names_to = "Species") %>%
-  filter(!is.na(value))
+  pivot_longer(cols = Dolichospermum:`Microcystis wesenbergii`, names_to = "Species") %>%
+  filter(!is.na(value)) %>%
+  
+  mutate(SampleID = paste0(Date, Station),
+         Site_Name = case_when(Station == "NBA Barker Sl PP" ~ "Barker Slough Pumping Plant",
+                                  Station == "Banks PP" ~ "Banks Pumping Plant",
+                                  Station == "Clifton Court Forebay"~"Clifton Court Forebay Inlet",
+                                  Station == "Dyer Res Outlet" ~ "Dyer Reservoir Outlet",
+                                  TRUE ~ Station),
+         Method = NA,
+         Comments = Notes) %>%
+  left_join(site_swp %>% select(Site_Name, ApproximateGpsCoordinates, SampleLocation)) %>%
+  separate(ApproximateGpsCoordinates, c("Latitude", "Longitude"), sep = ",") %>%
+  mutate(Latitude = as.numeric(Latitude),
+         Longitude = as.numeric(Longitude),
+         Date = date(Date),
+         Study = "SWP")%>%
+  dplyr::select(SampleID, Station_Code = Station, Site_Name , Latitude, Longitude, Method, Analyte=Species, Result = value, Comments, SampleDate = Date, Study)
+
+
+glimpse(swp)
 
 #quick plot
-ggplot(habs2, aes(x = as.factor(Date), y = value, fill = Species)) + geom_bar(stat = "identity")
+ggplot(swp, aes(x = as.factor(Date), y = value, fill = Species)) + geom_bar(stat = "identity")
 ```
 
 ## Water Board
 ```{r}
 
 # Add lat/lon based on COC_20220824.pdf
-ct_wb <- ct_wb0 %>%
+wb <- ct_wb0 %>%
   mutate(Latitude = case_when(Station == "Buckley Cove" ~ 37.97717,
                               Station == "SJR @ Stockton GC" ~ 37.95416,
                               Station == "McLeod Lake" ~ 37.9536),
@@ -101,8 +127,10 @@ ct_wb <- ct_wb0 %>%
          Result = as.numeric(Result),
          Comments = "NA",
          Datetime = mdy_hm(Datetime),
-         Date = date(Datetime)) %>%
-  select(Station_Code, Site_Name = Station, Latitude, Longitude, Result, Comments, SampleDate = Date)
+         Date = date(Datetime),
+         SampleID = paste0(Datetime, Station_Code),
+         Study = "fHAB") %>%
+  dplyr::select(SampleID, Station_Code, Site_Name = Station, Latitude, Longitude, Method, Analyte=Target, Result, Comments, SampleDate = Date, Study)
 ```
 
 
@@ -113,7 +141,7 @@ ct_wb <- ct_wb0 %>%
 * Unfortunately lots of dates with no actual data. Left comments in in case we can use that in the text to indicate there was probably Microcystis.
 
 ```{r}
-EastBay2 = ct_eb0 %>%
+ebparks = ct_eb0 %>%
   mutate(Station_Code = "07BBkayaklaun",
          Latitude = 38.01245,
          Longitude = -121.7282,
@@ -123,31 +151,144 @@ EastBay2 = ct_eb0 %>%
                             `Toxin Result (ppb)` == "0.01 ppb" ~ 0.01,
                             `Toxin Result (ppb)` == "> 10 ppb" ~ 10,
                             TRUE ~ as.numeric(`Toxin Result (ppb)`)),
-         SampleID = NA,
-         Analyte = "Microcystins", Station = "BigBreak") %>%
-  select(Station_Code, Site_Name = Site, Latitude, Longitude, Result, Comments = Commments, SampleDate = Date)
+         SampleID = paste0(Date, Site),
+         Method = NA,
+         Analyte = "Microcystins", Station = "BigBreak",
+         Study = "Parks") %>%
+  select(SampleID, Station_Code, Site_Name = Site, Latitude, Longitude, Method, Analyte, Result, Comments = Commments, SampleDate = Date, Study)
 ```
+
+## Nautilus
+```{r}
+naut = ct_naut %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  mutate(SampleID = paste0(SampleDate, SampleTime, Location),
+         Site_Name = NA, Comments = NA,
+         Study = "Nautilus") %>%
+  dplyr::select(SampleID, Station_Code = Location, Site_Name, Latitude, Longitude, Method, Analyte = Parameter, Result, Comments, SampleDate, Study) %>%
+  mutate(Result = case_when(Result == "ND" ~ 0,
+                            TRUE ~ as.numeric(Result))) %>%
+  dplyr::filter(!is.na(Result))
+```
+
+## USGS
+Lat/Lon is NAD83
+```{r}
+usgs <- ct_usgs0 %>%
+  mutate(Comments = NA,
+         Resultf = case_when(Result == "ND" ~ "0",
+                             Result == "N/A" ~ "NA",
+                            TRUE ~ as.character(Result)),
+         Result = as.numeric(Resultf),
+         Study = "USGS") %>%
+  filter(detect_tox == "Yes") %>%
+left_join(site_usgs0 %>% select(NWIS_site_no, Site, dec_lat_va, dec_long_va)) %>%
+  dplyr::select(SampleID = UniqueID, Station_Code = NWIS_site_no, Site_Name = Site, Latitude = dec_lat_va, Longitude = dec_long_va, Method, Analyte, Result, Comments, SampleDate = Date, Study)
+```
+
 
 # Combine data
 
 * SWP, Spatt, Stockton, Prop1, Nautilus, EastBay
 
 ```{r}
-# Use bind_rows()
+ct_all <- rbind(swp, wb, ebparks, naut, usgs) %>%
+  mutate(Analyte2 = case_when(grepl("MC",Analyte) |grepl("Microcys", Analyte) ~ "Microcystins",
+                              grepl("Anatoxin", Analyte)| grepl("anatoxin", Analyte) ~ "Anatoxins",
+                              grepl("Dolicho", Analyte) ~ "Dolichopspermum",
+                              grepl("Anabaen", Analyte) ~ "Anabaenopeptin",
+                              grepl("Cylindrospermopsin", Analyte) ~ "Cylindrospermopsin",
+                              grepl("Oscillamide", Analyte) ~ "Oscillamide",
+                             TRUE ~ Analyte),
+         Longitude = ifelse(Longitude>0, Longitude * -1, Longitude)) %>%
+  filter(Analyte2 %in% c("Microcystins", "Anatoxins"),
+         !is.na(Result))
+
+glimpse(ct_all)
+unique(ct_all$Analyte)
 ```
 
 
 # Add warning levels 
 
 ```{r}
-Alltox3 = mutate(Alltoxsf, Advisory = case_when(Analyte == "Microcystins" & result > 0.8 & result < 6 ~ "Caution",
-                                                 Analyte == "Microcystins"  & result >= 6 & result < 20 ~ "Warning",
-                                                 Analyte == "Microcystins"  & result >= 20 ~ "Danger",
-                                                 Analyte == "Microcystins"  & result < 0.8 ~ "No Advisory",
-                                               Analyte == "Anatoxins" & result > 20 & result <90 ~ "Warning",
-                                               Analyte == "Anatoxins"  & result > 0 & result < 20 ~ "Caution",
-                                               Analyte == "Anatoxins"  & result == 0 ~ "No Advisory"))
+ct_all2 = mutate(ct_all, Advisory = case_when(Analyte2 == "Microcystins" & Result > 0.8 & Result < 6 ~ "Caution",
+                                                 Analyte2 == "Microcystins"  & Result >= 6 & Result < 20 ~ "Warning",
+                                                 Analyte2 == "Microcystins"  & Result >= 20 ~ "Danger",
+                                                 Analyte2 == "Microcystins"  & Result < 0.8 ~ "No Advisory",
+                                               Analyte2 == "Anatoxins" & Result > 20 & Result <90 ~ "Warning",
+                                               Analyte2 == "Anatoxins"  & Result > 0 & Result < 20 ~ "Caution",
+                                               Analyte2 == "Anatoxins"  & Result == 0 ~ "No Advisory"))
 ```
+
+# Add geometry
+```{r}
+ct_all_sf <- ct_all2 %>%
+  filter(!is.na(Latitude)) %>%
+  st_as_sf(coords =c("Longitude", "Latitude"), remove = FALSE)
+st_crs(ct_all_sf) <- 4269
+
+EDSM_Strata <- st_transform(deltamapr::R_EDSM_Strata_19P3, crs = 4269)
+```
+
+```{r}
+mapview::mapview(ct_all_sf)
+```
+
+```{r}
+#To plot the toxin data, I want to put it in terms of the health
+#advisory levels from OEHHA. Here is a dataframe of those levels:
+health = data.frame(Analyte = c("Microcystins", "Microcystins", "Microcystins", "Anatoxins","Anatoxins"), Advisory = c(0.8, 6,20, .5, 20),
+                    AdviseType = c("Caution\nTier I", "Warning \nTier II","Danger \nTier III", "Caution\nTier I", "Warning \nTier II")) %>%
+  mutate(AdviseType = factor(AdviseType, levels = c("Caution\nTier I", "Warning \nTier II","Danger \nTier III")))
+```
+
+# Plots
+
+Map all the toxin stations
+```{r}
+
+#This is plot 2-4 in the report
+ggplot()+
+  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
+  
+  geom_sf(data = EDSM_Strata, aes(fill = Stratum), inherit.aes = FALSE, alpha = 0.1)+
+  #scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  geom_sf(data =ct_all_sf, aes(color = Study))+
+  scale_color_brewer(palette = "Dark2")+
+  theme_bw()+
+ scale_x_continuous(limits = c(-121.9, -121.2)) +
+  scale_y_continuous( limits = c(37.65, 38.4))+
+  #geom_sf_text(data = Alltoxsf, aes(label = Station), size = 2)
+#  geom_sf_text(data = reg3crop, aes(label = Stratum2))+
+#  annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
+#  annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
+  scalebar(dist = 10, dist_unit = "km",
+           transform = TRUE, st.dist = .1, x.min = -121.6, x.max = -121.8, y.min = 37.7, y.max = 37.9) +
+  north(data = ct_all_sf, symbol = 2) +
+  theme_bw()+ylab("")+xlab("")
+```
+
+Map of recreational advisories
+```{r}
+ggplot(ct_all_sf, aes(x = SampleDate, y = Result)) + geom_point(aes(shape = Study))+
+  geom_hline(data = filter(health, AdviseType != "Danger \nTier III"), aes(yintercept = Advisory, color = AdviseType))+
+  scale_color_manual(values = c("yellow", "orange", "red"), name = "Recreational \nAdvisory")+
+  #facet_grid(Analyte~Stratum2, scales = "free_y") +
+  xlab("Month of 2022")+ ylab("Concentration ug/L")+
+  scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0))+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
+
+
+
+
+
+
+
+
+
 
 
 # Combine with last year's dataset 

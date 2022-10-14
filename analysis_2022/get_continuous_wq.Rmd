@@ -71,6 +71,11 @@ flow_sum <- flow_clean %>%
   summarize(n = n())
 ```
 
+```{r}
+saveRDS(flow_clean, here(data_root,"CDEC_flow_FAL_HLT_HOL_OSJ_2015_2022.rds"))
+flow_clean <- readRDS(here(data_root,"CDEC_flow_FAL_HLT_HOL_OSJ_2015_2022.rds"))
+```
+
 ## get velocity data
 ```{r}
 interval <- "E" # Event = every 15 minutes, H = Hourly, A = Annual
@@ -258,6 +263,23 @@ data_HOL <- map(plist[1:6], ~ f_cleanparam2(sta = "HOL", param = .x, enddate = "
 data_NCRO <- rbind(data_FAL, data_HOL, data_HLT, data_OSJ)
 ```
 
+# EMP
+```{r}
+FRK0 <- read_csv(here(data_root, "EMP_Continuous_FRK_2022.csv"))
+
+FRK <- FRK0 %>%
+  mutate(date = date(datetime)) %>%
+  rename(wtemp = watertemp_C,
+         do = `dissolvedoxygen_mg/l`,
+         chl = `fluorescence_ug/l`,
+         pH = ph, 
+         turbidity = turbidity_FNU,
+         spc = `specificconductivity_uS/cm`) %>%
+  pivot_longer(cols = do:wtemp, names_to = "parameter", values_to = "value") %>%
+  select(datetime, date, station, parameter, value)
+```
+
+
 ## USGS
 
 00010 = water temperature, C
@@ -324,12 +346,17 @@ f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), star
 
 MDM: Latitude 37°56'34",   Longitude 121°31'59"   NAD27
 ORQ: Latitude 38°01'38",   Longitude 121°33'52"   NAD83
+DSJ: Latitude 38°00'49",   Longitude 121°40'00"   NAD27
+DUTCH SLOUGH BL JERSEY ISLAND RD A JERSEY ISLAND: 
 ```{r}
 f_get_NWIS(siteNumbers = 11312676)
 f_get_NWIS_flow(siteNumbers=11312676)
-
 f_get_NWIS_flow(siteNumbers=11313434)
+f_get_NWIS(siteNumbers = 11313433)
+f_get_NWIS_flow(siteNumbers = 11313433)
+```
 
+```{r}
 MDM <- read_csv(here(data_root, "USGS_NWIS_11312676_WQ.csv"))
 MDMf <- readRDS(here(data_root, "USGS_NWIS_11312676_flow.rds")) %>%
   mutate(site_no = as.numeric(site_no)) 
@@ -350,7 +377,7 @@ MDM_comb <- left_join(MDMf, MDM) %>%
                names_to = "parameter",
                values_to = "value")
 
-ORQ <- read_csv(here(data_root, "USGS_NWIS_11313434_WQ.csv")) %>%
+ORQ <- readRDS(here(data_root, "USGS_NWIS_11313434_flow.rds")) %>%
   rename(Datetime = date_time, 
          flow = flow_inst)%>%
   mutate(station = "ORQ",
@@ -361,15 +388,26 @@ ORQ <- read_csv(here(data_root, "USGS_NWIS_11313434_WQ.csv")) %>%
                names_to = "parameter",
                values_to = "value")
 
-data_USGS <- rbind(MDM_comb, ORQ) 
+DSJ <- read_csv(here(data_root, "USGS_NWIS_11313433_WQ.csv"))%>%
+  rename(Datetime = date_time, 
+         wtemp = wtemp_inst,
+         spc = spec_cond_inst,
+         turbidity = ts213_ysi_exo_turb_inst)%>%
+  mutate(station = "DSJ",
+         date = date(Datetime),
+         datetime = Datetime) %>%
+  select(datetime, date, station, wtemp, spc, turbidity) %>%
+  pivot_longer(cols = wtemp:turbidity,
+               names_to = "parameter",
+               values_to = "value")
+
+data_USGS <- rbind(MDM_comb, ORQ, DSJ) 
 ```
 
 ### Combine data from different programs
 ```{r}
-wq_2022 <- rbind(data_NCRO, data_USGS, flow_clean) 
-  
+wq_2022 <- rbind(data_NCRO, FRK, data_USGS, flow_clean) 
 ```
-
 
 ### Convert to daily info
 ```{r}
@@ -406,8 +444,22 @@ load(here("data", "WQ.daily.RData"))
 wq_all <- rbind(wq_2022_daily, WQ.daily)
 ```
 
+### Combine with coordinates 
+```{r}
+stalatlon <- read_excel("data/continuous stations.xlsx") %>%
+  dplyr::select(-Type)
+
+unique(wq_all$Site)
+
+wq_all <- readRDS(here(data_root, "../data_clean", "continuous_wq_2015_2022.rds")) %>%
+  left_join(stalatlon %>% rename(Site = StationCode))
+wq_2022 <- readRDS(here(data_root, "../data_clean", "continuous_wq_2022_allvals.rds"))%>%
+  left_join(stalatlon %>% rename(station = StationCode))
+```
+
 ### Write file
 ```{r}
 saveRDS(wq_all, here(data_root, "../data_clean", "continuous_wq_2015_2022.rds"))
+saveRDS(wq_2022, here(data_root, "../data_clean", "continuous_wq_2022_allvals.rds"), compress = "xz")
 ```
 

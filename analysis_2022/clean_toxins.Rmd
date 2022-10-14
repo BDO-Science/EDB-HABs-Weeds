@@ -61,15 +61,40 @@ ct_usgs0 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_WW.tsv"))
 site_usgs0 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_SiteLatLon.tsv"))
 ```
 
+```{r}
+spatt_files_DSP <- list.files("analysis_2022/data_raw", pattern = "USGS_Spatt_DSP", full.names = TRUE)
+spatt1 <- lapply(spatt_files_DSP, read_excel, sheet = "Total Toxin Summary") %>%
+  bind_rows() %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  rename(TotalAnabaenopeptinsPpb = TotalAnabaenopetinsPpb,
+         TotalAnabaenopeptinsNgG = TotalAnabaenopetinsNgG) %>%
+  mutate(across(TotalMicrocystinsPpb:TotalOtherToxinsNgG, ~ replace(., str_detect(., 'ND'), 0)),
+         across(TotalMicrocystinsPpb:TotalOtherToxinsNgG, as.numeric))
+
+spatt2 <- lapply(spatt_files_MDM, read_excel, sheet = "Total Toxin Summary") %>%
+  bind_rows() %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  rename(TotalAnabaenopeptinsPpb = TotalAnabaenopetinsPpb,
+         TotalAnabaenopeptinsNgG = TotalAnabaenopetinsNgG) %>%
+  select(VialNumber, ProjectUniqueId, FieldId, StationNumber, SampleStartDate, SampleStartTimePst,
+         TotalMicrocystinsPpb, TotalAnabaenopeptinsPpb, TotalAnatoxinsPpb, TotalCylindrospermopsinsPpb, TotalSaxitoxinsPpb, TotalOtherToxinsPpb, TotalMicrocystinsNgG, TotalAnabaenopeptinsNgG, TotalAnatoxinsNgG, TotalCylindrospermopsinsNgG, TotalSaxitoxinsNgG, TotalOtherToxinsNgG)%>%
+  mutate(across(TotalMicrocystinsPpb:TotalOtherToxinsNgG, ~ replace(., str_detect(., 'ND'), 0)),
+         across(TotalMicrocystinsPpb:TotalOtherToxinsNgG, as.numeric))
+
+spatt = rbind(spatt1, spatt2)
+```
+
 # Format
 
 ## SWP
 There is some method information in the DWR_SWP_cyano_data_2022.xlsx file that can be extracted if needed.
+
+Had to estimate Latitude and Longitude for Lake Del Valle, Barker Slough PP, Banks PP
 ```{r}
 #Get the species into a consistent format
-unique(ct_swp$`PTOX Species 1`)
-ct_swp = mutate(ct_swp0, 
-                Species = case_when(
+unique(ct_swp0$`PTOX Species 1`)
+ct_swp = ct_swp0 %>%
+  mutate(Species = case_when(
   `PTOX Species 1` %in% c("Aphanizomenon cf. flos-aquae/klebahnii",
                         "Aphanizomenon flos-aquae/klebahnii", "cf. Aphanizomenon") ~ "Aphanizomenon",
   `PTOX Species 1` %in% c("Oscillatoria cf. perornata", "Oscillatorialean filament(s)") ~ "Oscillatoria",
@@ -77,7 +102,6 @@ ct_swp = mutate(ct_swp0,
   `PTOX Species 1` == "cf. Planktothrix" ~ "Planktothrix",
   TRUE ~ `PTOX Species 1`
 ), Concentration = parse_number(`Result (ng/mL)`))
-unique(ct_swp$Species)
 
 #Now pivot wider then longer so I can add in zeros
 swp = pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Species,
@@ -91,13 +115,20 @@ swp = pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Specie
                                   Station == "Banks PP" ~ "Banks Pumping Plant",
                                   Station == "Clifton Court Forebay"~"Clifton Court Forebay Inlet",
                                   Station == "Dyer Res Outlet" ~ "Dyer Reservoir Outlet",
+                                  grepl("Lake Del Valle", Station) ~ "Lake Del Valle",
                                   TRUE ~ Station),
          Method = NA,
          Comments = Notes) %>%
   left_join(site_swp %>% select(Site_Name, ApproximateGpsCoordinates, SampleLocation)) %>%
   separate(ApproximateGpsCoordinates, c("Latitude", "Longitude"), sep = ",") %>%
-  mutate(Latitude = as.numeric(Latitude),
-         Longitude = as.numeric(Longitude),
+  mutate(Latitude = case_when(Station == "NBA Barker Sl PP" ~ 38.275900,
+                              Station == "Banks PP" ~ 37.801944,
+                              Site_Name == "Lake Del Valle" ~ 37.586130,
+                              TRUE ~ as.numeric(Latitude)),
+         Longitude = case_when(Station == "NBA Barker Sl PP" ~ -121.7965,
+                              Station == "Banks PP" ~ -121.620278,
+                              Site_Name == "Lake Del Valle" ~ -121.703795,
+                              TRUE ~ as.numeric(Longitude)),
          Date = date(Date),
          Study = "SWP")%>%
   dplyr::select(SampleID, Station_Code = Station, Site_Name , Latitude, Longitude, Method, Analyte=Species, Result = value, Comments, SampleDate = Date, Study)
@@ -106,7 +137,7 @@ swp = pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Specie
 glimpse(swp)
 
 #quick plot
-ggplot(swp, aes(x = as.factor(Date), y = value, fill = Species)) + geom_bar(stat = "identity")
+ggplot(swp, aes(x = as.factor(SampleDate), y = Result, fill = Analyte)) + geom_bar(stat = "identity")
 ```
 
 ## Water Board
@@ -160,7 +191,7 @@ ebparks = ct_eb0 %>%
 
 ## Nautilus
 ```{r}
-naut = ct_naut %>%
+naut = ct_naut0 %>%
   janitor::clean_names(case = "upper_camel") %>%
   mutate(SampleID = paste0(SampleDate, SampleTime, Location),
          Site_Name = NA, Comments = NA,
@@ -173,6 +204,8 @@ naut = ct_naut %>%
 
 ## USGS
 Lat/Lon is NAD83
+
+need info on SJMS
 ```{r}
 usgs <- ct_usgs0 %>%
   mutate(Comments = NA,
@@ -181,11 +214,18 @@ usgs <- ct_usgs0 %>%
                             TRUE ~ as.character(Result)),
          Result = as.numeric(Resultf),
          Study = "USGS") %>%
-  filter(detect_tox == "Yes") %>%
+  #filter(detect_tox == "Yes") %>%
 left_join(site_usgs0 %>% select(NWIS_site_no, Site, dec_lat_va, dec_long_va)) %>%
   dplyr::select(SampleID = UniqueID, Station_Code = NWIS_site_no, Site_Name = Site, Latitude = dec_lat_va, Longitude = dec_long_va, Method, Analyte, Result, Comments, SampleDate = Date, Study)
 ```
 
+## Spatt - not currently included
+Why are there different units?
+```{r}
+ggplot(spatt) + geom_point(aes(SampleStartDate, TotalMicrocystinsPpb, color = FieldId)) +
+  theme_bw()
+ggplot(spatt) + geom_point(aes(SampleStartDate, TotalAnatoxinsNgG, color = FieldId)) + theme_bw()
+```
 
 # Combine data
 
@@ -193,32 +233,30 @@ left_join(site_usgs0 %>% select(NWIS_site_no, Site, dec_lat_va, dec_long_va)) %>
 
 ```{r}
 ct_all <- rbind(swp, wb, ebparks, naut, usgs) %>%
-  mutate(Analyte2 = case_when(grepl("MC",Analyte) |grepl("Microcys", Analyte) ~ "Microcystins",
-                              grepl("Anatoxin", Analyte)| grepl("anatoxin", Analyte) ~ "Anatoxins",
+  mutate(Analyte2 = case_when(grepl("MC",Analyte) |grepl("Microcys", Analyte) | grepl("D-Asp3-", Analyte)|grepl("Leu1", Analyte)|grepl("Dha-LR", Analyte) ~ "Microcystins",
+                              grepl("Anatoxin", Analyte) ~ "Anatoxins",
                               grepl("Dolicho", Analyte) ~ "Dolichopspermum",
-                              grepl("Anabaen", Analyte) ~ "Anabaenopeptin",
+                              grepl("Anabaen", Analyte)|grepl("Oscillamide", Analyte) ~ "Anabaenopeptin",
                               grepl("Cylindrospermopsin", Analyte) ~ "Cylindrospermopsin",
-                              grepl("Oscillamide", Analyte) ~ "Oscillamide",
                              TRUE ~ Analyte),
          Longitude = ifelse(Longitude>0, Longitude * -1, Longitude)) %>%
-  filter(Analyte2 %in% c("Microcystins", "Anatoxins"),
-         !is.na(Result))
+         filter(!is.na(Result))
 
 glimpse(ct_all)
-unique(ct_all$Analyte)
+unique(ct_all$Analyte2)
 ```
 
-
-# Add warning levels 
-
+# Add warnings
 ```{r}
-ct_all2 = mutate(ct_all, Advisory = case_when(Analyte2 == "Microcystins" & Result > 0.8 & Result < 6 ~ "Caution",
+ct_all2 = ct_all %>%
+  filter(Analyte2 %in% c("Microcystins", "Anatoxins")) %>%
+  mutateAdvisory = case_when(Analyte2 == "Microcystins" & Result > 0.8 & Result < 6 ~ "Caution",
                                                  Analyte2 == "Microcystins"  & Result >= 6 & Result < 20 ~ "Warning",
                                                  Analyte2 == "Microcystins"  & Result >= 20 ~ "Danger",
                                                  Analyte2 == "Microcystins"  & Result < 0.8 ~ "No Advisory",
                                                Analyte2 == "Anatoxins" & Result > 20 & Result <90 ~ "Warning",
                                                Analyte2 == "Anatoxins"  & Result > 0 & Result < 20 ~ "Caution",
-                                               Analyte2 == "Anatoxins"  & Result == 0 ~ "No Advisory"))
+                                               Analyte2 == "Anatoxins"  & Result == 0 ~ "No Advisory")
 ```
 
 # Add geometry
@@ -227,14 +265,33 @@ ct_all_sf <- ct_all2 %>%
   filter(!is.na(Latitude)) %>%
   st_as_sf(coords =c("Longitude", "Latitude"), remove = FALSE)
 st_crs(ct_all_sf) <- 4269
-
-EDSM_Strata <- st_transform(deltamapr::R_EDSM_Strata_19P3, crs = 4269)
 ```
 
 ```{r}
 mapview::mapview(ct_all_sf)
 ```
 
+```{r}
+write_csv(ct_all_sf, "data_clean/ct_all_2022.csv")
+```
+
+
+# Add warning levels 
+
+```{r}
+ct_all2 = ct_all %>%
+  filter(Analyte2 %in% c("Microcystins", "Anatoxins")) %>%
+  mutateAdvisory = case_when(Analyte2 == "Microcystins" & Result > 0.8 & Result < 6 ~ "Caution",
+                                                 Analyte2 == "Microcystins"  & Result >= 6 & Result < 20 ~ "Warning",
+                                                 Analyte2 == "Microcystins"  & Result >= 20 ~ "Danger",
+                                                 Analyte2 == "Microcystins"  & Result < 0.8 ~ "No Advisory",
+                                               Analyte2 == "Anatoxins" & Result > 20 & Result <90 ~ "Warning",
+                                               Analyte2 == "Anatoxins"  & Result > 0 & Result < 20 ~ "Caution",
+                                               Analyte2 == "Anatoxins"  & Result == 0 ~ "No Advisory")
+```
+
+
+# Filter only Microcystins and Anatoxins 
 ```{r}
 #To plot the toxin data, I want to put it in terms of the health
 #advisory levels from OEHHA. Here is a dataframe of those levels:
@@ -243,43 +300,6 @@ health = data.frame(Analyte = c("Microcystins", "Microcystins", "Microcystins", 
   mutate(AdviseType = factor(AdviseType, levels = c("Caution\nTier I", "Warning \nTier II","Danger \nTier III")))
 ```
 
-# Plots
-
-Map all the toxin stations
-```{r}
-
-#This is plot 2-4 in the report
-ggplot()+
-  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
-  
-  geom_sf(data = EDSM_Strata, aes(fill = Stratum), inherit.aes = FALSE, alpha = 0.1)+
-  #scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
-  geom_sf(data =ct_all_sf, aes(color = Study))+
-  scale_color_brewer(palette = "Dark2")+
-  theme_bw()+
- scale_x_continuous(limits = c(-121.9, -121.2)) +
-  scale_y_continuous( limits = c(37.65, 38.4))+
-  #geom_sf_text(data = Alltoxsf, aes(label = Station), size = 2)
-#  geom_sf_text(data = reg3crop, aes(label = Stratum2))+
-#  annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
-#  annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
-  scalebar(dist = 10, dist_unit = "km",
-           transform = TRUE, st.dist = .1, x.min = -121.6, x.max = -121.8, y.min = 37.7, y.max = 37.9) +
-  north(data = ct_all_sf, symbol = 2) +
-  theme_bw()+ylab("")+xlab("")
-```
-
-Map of recreational advisories
-```{r}
-ggplot(ct_all_sf, aes(x = SampleDate, y = Result)) + geom_point(aes(shape = Study))+
-  geom_hline(data = filter(health, AdviseType != "Danger \nTier III"), aes(yintercept = Advisory, color = AdviseType))+
-  scale_color_manual(values = c("yellow", "orange", "red"), name = "Recreational \nAdvisory")+
-  #facet_grid(Analyte~Stratum2, scales = "free_y") +
-  xlab("Month of 2022")+ ylab("Concentration ug/L")+
-  scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0))+
-  theme_bw()+
-  theme(legend.position = "bottom")
-```
 
 
 

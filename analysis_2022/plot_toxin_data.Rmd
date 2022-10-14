@@ -1,0 +1,74 @@
+---
+title: "plot_toxins"
+author: "Catarina Pien"
+date: '2022-10-12'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(deltamapr)
+library(dplyr)
+library(ggplot2)
+```
+
+
+
+```{r}
+ct_all <- read("data_clean/ct_all.csv")
+load("data/Regions.RData")
+```
+
+# Plots
+
+Map all the toxin stations
+```{r}
+
+#This is plot 2-4 in the report
+ggplot()+
+  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
+  geom_sf(data = EDSM_Strata, aes(fill = Stratum), inherit.aes = FALSE, alpha = 0.1)+
+  #scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  geom_sf(data =ct_all_sf, aes(color = Study))+
+  scale_color_brewer(palette = "Dark2")+
+  theme_bw()+
+ scale_x_continuous(limits = c(-121.9, -121.2)) +
+  scale_y_continuous( limits = c(37.65, 38.4))+
+  #geom_sf_text(data = Alltoxsf, aes(label = Station), size = 2)
+#  geom_sf_text(data = reg3crop, aes(label = Stratum2))+
+#  annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
+#  annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
+  scalebar(dist = 10, dist_unit = "km",
+           transform = TRUE, st.dist = .1, x.min = -121.6, x.max = -121.8, y.min = 37.7, y.max = 37.9) +
+  north(data = ct_all_sf, symbol = 2) +
+  theme_bw()+ylab("")+xlab("")
+```
+
+Map of recreational advisories
+```{r}
+ggplot(ct_all_sf, aes(x = SampleDate, y = Result)) + geom_point(aes(shape = Study))+
+  geom_hline(data = filter(health, AdviseType != "Danger \nTier III"), aes(yintercept = Advisory, color = AdviseType))+
+  scale_color_manual(values = c("yellow", "orange", "red"), name = "Recreational \nAdvisory")+
+  #facet_grid(Analyte~Stratum2, scales = "free_y") +
+  xlab("Month of 2022")+ ylab("Concentration ug/L")+
+  scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0))+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
+
+
+# Tables
+
+2-3 Locations of Cyanotoxin Monitoring Data (Study-Station-Lat-Lon-Region)
+```{r}
+
+```
+
+2-4 Methods used for Cyanotoxin Analysis by each study
+```{r}
+
+```
+

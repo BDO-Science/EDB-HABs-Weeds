@@ -1,0 +1,184 @@
+---
+title: "make_FP_map"
+author: "Catarina Pien"
+date: '2022-10-13'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(lubridate) #today()
+library(readxl)
+library(here)
+library(sf)
+library(deltamapr)
+
+library(sp)
+library(gstat)
+library(raster)
+library(tmap)
+library(rgdal)
+
+# Visualization
+library(ggmap)
+library(ggspatial)
+library(deltamapr)
+library(viridis)
+
+data_root = "analysis_2022/data_raw/"
+```
+
+
+```{r}
+fpjuly <- read_excel(here(data_root, "FP_data_USGS_T3_DeltaMapping_July2022_2022-08-29_KO.xlsx"))
+fpmay <- read_excel(here(data_root, "FP_data_USGS_T3_DeltaMapping_May2022_2022-09-08_KO.xlsx"))
+```
+
+```{r}
+fpm <- fpmay %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  dplyr::select(Datetime = TimestampPst,
+                Latitude = LatitudeDecimalDegrees,
+                Longitude = LongitudeDecimalDegrees,
+                BlueGreenAlgae = BluegreenAlgaeUgLFpHr) %>%
+  mutate(date = date(Datetime),
+         month = month(date),
+         period = "May 16-19")
+
+fpj <- fpjuly %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  dplyr::select(Datetime = TimestampPst,
+                Latitude = LatitudeDecimalDegrees,
+                Longitude = LongitudeDecimalDegrees,
+                BlueGreenAlgae = BluegreenAlgaeUgLFpHr) %>%
+  mutate(date = date(Datetime),
+         month = month(date),
+         period = "July 18-21")
+
+
+fp_all <- rbind(fpm, fpj) %>%
+  filter(!is.na(BlueGreenAlgae))
+
+
+fp_sf <- fp_all %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), remove = FALSE)
+
+st_crs(fp_sf) <- 4326
+
+```
+
+
+## Try making raster - too slow right now, not working
+```{r}
+may <- filter(fp_sf, month ==5)
+july <- filter(fp_sf, month ==7)
+
+may_spatial <- as(may, "Spatial")
+july_spatial <- as(july, "Spatial")
+
+df=may_spatial
+
+WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_sf))
+
+interp_map <- function(df, mask=WW_Delta_4326) {
+
+  grd <- as.data.frame(spsample(df, "regular", n = 50000))
+  names(grd)       <- c("X", "Y")
+  coordinates(grd) <- c("X", "Y")
+  gridded(grd)     <- TRUE  # Create SpatialPixel object
+  fullgrid(grd)    <- TRUE  # Create SpatialGrid object
+
+  # Add projection information to the empty grid
+  proj4string(df) <- proj4string(df) # Temp fix until new proj env is adopted
+  proj4string(grd) <- proj4string(df)
+
+  # Interpolate the grid cells using a power value of 2 (idp=2.0)
+  idw <- gstat::idw(BlueGreenAlgae ~ 1, df, newdata=grd, idp=2.0)
+
+  # Convert to raster object then clip to Texas
+  raster       <- raster(idw)
+  raster_mask     <- mask(raster, mask)
+
+  return(raster_mask)
+
+}
+
+may_interp <- interp_map(may_spatial)
+jul_interp <- interp_map(july_spatial)
+```
+
+# Make map
+```{r}
+fp_sf$period <- factor(fp_sf$period, levels = c("May 16-19", "July 18-21"))
+
+map <- ggplot() +
+      geom_sf(data = WW_Delta_4326,  color = "lightsteelblue2", fill = "lightsteelblue2", inherit.aes = FALSE) +
+      geom_sf(data = fp_sf, aes(color = BlueGreenAlgae), size = 0.2,inherit.aes = FALSE)+
+      facet_wrap(~period) + 
+      annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
+  scale_x_continuous(limits = c(-122.2, -121.2)) +
+  scale_y_continuous( limits = c(37.8, 38.6))+
+     scale_colour_gradientn(colours = c("#0d0887", "#9511a1", "#a72197",
+                                   "#dd5e66", "#f79044","#f0f921"),
+                       values = scales::rescale(c(min(fp_sf$BlueGreenAlgae), 1, 
+                                                2, 3, 10, 20, max(fp_sf$BlueGreenAlgae))))+
+  labs(color = "Blue Green Algae (ug/L)")+
+      theme_classic()+
+      theme(axis.text = element_blank(),
+            axis.title = element_blank(),
+            axis.ticks = element_blank())
+
+map
+```
+
+# Write figure
+```{r}
+png(filename = here("analysis_2022", "figures", "FP_map_raw_2022.png"), width = 8, height = 5.5, units = "in", pointsize = 12, family = "sans", res = 300)
+map
+dev.off()
+```
+
+
+## Plot
+```{r}
+ggplot() + 
+  geom_sf(data = WW_Delta, fill = "lightblue", color = "lightblue") +
+  geom_sf(data = fp_sf, aes(color = BlueGreenAlgae), size = 0.2,inherit.aes = FALSE)+
+  scale_x_continuous(limits = c(-122.2, -121.2)) +
+  scale_y_continuous( limits = c(37.8, 38.6))+
+  #viridis::scale_color_viridis(option = "plasma") +
+  scale_colour_gradientn(colours = c("#0d0887", "#9511a1", "#a72197",
+                                   "#dd5e66", "#f79044","#f0f921"),
+                       values = scales::rescale(c(min(fp_sf$BlueGreenAlgae), 1, 
+                                                2, 3, 10, 20, max(fp_sf$BlueGreenAlgae))))+
+  facet_wrap(~period)+
+  theme_bw()
+  
+```
+
+```{r}
+hist(fp_sf$BlueGreenAlgae)
+```
+
+
+
+
+```{r}
+ggplot() + 
+  geom_sf(data = WW_Delta, fill = "lightblue", color = "lightblue") +
+  geom_sf(data = fpm_sf, aes(color = BlueGreenAlgae), size = 0.2,inherit.aes = FALSE)+
+  scale_x_continuous(limits = c(-122, -121.2)) +
+  scale_y_continuous( limits = c(37.8, 38.6))+
+  scale_color_viridis(option = "plasma") +
+  theme_bw()
+```
+

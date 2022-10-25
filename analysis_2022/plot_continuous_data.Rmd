@@ -19,37 +19,50 @@ library(here)
 library(Polychrome)
 library(viridis)
 library(deltamapr)
+library(sf)
+library(ggspatial)
 
 data_root = "analysis_2022/"
 ```
 
 Read data
 ```{r}
-wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds"))
-wq_sf <- st_as_sf(wq_data, coords = c("Longitude", "Latitude"), remove = FALSE)
-st_crs(wq_sf) <- 4326
-delta_4326 <- st_transform(WW_Delta, crs = st_crs(wq_sf))
-stations <- wq_sf %>% 
-  dplyr::select(Site, Analyte, Latitude, Longitude) %>%
-  unique()
+wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds")) %>%
+  mutate(fYear = factor(Year)) %>%
+  filter(Year > 2014)
+
+wq_frk <- wq_data %>% filter(!(Site %in% c("BLP", "DSJ")))
+unique(wq_frk$Site)
+wq_bb <- wq_data %>% filter(Site %in% c("BLP", "DSJ"))
+unique(wq_bb$Site)
+# Mean across stations: 
+# Maximum temperature, chla, turb
+# Minimum DO
+# Mean Flow, pH, SpCnd
+wq_daily_frk <- wq_frk %>%
+  mutate(dailyval = case_when(Analyte %in% c("Temp", "Chl.a", "Turb") ~ Daily.Max,
+                              Analyte == "DO.Conc" ~ Daily.Min,
+                              TRUE ~ Daily.Mean),
+         Date2 = paste0(1980, "-", Month, "-", day(Date)),
+         Date2 = ymd(Date2)) %>%
+  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte) %>%
+  summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
+  filter(!is.na(Date)) %>%
+  mutate(Location = "Frank's Tract")
+
+wq_daily_bb <- wq_bb %>%
+  mutate(dailyval = case_when(Analyte %in% c("Temp", "Chl.a", "Turb") ~ Daily.Max,
+                              Analyte == "DO.Conc" ~ Daily.Min,
+                              TRUE ~ Daily.Mean),
+         Date2 = paste0(1980, "-", Month, "-", day(Date)),
+         Date2 = ymd(Date2)) %>%
+  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte) %>%
+  summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
+  filter(!is.na(Date))%>%
+  mutate(Location = "Big Break")
 ```
 
 # Plots
-## Map of stations
-```{r}
-ggplot() + 
-  geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
-  geom_sf(data = stations)+
-  geom_text(data = stations, aes(x = Longitude, y = Latitude, label = Site), size = 3, vjust = 1.5, hjust = 1)+
-  scale_x_continuous(limits = c(-121.8, -121.2)) +
-  scale_y_continuous( limits = c(37.8, 38.3))+
-  annotation_north_arrow(location = "tr", which_north = "true",
-                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
-                             style = north_arrow_fancy_orienteering) +
-      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
-  #viridis::scale_color_viridis(option = "plasma") +
-  theme_bw()
-```
 
 ## 2022 only
 ```{r}
@@ -82,9 +95,60 @@ pal36 <- as.vector(t(pal36))
   theme_bw())
 ```
 
+## View by year
 ```{r}
+(plot_cont_jday_frk <- ggplot(wq_daily_frk) +
+  geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  facet_wrap(~Analyte, scales = "free_y", nrow = 7, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    theme(strip.background = element_rect(fill="White", color = "White"),
+          strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Daily Mean Value", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank()))
 
+(plot_cont_jday_bb <- ggplot(wq_daily_bb) +
+  geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
+    #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  facet_wrap(~Analyte, scales = "free_y", nrow = 7, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    theme(strip.background = element_rect(fill="White", color = "White"),
+          strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Daily Mean Value", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank()))
 ```
+
+Comparing Big Break and Frank's Tract, select years
+```{r}
+wq_daily_comb <- rbind(wq_daily_bb, wq_daily_frk) %>%
+  filter(fYear %in% c("2015", "2017", "2021", "2022"))
+
+(plot_bb_vs_frk <- ggplot(wq_daily_comb) +
+  geom_line(aes(x = Date2, y = Daily, color = Location)) + 
+    #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  facet_grid(Analyte~fYear, scales = "free_y", labeller = as_labeller(c(`2015` = "2015", `2017` = "2017 (Wet)", `2021` = "2021", `2022` = "2022", Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water \nTemp \n(°C)"))) +
+    #theme(strip.background = element_rect(fill="White", color = "White"),
+     #     strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+  scale_color_brewer(palette = "Set1") +
+   scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Daily Mean Value", color = "Location") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 11),
+         axis.text = element_text(size = 11),
+         axis.title.x = element_blank(),
+  legend.position = "top"))
+```
+
+
+
 
 Export Figures
 ```{r}
@@ -96,11 +160,18 @@ dev.off()
 png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022.png"), width = 10, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
 plot_cont_allyears
 dev.off()
+
+png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_SDelta.png"), width = 10, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_cont_jday_frk
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_BigBreak.png"), width = 10, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_cont_jday_bb
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "plot_cont_bb_vs_frk.png"), width = 10, height = 7, units = "in", pointsize = 8, family = "sans", res = 300)
+plot_bb_vs_frk
+dev.off()
 ```
 
-# Tables
-2-5 Station Code - Operator - USGS Station ID - Station Name - Latitude - Longitude - Sensors
-```{r}
-
-```
 

@@ -18,6 +18,7 @@ library(lubridate) #today()
 library(CDECRetrieve) #cdec_datasets
 library(readr)
 library(here)
+library(readxl)
 
 data_root = "analysis_2022/data_raw/"
 ```
@@ -315,7 +316,7 @@ f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '0
   data2 <- janitor::clean_names(data2)
 
   # write out
-  readr::write_csv(data2, paste0("analysis_2022/data_raw/USGS_NWIS_", siteNumbers, "_WQ.csv"))
+  saveRDS(data2, paste0("analysis_2022/data_raw/USGS_NWIS_", siteNumbers, "_WQ.rds"))
 
   # print message!
   print("Data saved in data_raw")
@@ -346,13 +347,13 @@ f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), star
 
 MDM: Latitude 37°56'34",   Longitude 121°31'59"   NAD27
 ORQ: Latitude 38°01'38",   Longitude 121°33'52"   NAD83
-DSJ: Latitude 38°00'49",   Longitude 121°40'00"   NAD27
+DSJ: Latitude 38°00'49",   Longitude 121°40'00"   NAD27 38.01361 -121.6667
 DUTCH SLOUGH BL JERSEY ISLAND RD A JERSEY ISLAND: 
 ```{r}
 f_get_NWIS(siteNumbers = 11312676)
 f_get_NWIS_flow(siteNumbers=11312676)
 f_get_NWIS_flow(siteNumbers=11313434)
-f_get_NWIS(siteNumbers = 11313433)
+f_get_NWIS(siteNumbers = 11313433, startDate = "2015-01-01")
 f_get_NWIS_flow(siteNumbers = 11313433)
 ```
 
@@ -375,7 +376,8 @@ MDM_comb <- left_join(MDMf, MDM) %>%
   select(datetime, date, station, wtemp, flow, spc, do, pH, turbidity,chl) %>%
   pivot_longer(cols = wtemp:chl,
                names_to = "parameter",
-               values_to = "value")
+               values_to = "value") %>%
+  filter(!is.na(value))
 
 ORQ <- readRDS(here(data_root, "USGS_NWIS_11313434_flow.rds")) %>%
   rename(Datetime = date_time, 
@@ -388,16 +390,19 @@ ORQ <- readRDS(here(data_root, "USGS_NWIS_11313434_flow.rds")) %>%
                names_to = "parameter",
                values_to = "value")
 
-DSJ <- read_csv(here(data_root, "USGS_NWIS_11313433_WQ.csv"))%>%
+DSJ_WQ <- readRDS(here(data_root, "USGS_NWIS_11313433_WQ.rds"))
+DSJ_flow <- readRDS(here(data_root, "USGS_NWIS_11313433_flow.rds"))
+DSJ <- left_join(DSJ_WQ, DSJ_flow) %>%
   rename(Datetime = date_time, 
+         flow = flow_inst,
          wtemp = wtemp_inst,
          spc = spec_cond_inst,
          turbidity = ts213_ysi_exo_turb_inst)%>%
   mutate(station = "DSJ",
          date = date(Datetime),
          datetime = Datetime) %>%
-  select(datetime, date, station, wtemp, spc, turbidity) %>%
-  pivot_longer(cols = wtemp:turbidity,
+  select(datetime, date, station, wtemp, spc, turbidity, flow) %>%
+  pivot_longer(cols = wtemp:flow,
                names_to = "parameter",
                values_to = "value")
 
@@ -419,7 +424,7 @@ wq_2022_daily <- wq_2022 %>%
   ungroup() %>%
   mutate(Year = year(date),
          Julian = yday(date),
-         Month = month(date)) %>%
+         Month = month(date, label = TRUE)) %>%
 rename(Site = station,
        Analyte = parameter, 
        Date = date) %>%
@@ -432,7 +437,9 @@ rename(Site = station,
                              Analyte == "turbidity" ~ "Turb",
                              Analyte == "flow" ~ "Flow",
                              TRUE ~ Analyte)) %>%
-  select(Site, Date, Analyte, Daily.Mean, Daily.Max, Daily.Min, Year, Julian, Month)
+  select(Site, Date, Analyte, Daily.Mean, Daily.Max, Daily.Min, Year, Julian, Month) %>%
+  filter(!is.infinite(Daily.Min),
+         !is.na(Date))
 
 unique(wq_2022_daily$Analyte)
 ```
@@ -442,19 +449,20 @@ unique(wq_2022_daily$Analyte)
 ```{r}
 load(here("data", "WQ.daily.RData"))
 wq_all <- rbind(wq_2022_daily, WQ.daily)
+
+summary(wq_all)
 ```
 
 ### Combine with coordinates 
 ```{r}
-stalatlon <- read_excel("data/continuous stations.xlsx") %>%
-  dplyr::select(-Type)
+stalatlon <- read_excel(here(data_root, "../data_clean", "continuous_stations.xlsx")) %>%
+  dplyr::select(-Type) %>%
+  rename(Site = StationCode)
 
 unique(wq_all$Site)
 
-wq_all <- readRDS(here(data_root, "../data_clean", "continuous_wq_2015_2022.rds")) %>%
-  left_join(stalatlon %>% rename(Site = StationCode))
-wq_2022 <- readRDS(here(data_root, "../data_clean", "continuous_wq_2022_allvals.rds"))%>%
-  left_join(stalatlon %>% rename(station = StationCode))
+wq_all <- left_join(wq_all, stalatlon)
+wq_2022 <- left_join(wq_2022_daily, stalatlon)
 ```
 
 ### Write file

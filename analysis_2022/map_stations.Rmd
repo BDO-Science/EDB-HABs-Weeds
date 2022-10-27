@@ -45,6 +45,9 @@ delta_4326 <- st_transform(WW_Delta, crs = st_crs(sta_sf))
 stations <- wq_sf %>% 
   dplyr::select(Site, Analyte, Latitude, Longitude) %>%
   unique()
+
+#Regions
+load("../data/Regions.RData")
 ```
 
 ## Map of stations
@@ -52,6 +55,7 @@ stations <- wq_sf %>%
 (wq_map <- ggplot() + 
   geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
   geom_sf(data = sta_sf)+
+  geom_sf(data = reg3, aes(fill = Stratum), inherit.aes = FALSE, alpha = 0.1)+
   geom_text(data = stations, aes(x = Longitude, y = Latitude, label = Site), size = 3, vjust = 1, hjust = 1)+
   scale_x_continuous(limits = c(-121.8, -121.4)) +
   scale_y_continuous( limits = c(37.9, 38.15))+

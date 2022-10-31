@@ -73,7 +73,7 @@ pal36 <- as.vector(t(pal36))
 (plot_cont_2022 <- ggplot(wq_2022) + 
   geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + 
   geom_point(aes(x = Date, y = Daily.Mean, color = Site), size = 0.6) + 
-  facet_wrap(~Analyte, scales = "free_y", nrow = 7, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+  facet_wrap(~Analyte, scales = "free_y", nrow = 8, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_viridis(option = "turbo", discrete = TRUE) +
@@ -86,7 +86,7 @@ pal36 <- as.vector(t(pal36))
 ```{r}
 (plot_cont_allyears <- ggplot(wq_data) + 
    geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + 
-  facet_wrap(~Analyte, scales = "free_y", nrow = 7, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+  facet_wrap(~Analyte, scales = "free_y", nrow = 8, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_viridis(option = "turbo", discrete = TRUE) +
@@ -100,7 +100,7 @@ pal36 <- as.vector(t(pal36))
 (plot_cont_jday_frk <- ggplot(wq_daily_frk) +
   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
   # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
-  facet_wrap(~Analyte, scales = "free_y", nrow = 7, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+  facet_wrap(~Analyte, scales = "free_y", nrow = 8, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)",DO.Pct = "DO %", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_viridis(option = "turbo", discrete = TRUE) +
@@ -114,7 +114,7 @@ pal36 <- as.vector(t(pal36))
 (plot_cont_jday_bb <- ggplot(wq_daily_bb) +
   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
     #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
-  facet_wrap(~Analyte, scales = "free_y", nrow = 7, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+  facet_wrap(~Analyte, scales = "free_y", nrow = 8, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", DO.Pct = "DO %",Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_viridis(option = "turbo", discrete = TRUE) +
@@ -134,7 +134,7 @@ wq_daily_comb <- rbind(wq_daily_bb, wq_daily_frk) %>%
 (plot_bb_vs_frk <- ggplot(wq_daily_comb) +
   geom_line(aes(x = Date2, y = Daily, color = Location)) + 
     #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
-  facet_grid(Analyte~fYear, scales = "free_y", labeller = as_labeller(c(`2015` = "2015", `2017` = "2017 (Wet)", `2021` = "2021", `2022` = "2022", Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water \nTemp \n(°C)"))) +
+  facet_grid(Analyte~fYear, scales = "free_y", labeller = as_labeller(c(`2015` = "2015", `2017` = "2017 (Wet)", `2021` = "2021", `2022` = "2022", Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", DO.Pct = "DO %", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water \nTemp \n(°C)"))) +
     #theme(strip.background = element_rect(fill="White", color = "White"),
      #     strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_brewer(palette = "Set1") +
@@ -161,15 +161,15 @@ png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022.png"), widt
 plot_cont_allyears
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_SDelta.png"), width = 10, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_SDelta.png"), width = 10, height = 9, units = "in", pointsize = 12, family = "sans", res = 300)
 plot_cont_jday_frk
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_BigBreak.png"), width = 10, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_BigBreak.png"), width = 10, height = 9, units = "in", pointsize = 12, family = "sans", res = 300)
 plot_cont_jday_bb
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "plot_cont_bb_vs_frk.png"), width = 10, height = 7, units = "in", pointsize = 8, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "plot_cont_bb_vs_frk.png"), width = 10, height = 7, units = "in", pointsize = 9, family = "sans", res = 300)
 plot_bb_vs_frk
 dev.off()
 ```

@@ -1,0 +1,21 @@
+---
+title: "get_emp_stations"
+author: "Catarina Pien"
+date: '2022-11-02'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+library(here)
+```
+
+```{r}
+emp_sta <- "https://portal.edirepository.org/nis/dataviewer?packageid=edi.458.7&entityid=ecf241d54a8335a49f8dfc8813d75609"
+
+sta <- read_csv(emp_sta)
+write_csv(sta, here("analysis_2022", "data_raw", "stations_emp.csv"))
+```
+

@@ -1,0 +1,118 @@
+---
+title: "get_discrete_USGS_data"
+author: "Catarina Pien"
+date: '2022-11-03'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(glue)
+library(dataRetrieval)
+library(dplyr)
+library(ggplot2)
+library(janitor)
+library(here)
+library(readxl)
+```
+
+Cache: 11455095, 11455136, 11455142, 11455143, 11455146, 11455276, 11455315, 11455385
+East Delta: 11336685, 11336790
+Lower Sac: 11455478, 11455485
+Lower SJ: 11313460, 11337190
+OMR: 11312672, 11312676, 11313405
+Upper Sac: 11447650, 11447890
+South Delta: 11311300, 11312685
+
+Chlorophyll, Dissolved Ammonium, Dissolved Nitrate + Nitrite, Dissolved Orthophosphate
+ # 00608 = Ammonium + Ammonia
+  # 00631 = Nitrate + Nitrite
+  # 00671 = Ortho-Phosphate
+  # 70953 = Chlorophyll-a
+  
+  
+Read in discrete USGS data (CAWSC)
+From https://github.com/EMRR-DISE/EDBdata/blob/master/data-raw/disc_nutr_chla.R
+
+```{r}
+sites <- c(11455095, 11455136, 11455142, 11455143, 11455146, 11455276, 11455315, 11455385)
+ site_numb <-
+    c(
+      "USGS-11303500",
+      "USGS-11304810",
+      "USGS-11311300",
+      "USGS-11312672",
+      "USGS-11312676",
+      "USGS-11312685",
+      "USGS-11313315",
+      "USGS-11313405",
+      "USGS-11313431",
+      "USGS-11313434",
+      "USGS-11313440",
+      "USGS-11313452",
+      "USGS-11313460",
+      "USGS-11336680",
+      "USGS-11336685",
+      "USGS-11336790",
+      "USGS-11336930",
+      "USGS-11337080",
+      "USGS-11337190",
+      "USGS-11447650",
+      "USGS-11447830",
+      "USGS-11447890",
+      "USGS-11447903",
+      "USGS-11455095",
+      "USGS-11455136",
+      "USGS-11455139",
+      "USGS-11455140",
+      "USGS-11455142",
+      "USGS-11455143",
+      "USGS-11455146",
+      "USGS-11455166",
+      "USGS-11455167",
+      "USGS-11455276",
+      "USGS-11455280",
+      "USGS-11455315",
+      "USGS-11455335",
+      "USGS-11455350",
+      "USGS-11455385",
+      "USGS-11455420",
+      "USGS-11455478",
+      "USGS-11455485",
+      "USGS-11455508",
+      "USGS-380631122032201",
+      "USGS-380833122033401",
+      "USGS-381142122015801",
+      "USGS-381424121405601",
+      "USGS-381614121415301",
+      "USGS-382006121401601",
+      "USGS-382010121402301"
+    )
+params <- c("00608", "00631", "00671", "70953")
+
+# get data function - data retrieval is in Pacific Standard Time
+df_cawsc_tmp <-
+    readWQPqw(
+      siteNumbers = site_numb,
+      parameterCd = params,
+      startDate = "2022-01-01",
+      endDate = "2022-11-01"
+    )
+dat_clean <- dataRetrieval::renameNWISColumns(df_cawsc_tmp)
+
+# Download station coordinates
+df_cawsc_coord <- whatWQPsites(siteid = site_numb) %>%
+  select(MonitoringLocationIdentifier, LatitudeMeasure, LongitudeMeasure)
+
+# Add coordinates to data frame
+df_cawsc_tmp <- left_join(df_cawsc_tmp, df_cawsc_coord, by = "MonitoringLocationIdentifier")
+
+# Save data as a .csv file in the "data-raw/Discrete_nutr_chla_data" folder
+df_cawsc_tmp %>%
+  readr::write_csv(here::here("analysis_2022", "data_raw/USGS_CAWSC_nutr_chla_data_2022.csv"))
+
+  # Clean up
+  rm(params, site_numb, df_cawsc_tmp, df_cawsc_coord)
+```
+

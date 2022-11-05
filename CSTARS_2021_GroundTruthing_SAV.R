@@ -122,78 +122,78 @@ st_crs(WW_Delta)
 #CRS = NAD83, which is different than our sample data points; EPSG: 4269
 WW_Delta_4326 <- st_transform(WW_Delta, crs = 4326)
 
-
-#create map showing all Delta SAV data points
-(sav_map_all <- ggplot()+
-  #plot waterways base layer
-  geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
-  #plot SAV sampling points
-  geom_sf(data= cstars_format3, fill= "red", color= "black", shape= 22, size= 1.5)+
-    coord_sf(
-      xlim =c(-121.870, -121.251),
-      ylim = c(38.570, 37.801)
-    )+
-    theme_bw()
-
-)
-
-#create map showing Franks Tract SAV data points
-(sav_map_ft <- ggplot()+
-    #plot waterways base layer
-    geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
-    #plot SAV sampling points
-    geom_sf(data= cstars_format3, fill= "red", color= "black", shape= 22, size= 3.5)+
-    #set bounding box for site
-    #Box picks up a few unneeded sampling over in Taylor Slough
-    coord_sf(
-      xlim =c(-121.677, -121.576),
-      ylim = c(38.07, 38.02)
-    )+
-    theme_bw()+
-    ggtitle("Franks Tract")
-)
-
-#create map showing Big Break SAV data points
-(sav_map_bb <- ggplot()+
-    #plot waterways base layer
-    geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
-    #plot SAV sampling points
-    geom_sf(data= cstars_format3, fill= "red", color= "black", shape= 22, size= 3.5)+
-    #set bounding box for site
-    #No stray samples from outside sites captured in this box
-    coord_sf(
-      xlim =c(-121.740, -121.685),
-      ylim = c(38.031, 38.005)
-    )+
-    theme_bw()+
-    ggtitle("Big Break")
-)
-
-# #create map showing Clifton Court SAV data points
-# #no sampling in Clifton Court
-# #not too surprising because access is restricted
-# (sav_map_cc <- ggplot()+
+#
+# #create map showing all Delta SAV data points
+# (sav_map_all <- ggplot()+
+#   #plot waterways base layer
+#   geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
+#   #plot SAV sampling points
+#   geom_sf(data= cstars_format3, fill= "red", color= "black", shape= 22, size= 1.5)+
+#     coord_sf(
+#       xlim =c(-121.870, -121.251),
+#       ylim = c(38.570, 37.801)
+#     )+
+#     theme_bw()
+#
+# )
+#
+# #create map showing Franks Tract SAV data points
+# (sav_map_ft <- ggplot()+
 #     #plot waterways base layer
 #     geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
 #     #plot SAV sampling points
 #     geom_sf(data= cstars_format3, fill= "red", color= "black", shape= 22, size= 3.5)+
+#     #set bounding box for site
+#     #Box picks up a few unneeded sampling over in Taylor Slough
 #     coord_sf(
-#       xlim =c(-121.605, -121.552),
-#       ylim = c(37.867, 37.818)
+#       xlim =c(-121.677, -121.576),
+#       ylim = c(38.07, 38.02)
 #     )+
 #     theme_bw()+
-#     ggtitle("Clifton Court")
+#     ggtitle("Franks Tract")
 # )
-#creates a map of San Joaquin River SAV data points
-(sav_map_sj <- ggplot()+
-    #plot waterways base layer
-    geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
-    #plot SAV sampling points
-    geom_sf(data= cstars_format3, fill= "red", color= "black", shape= 22, size= 3.5)+
-    #set bounding box for site
-    coord_sf(xlim = c(-121.550, -121.400), ylim = c(37.980, 38.110)))+
-  theme_bw()+
-  ggtitle("San Joaquin River")
+#
+# #create map showing Big Break SAV data points
+# (sav_map_bb <- ggplot()+
+#     #plot waterways base layer
+#     geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
+#     #plot SAV sampling points
+#     geom_sf(data= cstars_format3, fill= "red", color= "black", shape= 22, size= 3.5)+
+#     #set bounding box for site
+#     #No stray samples from outside sites captured in this box
+#     coord_sf(
+#       xlim =c(-121.740, -121.685),
+#       ylim = c(38.031, 38.005)
+#     )+
+#     theme_bw()+
+#     ggtitle("Big Break")
+# )
+#
+# # #create map showing Clifton Court SAV data points
+# # #no sampling in Clifton Court
+# # #not too surprising because access is restricted
+# # (sav_map_cc <- ggplot()+
+# #     #plot waterways base layer
+# #     geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
+# #     #plot SAV sampling points
+# #     geom_sf(data= cstars_format3, fill= "red", color= "black", shape= 22, size= 3.5)+
+# #     coord_sf(
+# #       xlim =c(-121.605, -121.552),
+# #       ylim = c(37.867, 37.818)
+# #     )+
+# #     theme_bw()+
+# #     ggtitle("Clifton Court")
+# # )
+# #creates a map of San Joaquin River SAV data points
+# (sav_map_sj <- ggplot()+
+#     #plot waterways base layer
+#     geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
+#     #plot SAV sampling points
+#     geom_sf(data= cstars_format3, fill= "red", color= "black", shape= 22, size= 3.5)+
+#     #set bounding box for site
+#     coord_sf(xlim = c(-121.550, -121.400), ylim = c(37.980, 38.110)))+
+#   theme_bw()+
+#   ggtitle("San Joaquin River")
 
 #create subsets of data sets by site using site polygons---------
 
@@ -312,6 +312,23 @@ weeds_fb <- bind_rows(weeds_franks,weeds_bbreak, weeds_sj)
 )
 #ggsave(file = "C:/Users/nbertrand/Desktop/Bertrand/GitHub/EDB-HABs-Weeds/analysis_2022/data_raw/Veg/BigBreak_CSTARS_SampleSites_2022.png")
 
+
+
+#create map showing Big Break SAV data points
+(sav_map_sj_only <- ggplot()+
+    #plot waterways base layer
+    geom_sf(data= WW_Delta_4326, fill= "skyblue3", color= "black") +
+    #plot SAV sampling points
+    geom_sf(data=weeds_sj, fill= "red", color= "black", shape= 22, size= 3.5)+
+    #set bounding box for site
+    coord_sf(
+      xlim = c(bbox_sj_4326$xmin, bbox_sj_4326$xmax),
+      ylim = c(bbox_sj_4326$ymin, bbox_sj_4326$ymax)
+    ) +
+    theme_bw()+
+    ggtitle("San Joaquin")
+)
+#ggsave(file = "C:/Users/nbertrand/Desktop/Bertrand/GitHub/EDB-HABs-Weeds/analysis_2022/data_raw/Veg/SanJoaquin_CSTARS_SampleSites_2022.png")
 
 #look at Franks Tract samples-------
 

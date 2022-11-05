@@ -1,0 +1,26 @@
+Data Dictionary Name,Latin Name,Common Name,species,native
+" ""SAV-Egeria""",Egeria densa,Brazilian waterweed,Egeria,n
+" ""SAV-Watermilfoil""",Myriophyllum spicatum,Eurasian watermilfoil,Watermilfoil,n
+" ""SAV-Cabomba""",Cabomba caroliniana,Carolina fanwort,Cambomba,n
+" ""SAV-Coontail""",Ceratophyllum demersum,Coontail,Coontail,y
+" ""SAV-AmPondweed""",Potamogeton nodosus,American pondweed,AmPondweed,y
+" ""SAV-Curlyleaf""",Potamogeton crispus,Curlyleaf pondweed,CurlyLeaf,n
+" ""SAV-Richardson""",Potamogeton richardsonii,Richardsons Pondweed,Richarsdon,y
+" ""SAV-Sago""",Stuckenia pectinata,sago pondweed,Sago,y
+" ""SAV-Echinodorus""",Echinodorus berteroi,Burhead, Echinodorus,
+" ""SAV-Snaiad""",Najas guadalupensis,Southern Naiad,Snaiad,y
+" ""SAV-Elodea""",Elodea canadensis,Common waterweed,Elodea,y
+" ""SAV-Ribbonweed"" ",Vallisneria americana,Tape-grass,Ribbonweed,
+" ""SAV-Algae""",,Algae Mats,Algae,
+" ""SAV-Unknown""",,,Uknown,
+" ""SAV-Mixed""",,,Mixed,
+" ""SAV-Hdubia""",Heteranthera dubia,,Hdubia,y
+" ""SAV-Nuttallii""",potamogeton epihydrus,,Nuttallii,
+" ""FLT-WHyacinth""",Eichhornia crassipes,water hyacinth,WHyacinth,
+"  ""FLT-WPrimrose""",Ludwigia hexapetala,water primrose,WPrimrose,
+" ""FLT-Alligatorweed""",Alternanthera philoxeroides,Alligator weed,Alligatorweed,
+"  ""FLT-Pennywort""",Hydrocotyle ranunculoides,pennywort,Pennywort,
+" ""FLT-Parrotfeather""",Myriophyllum aquaticum,parrot feather,Parrotfeather,
+" ""FLT-SpongePlant""",Limnobium laevigatum,West Indian sponge plant,SpongePlant,
+" ""FLT-Azolla""",Azolla spp,fairy moss,Azolla,
+" ""FLT-Duckweed""",Lemna minor,Duckweed,Duckweed,

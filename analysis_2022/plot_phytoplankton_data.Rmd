@@ -1,0 +1,72 @@
+---
+title: "plot_phytoplankton"
+author: "Catarina Pien"
+date: '2022-11-02'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(here)
+library(readxl)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(sf)
+library(deltamapr)
+library(ggspatial)
+```
+
+Read data
+```{r}
+phyto <- read_excel(here::here("analysis_2022", "data_raw", "EMP_Phytoplankton_Jan-Sept-2022.xlsx")) 
+phyto_2021 <- load(here::here("analysis_2022", "data_raw", "EMPPHyto.RData"))
+emp_stations <- read_csv(here("analysis_2022", "data_raw", "stations_emp.csv")) %>%
+  rename(StationCode = Station)
+load("../data/Regions.RData")
+
+```
+
+Add spatial
+```{r}
+phyto_sta <- left_join(phyto, emp_stations) %>%
+  filter(!is.na(Latitude))
+phyto_sf <- st_as_sf(phyto_sta, coords = c("Longitude", "Latitude"))
+st_crs(phyto_sf) <- 4326
+```
+
+Map
+```{r}
+(map_phyto <- ggplot()+
+  geom_sf(data =reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.4)+
+  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue", alpha = 0.5, lwd = 0.5)+
+  geom_sf(data =phyto_sf, inherit.aes = FALSE, size = 1.5)+
+  scale_color_brewer(palette = "Dark2", direction = -1)+
+ # scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  #scale_shape_manual(values = c(12,21,24, 25,22, 23)) +
+  theme_bw()+
+  #scale_x_continuous(limits = c(-122, -121.2)) +
+  #scale_y_continuous( limits = c(37.65, 38.41))+
+  #geom_sf_text(data = Alltoxsf, aes(label = Station), size = 2)
+#geom_sf_text(data = reg3crop, aes(label = Stratum2))+
+annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
+annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
+  annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
+  theme(legend.position = c(0.15, 0.2),
+        panel.border = element_rect(colour = "black", fill = NA),
+        legend.background = element_rect(linetype = 2, size = 0.5, colour = 1),
+        axis.title = element_blank()))
+```
+
+Figure 2-29? 
+HOw to figure out which species are which groupings? 
+```{r}
+ggplot(phyto) + geom_col(aes())
+```
+

@@ -1,0 +1,123 @@
+---
+title: "map_stations"
+author: "Catarina Pien"
+date: '2022-10-24'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(lubridate) #today()
+library(readr)
+library(here)
+library(Polychrome)
+library(viridis)
+library(deltamapr)
+library(sf)
+library(ggspatial)
+library(readxl)
+
+data_root = "analysis_2022/"
+```
+
+```{r}
+sta_cont <- read_excel(here(data_root, "data_clean", "continuous_stations.xlsx")) %>%
+  filter(Type == "WQ") %>%
+  dplyr::select(-Type) %>%
+  rename(Station = StationCode) %>%
+  mutate(WQ = "Continuous") %>%
+  mutate(Source = case_when(
+    Station == "FRK" ~ "DWR_EMP",
+    Station %in% c("MDM", "ORQ", "DSJ") ~ "USGS_CAWSC",
+    TRUE ~ "DWR_NCRO"
+  ))
+
+sta_discrete <- read_csv(here(data_root, "data_clean", "discrete_wq_stations_all_2022.csv")) %>%
+  mutate(WQ = "Discrete")
+
+sta_combined <- bind_rows(sta_cont, sta_discrete) %>%
+  filter(!is.na(Latitude))
+
+
+
+ # wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds")) %>%
+ #   mutate(fYear = factor(Year))
+
+# For map:
+# wq_sf <- st_as_sf(wq_data, coords = c("Longitude", "Latitude"), remove = FALSE)
+# st_crs(wq_sf) <- 4326
+# 
+# stations <- wq_sf %>% 
+#   dplyr::select(Site, Analyte, Latitude, Longitude) %>%
+#   unique()
+# CRS
+sta_sf <- st_as_sf(sta_combined, coords = c("Longitude", "Latitude"), remove = FALSE) %>%
+  filter(Longitude > -121.85)
+st_crs(sta_sf) <- 4326
+delta_4326 <- st_transform(WW_Delta, crs = st_crs(sta_sf))
+#Regions
+load("./data/Regions.RData")
+```
+
+
+## Map of stations
+```{r}
+cont <- sta_sf %>%filter(WQ == "Continuous")
+
+
+(cont_map <- ggplot() + 
+  geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
+
+  geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.1)+
+  geom_sf(data = cont)+
+  geom_text(data = cont, aes(x = Longitude, y = Latitude, label = Station), size = 3, vjust = 1, hjust = 1)+
+  scale_x_continuous(limits = c(-121.8, -121.4)) +
+  scale_y_continuous( limits = c(37.9, 38.15))+
+  annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
+  theme_bw())
+```
+
+
+```{r}
+(wq_map <- ggplot() + 
+  geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
+  geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
+  geom_sf(data = sta_sf, aes(color = WQ, shape = Source), inherit.aes = FALSE)+
+   # geom_text(data = stations, aes(x = Longitude, y = Latitude, label = Site), size = 3, vjust = 1, hjust = 1)+
+  scale_x_continuous(limits = c(-122, -121.2)) +
+  scale_y_continuous( limits = c(37.7, 38.6))+
+  annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
+   scale_color_manual(values = c("coral","blue4")) + 
+  theme_bw())
+```
+
+## Write
+
+```{r}
+png(filename = here("analysis_2022", "figures", "wq_map.png"), width = 6, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+wq_map
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "cont_map.png"), width = 6, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+cont_map
+dev.off()
+```
+
+
+# Tables
+2-5 Station Code - Operator - USGS Station ID - Station Name - Latitude - Longitude - Sensors
+```{r}
+
+```

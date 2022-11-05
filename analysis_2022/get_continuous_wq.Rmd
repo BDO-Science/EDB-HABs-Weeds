@@ -18,6 +18,7 @@ library(lubridate) #today()
 library(CDECRetrieve) #cdec_datasets
 library(readr)
 library(here)
+library(readxl)
 
 data_root = "analysis_2022/data_raw/"
 ```
@@ -127,9 +128,9 @@ Data Quality Description
 * Kept data that was scored 1 or 40, removed the rest
 ```{r}
 # For 7 parameter data (including chlorophyll)
-f_cleanparam <- function(sta, param, enddate) {
+f_cleanparam <- function(sta, param, startdate = "20220101",enddate) {
   # rename variables in a pattern to prepare for pivot
-  df <- read.csv(here(data_root, paste0("NCRO_Continuous_WQ_", sta, "_20220101-",enddate, ".CSV")), skip = 1) %>%
+  df <- read.csv(here(data_root, paste0("NCRO_Continuous_WQ_", sta, "_", startdate, "-",enddate, ".CSV")), skip = 1) %>%
   rename(datetime = and,
          p_wtemp = X450,
          p_depth = X630,
@@ -171,9 +172,9 @@ f_cleanparam <- function(sta, param, enddate) {
 }
 
 # For data without chlorophyll
-f_cleanparam2 <- function(sta, param, enddate) {
+f_cleanparam2 <- function(sta, param, startdate = "20220101",enddate) {
   # rename variables in a pattern to prepare for pivot
-  df <- read.csv(here(data_root, paste0("NCRO_Continuous_WQ_", sta, "_20220101-",enddate, ".CSV")), skip = 1) %>%
+  df <- read.csv(here(data_root, paste0("NCRO_Continuous_WQ_", sta, "_", startdate, "-",enddate, ".CSV")), skip = 1) %>%
   rename(datetime = and,
          p_wtemp = X450,
          p_depth = X630,
@@ -213,9 +214,9 @@ f_cleanparam2 <- function(sta, param, enddate) {
 }
 
 # Missing do
-f_cleanparam3 <- function(sta, param, enddate) {
+f_cleanparam3 <- function(sta, param,  startdate = "20220101", enddate) {
   # rename variables in a pattern to prepare for pivot
-  df <- read.csv(here(data_root, paste0("NCRO_Continuous_WQ_", sta, "_20220101-",enddate, ".CSV")), skip = 1) %>%
+  df <- read.csv(here(data_root, paste0("NCRO_Continuous_WQ_", sta, "_", startdate, "-",enddate, ".CSV")), skip = 1) %>%
   rename(datetime = and,
          p_wtemp = X450,
          p_depth = X630,
@@ -251,19 +252,65 @@ f_cleanparam3 <- function(sta, param, enddate) {
   
   return(param_df)
 }
+
+
+f_cleanparam4 <- function(sta, param,  startdate = "20220101", enddate) {
+  # rename variables in a pattern to prepare for pivot
+  df <- read.csv(here(data_root, paste0("NCRO_Continuous_WQ_", sta, "_", startdate, "-",enddate, ".CSV")), skip = 1) %>%
+  rename(datetime = and,
+         p_wtemp = X450,
+         p_pH = X860,
+         p_turbidity = X810,
+         p_spc = X821,
+         p_dopct = X865,
+         p_do = X2351,
+         p_chl = X7004,
+         q_wtemp = X,
+         q_pH = X.2,
+         q_turbidity = X.5,
+         q_spc = X.1, 
+         q_dopct = X.3,
+         q_do = X.4,
+         q_chl = X.6) %>%
+  mutate(across(p_wtemp:q_chl, as.numeric)) %>%
+  subset(datetime != "Date") %>%
+  mutate(datetime = mdy_hm(datetime),
+         date = date(datetime),
+         station = sta) %>%
+  select(datetime, date, station, everything())
+  
+  # pivot_longer to be able to group by parameter
+  df_long <- df %>%
+  pivot_longer(cols = c(p_wtemp:q_chl), 
+               names_to = c("type", "parameter"),
+               names_sep = "_",
+               values_to = "value")
+  
+  # subset to parameter
+  param_df <- df_long %>%
+  filter(parameter == param) %>%
+  pivot_wider(names_from = "type", values_from = "value") %>%
+  filter(q<120) %>%
+  rename(value = p)%>%
+    select(-q)
+  
+  return(param_df)
+}
 ```
 
 ### Run functions to clean the data and combine data
 ```{r}
-plist <- c("wtemp","depth","turbidity","spc","dopct","do","chl")  
-data_FAL <- map(plist, ~ f_cleanparam(sta = "FAL", param = .x, enddate = "20220926")) %>% bind_rows()
-data_OSJ <- map(plist, ~ f_cleanparam(sta = "OSJ", param = .x, enddate = "20220926")) %>% bind_rows()
+plist <- c("wtemp","depth","turbidity","spc","dopct","do","chl", "pH")  
+data_FAL <- map(plist[1:7], ~ f_cleanparam(sta = "FAL", param = .x, enddate = "20220926")) %>% bind_rows()
+data_OSJ <- map(plist[1:7], ~ f_cleanparam(sta = "OSJ", param = .x, enddate = "20220926")) %>% bind_rows()
 data_HLT <- map(plist[-(5:6)], ~ f_cleanparam3(sta = "HLT", param = .x, enddate = "20220908")) %>% bind_rows()
 data_HOL <- map(plist[1:6], ~ f_cleanparam2(sta = "HOL", param = .x, enddate = "20220823")) %>% bind_rows()
-data_NCRO <- rbind(data_FAL, data_HOL, data_HLT, data_OSJ)
+data_BLP <- map(plist[c(1, 3:8)], ~ f_cleanparam4(sta = "BLP", param = .x, startdate = "2015", enddate = "2022")) %>%
+  bind_rows()
+data_NCRO <- rbind(data_FAL, data_HOL, data_HLT, data_OSJ, data_BLP)
 ```
 
-# EMP
+## EMP
 ```{r}
 FRK0 <- read_csv(here(data_root, "EMP_Continuous_FRK_2022.csv"))
 
@@ -315,7 +362,7 @@ f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '0
   data2 <- janitor::clean_names(data2)
 
   # write out
-  readr::write_csv(data2, paste0("analysis_2022/data_raw/USGS_NWIS_", siteNumbers, "_WQ.csv"))
+  saveRDS(data2, paste0("analysis_2022/data_raw/USGS_NWIS_", siteNumbers, "_WQ.rds"))
 
   # print message!
   print("Data saved in data_raw")
@@ -346,13 +393,13 @@ f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), star
 
 MDM: Latitude 37°56'34",   Longitude 121°31'59"   NAD27
 ORQ: Latitude 38°01'38",   Longitude 121°33'52"   NAD83
-DSJ: Latitude 38°00'49",   Longitude 121°40'00"   NAD27
+DSJ: Latitude 38°00'49",   Longitude 121°40'00"   NAD27 38.01361 -121.6667
 DUTCH SLOUGH BL JERSEY ISLAND RD A JERSEY ISLAND: 
 ```{r}
 f_get_NWIS(siteNumbers = 11312676)
 f_get_NWIS_flow(siteNumbers=11312676)
 f_get_NWIS_flow(siteNumbers=11313434)
-f_get_NWIS(siteNumbers = 11313433)
+f_get_NWIS(siteNumbers = 11313433, startDate = "2015-01-01")
 f_get_NWIS_flow(siteNumbers = 11313433)
 ```
 
@@ -375,7 +422,8 @@ MDM_comb <- left_join(MDMf, MDM) %>%
   select(datetime, date, station, wtemp, flow, spc, do, pH, turbidity,chl) %>%
   pivot_longer(cols = wtemp:chl,
                names_to = "parameter",
-               values_to = "value")
+               values_to = "value") %>%
+  filter(!is.na(value))
 
 ORQ <- readRDS(here(data_root, "USGS_NWIS_11313434_flow.rds")) %>%
   rename(Datetime = date_time, 
@@ -388,28 +436,31 @@ ORQ <- readRDS(here(data_root, "USGS_NWIS_11313434_flow.rds")) %>%
                names_to = "parameter",
                values_to = "value")
 
-DSJ <- read_csv(here(data_root, "USGS_NWIS_11313433_WQ.csv"))%>%
+DSJ_WQ <- readRDS(here(data_root, "USGS_NWIS_11313433_WQ.rds"))
+DSJ_flow <- readRDS(here(data_root, "USGS_NWIS_11313433_flow.rds"))
+DSJ <- left_join(DSJ_WQ, DSJ_flow) %>%
   rename(Datetime = date_time, 
+         flow = flow_inst,
          wtemp = wtemp_inst,
          spc = spec_cond_inst,
          turbidity = ts213_ysi_exo_turb_inst)%>%
   mutate(station = "DSJ",
          date = date(Datetime),
          datetime = Datetime) %>%
-  select(datetime, date, station, wtemp, spc, turbidity) %>%
-  pivot_longer(cols = wtemp:turbidity,
+  select(datetime, date, station, wtemp, spc, turbidity, flow) %>%
+  pivot_longer(cols = wtemp:flow,
                names_to = "parameter",
                values_to = "value")
 
 data_USGS <- rbind(MDM_comb, ORQ, DSJ) 
 ```
 
-### Combine data from different programs
+# Combine data from different programs
 ```{r}
 wq_2022 <- rbind(data_NCRO, FRK, data_USGS, flow_clean) 
 ```
 
-### Convert to daily info
+# Convert to daily info
 ```{r}
 wq_2022_daily <- wq_2022 %>%
   group_by(station, date, parameter) %>%
@@ -417,22 +468,24 @@ wq_2022_daily <- wq_2022 %>%
             Daily.Max = max(value, na.rm = TRUE),
             Daily.Min = min(value, na.rm = TRUE)) %>%
   ungroup() %>%
-  mutate(Year = year(date),
-         Julian = yday(date),
-         Month = month(date)) %>%
+  mutate(Year = lubridate::year(date),
+         Julian = lubridate::yday(date),
+         Month = lubridate::month(date, label = TRUE)) %>%
 rename(Site = station,
        Analyte = parameter, 
        Date = date) %>%
-  filter(Analyte != "depth",
-         Analyte != "dopct") %>%
+  filter(Analyte != "depth") %>%
   mutate(Analyte = case_when(Analyte == "chl" ~ "Chl.a",
                              Analyte == "do" ~ "DO.Conc",
+                             Analyte == "dopct" ~ "DO.Pct",
                              Analyte == "spc" ~ "SpCond",
                              Analyte == "wtemp" ~ "Temp",
                              Analyte == "turbidity" ~ "Turb",
                              Analyte == "flow" ~ "Flow",
                              TRUE ~ Analyte)) %>%
-  select(Site, Date, Analyte, Daily.Mean, Daily.Max, Daily.Min, Year, Julian, Month)
+  select(Site, Date, Analyte, Daily.Mean, Daily.Max, Daily.Min, Year, Julian, Month) %>%
+  filter(!is.infinite(Daily.Min),
+         !is.na(Date))
 
 unique(wq_2022_daily$Analyte)
 ```
@@ -442,19 +495,20 @@ unique(wq_2022_daily$Analyte)
 ```{r}
 load(here("data", "WQ.daily.RData"))
 wq_all <- rbind(wq_2022_daily, WQ.daily)
+
+summary(wq_all)
 ```
 
 ### Combine with coordinates 
 ```{r}
-stalatlon <- read_excel("data/continuous stations.xlsx") %>%
-  dplyr::select(-Type)
+stalatlon <- read_excel(here(data_root, "../data_clean", "continuous_stations.xlsx")) %>%
+  dplyr::select(-Type) %>%
+  rename(Site = StationCode)
 
 unique(wq_all$Site)
 
-wq_all <- readRDS(here(data_root, "../data_clean", "continuous_wq_2015_2022.rds")) %>%
-  left_join(stalatlon %>% rename(Site = StationCode))
-wq_2022 <- readRDS(here(data_root, "../data_clean", "continuous_wq_2022_allvals.rds"))%>%
-  left_join(stalatlon %>% rename(station = StationCode))
+wq_all <- left_join(wq_all, stalatlon)
+wq_2022 <- left_join(wq_2022_daily, stalatlon)
 ```
 
 ### Write file

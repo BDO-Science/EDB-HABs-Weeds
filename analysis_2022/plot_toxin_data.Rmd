@@ -3,6 +3,8 @@ title: "plot_toxins"
 author: "Catarina Pien"
 date: '2022-10-12'
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -13,43 +15,95 @@ knitr::opts_chunk$set(echo = TRUE)
 library(deltamapr)
 library(dplyr)
 library(ggplot2)
+library(ggspatial)
+library(here)
+library(readr)
+library(lubridate)
+library(sf)
+
+root <- "analysis_2022/" # this is to tell here where to start
 ```
 
-
-
+Read data
 ```{r}
-ct_all <- read("data_clean/ct_all.csv")
-load("data/Regions.RData")
+ct_all <- readRDS(here(root, "data_clean", "ct_all_2022.rds")) 
+ct_all_years <- readRDS(here(root, "data_clean", "ct_years_to_2022.rds")) %>%
+  select(-Month) %>%
+  mutate(Month = month(Date))
+  
+ct_all_years2 <- unnest(ct_all_years, geometry)
+
+
+sf::st_as_sf(ct_all_years, wkt = "geometry")
+class(ct_all_years$geometry) <- "geometry"
+  
+ct_stations <- ct_all %>%
+  select(Study, Station, StationName, geometry) %>%
+  distinct()
+load("./data/Regions.RData")
+
+incidents <-
+  readRDS(here("analysis_2022", "data_clean", "incident_data.rds")) %>%
+  mutate(fYear = factor(Year),
+         Advisory = factor(Advisory, levels = c("No Advisory", "Caution", "Warning", "Danger")))
+
+reg3crop = st_crop(reg3, xmin = -121.9, xmax = -121.2, ymin = 37.65, ymax = 38.4)
 ```
+
 
 # Plots
 
-Map all the toxin stations
+## Map all the toxin stations
 ```{r}
 
 #This is plot 2-4 in the report
-ggplot()+
-  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
-  geom_sf(data = EDSM_Strata, aes(fill = Stratum), inherit.aes = FALSE, alpha = 0.1)+
-  #scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
-  geom_sf(data =ct_all_sf, aes(color = Study))+
-  scale_color_brewer(palette = "Dark2")+
+(map_cyano <- ggplot()+
+  geom_sf(data =reg3crop, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.4)+
+  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue", alpha = 0.5, lwd = 0.5)+
+  geom_sf(data =ct_stations, aes(color = Study, shape = Study), inherit.aes = FALSE, size = 1.5)+
+  scale_color_brewer(palette = "Dark2", direction = -1)+
+  scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  #scale_shape_manual(values = c(12,21,24, 25,22, 23)) +
   theme_bw()+
- scale_x_continuous(limits = c(-121.9, -121.2)) +
-  scale_y_continuous( limits = c(37.65, 38.4))+
+  scale_x_continuous(limits = c(-122, -121.2)) +
+  scale_y_continuous( limits = c(37.65, 38.41))+
   #geom_sf_text(data = Alltoxsf, aes(label = Station), size = 2)
-#  geom_sf_text(data = reg3crop, aes(label = Stratum2))+
-#  annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
-#  annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
-  scalebar(dist = 10, dist_unit = "km",
-           transform = TRUE, st.dist = .1, x.min = -121.6, x.max = -121.8, y.min = 37.7, y.max = 37.9) +
-  north(data = ct_all_sf, symbol = 2) +
-  theme_bw()+ylab("")+xlab("")
+#geom_sf_text(data = reg3crop, aes(label = Stratum2))+
+annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
+annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
+  annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
+  theme(legend.position = c(0.15, 0.2),
+        panel.border = element_rect(colour = "black", fill = NA),
+        legend.background = element_rect(linetype = 2, size = 0.5, colour = 1),
+        axis.title = element_blank()))
 ```
 
-Map of recreational advisories
+
+## Map of recreational advisories and toxin concentrations
+
+### Filter only Microcystins and Anatoxins 
 ```{r}
-ggplot(ct_all_sf, aes(x = SampleDate, y = Result)) + geom_point(aes(shape = Study))+
+#To plot the toxin data, I want to put it in terms of the health
+#advisory levels from OEHHA. Here is a dataframe of those levels:
+health = data.frame(Analyte = c("Microcystins", "Microcystins", "Microcystins", "Anatoxins","Anatoxins"), Advisory = c(0.8, 6,20, .5, 20),
+                    AdviseType = c("Caution\nTier I", "Warning \nTier II","Danger \nTier III", "Caution\nTier I", "Warning \nTier II")) %>%
+  mutate(AdviseType = factor(AdviseType, levels = c("Caution\nTier I", "Warning \nTier II","Danger \nTier III")))
+```
+
+Combine data to plot advisories
+```{r}
+mic_only <- ct_all %>%
+  filter(!is.na(Advisory)) 
+advis <- bind_rows(mic_only, incidents %>%filter(!Advisory == "No Advisory")) %>%
+  filter(Year > 2021)
+```
+
+### Microcystis health advisories
+```{r}
+ggplot(mic_only, aes(x = Date, y = Result)) + geom_point(aes(shape = Study))+
   geom_hline(data = filter(health, AdviseType != "Danger \nTier III"), aes(yintercept = Advisory, color = AdviseType))+
   scale_color_manual(values = c("yellow", "orange", "red"), name = "Recreational \nAdvisory")+
   #facet_grid(Analyte~Stratum2, scales = "free_y") +
@@ -58,6 +112,110 @@ ggplot(ct_all_sf, aes(x = SampleDate, y = Result)) + geom_point(aes(shape = Stud
   theme_bw()+
   theme(legend.position = "bottom")
 ```
+
+Divided by region (Figure 2-16)
+```{r}
+(plot_advisories_by_region1 <- ggplot(mic_only, aes(x = Date, y = Result)) + geom_point(aes(shape = Study))+
+  geom_hline(data = filter(health, AdviseType != "Danger \nTier III"), aes(yintercept = Advisory, color = AdviseType))+
+  scale_color_manual(values = c("yellow", "orange", "red"), name = "Recreational \nAdvisory")+
+  facet_grid(Analyte~Stratum2, scales = "free_y") +
+  xlab("Month of 2022")+ ylab("Concentration ug/L")+
+  scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0))+
+  theme_bw()+
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 90)))
+```
+
+## Non-zeros
+```{r}
+nonzero <- ct_all %>%
+  filter(Analyte %in% c("Microcystins", "Anabaenopeptins", "Anatoxins", "Cylindrospermopsins"))
+unique(nonzero$Analyte)
+
+(plot_advisories_by_region2 <- ggplot(nonzero, aes(x = Date, y = Result)) + geom_point(aes(shape = Study))+
+  geom_hline(data = filter(health, AdviseType != "Danger \nTier III"), aes(yintercept = Advisory, color = AdviseType))+
+  scale_color_manual(values = c("yellow", "orange", "red"), name = "Recreational \nAdvisory")+
+  facet_grid(Analyte~Stratum2, scales = "free_y") +
+  xlab("Month of 2022")+ ylab("Concentration ug/L")+
+  scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0))+
+  theme_bw()+
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 90)))
+```
+
+## Map of advisory areas (2-18): Incident Reports + Cyanotoxin - 2022
+```{r}
+advisories <- advis %>%
+  filter(Advisory != "No Advisory")
+
+(map_advisories <- ggplot()+
+  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
+  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.4) +
+  scale_fill_manual(values = reg3$colors, guide = NULL)+
+  theme_bw()+ylab("")+xlab("")+
+  geom_sf(data = advisories, aes(color = Advisory, shape = Study), size = 3)+
+  scale_color_manual(values = c("yellow",  "orange"), labels = c("Caution", "Warning"), name = "Incident Reports\nAdvisory Level")+
+  theme_bw()+ 
+   annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
+  scale_x_continuous(limits = c(-121.9, -121.2)) +
+  scale_y_continuous( limits = c(37.7, 38.4)))
+```
+
+## Map of 2020, 2021, 2022
+```{r}
+all_data <- incidents %>%
+  mutate(fYear = factor(Year),
+         Advisory = factor(Advisory, levels = c("Caution", "Warning", "Danger")))%>%
+  filter(!(Advisory == "No Advisory"),
+         fYear %in% c("2020", "2021", "2022"))
+
+levels(all_data$Advisory)
+```
+
+```{r}
+(map_advisories_all <- ggplot()+
+  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.4) +
+   geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
+  scale_fill_manual(values = reg3$colors, guide = NULL)+
+  theme_bw()+ylab("")+xlab("")+
+  geom_sf(data = all_data, aes(color = Advisory, shape = Study), size = 3)+
+   facet_wrap(~factor(Year)) + 
+  scale_color_manual(values = c("yellow", "orange", "red"), labels = c("Caution", "Warning", "Danger"), name = "Incident Reports\nAdvisory Level")+
+   annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
+  scale_x_continuous(limits = c(-121.9, -121.2)) +
+  scale_y_continuous( limits = c(37.7, 38.4)) +
+  theme_bw()+ 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.6),
+        strip.text = element_text(size = 12),
+        legend.position = "top"))
+```
+
+
+## Write plots
+```{r}
+png(filename = here("analysis_2022", "figures", "map_cyano.png"), width = 6, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
+map_cyano
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "cyano_by_region.png"), width = 8, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_advisories_by_region2
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "map_advisories.png"), width = 6, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
+map_advisories
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "map_advisories_all.png"), width = 8, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
+map_advisories_all
+dev.off()
+```
+
 
 
 # Tables

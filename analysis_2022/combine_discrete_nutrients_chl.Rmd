@@ -1,0 +1,428 @@
+---
+title: "combine_discrete_nutrients_chl"
+author: "Catarina Pien"
+date: '2022-11-03'
+output: html_document
+---
+
+Description: Combine discrete wq data from EMP, NCRO, USGS. 
+EMP: From Morgan Battey
+NCRO: From Tyler Salman
+USGS: From NWIS
+
+Contains only Dissolved Ammonia, Nitrate + Nitrite, Orthophosphate, Chlorophyll.
+There are data here though for field WQ (EMP, NCRO, NWIS we would need to get the right parameter code).
+This data has not been QA/QCed here, though we obtained data that had been checked by data managers and NWIS. 
+
+Adapted from https://github.com/EMRR-DISE/EDBdata/blob/master/data-raw/disc_nutr_chla.R
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+library(tidyverse)
+library(lubridate)
+library(here)
+library(readxl)
+```
+
+# USGS
+```{r}
+# File path
+fp_nutr_chla <- dir(here("analysis_2022/data_raw"), full.names = TRUE)
+
+# Read in data
+df_cawsc <-
+  read_csv(
+    file = str_subset(fp_nutr_chla, "USGS_CAWSC"),
+    col_types = cols_only(
+      ActivityStartDate = "D",
+      ActivityStartTime.Time = "t",
+      ActivityStartTime.TimeZoneCode = "c",
+      MonitoringLocationIdentifier = "c",
+      ResultDetectionConditionText = "c",
+      CharacteristicName = "c",
+      ResultMeasureValue = "d",
+      ResultStatusIdentifier = "c",
+      ResultValueTypeName = "c",
+      ResultAnalyticalMethod.MethodName = "c",
+      ResultLaboratoryCommentText = "c",
+      DetectionQuantitationLimitMeasure.MeasureValue = "d",
+      LatitudeMeasure = "d",
+      LongitudeMeasure = "d"
+    )
+  )
+```
+
+
+```{r}
+# Prepare CAWSC data to be combined with all other data
+df_cawsc_c <- df_cawsc %>%
+  # Add source variable
+  mutate(Source = "USGS_CAWSC") %>%
+  # Rename variables so that they are easier to use
+  select(
+    Source,
+    Station = MonitoringLocationIdentifier,
+    Latitude = LatitudeMeasure,
+    Longitude = LongitudeMeasure,
+    Date = ActivityStartDate,
+    Time = ActivityStartTime.Time,
+    TimeZone = ActivityStartTime.TimeZoneCode,
+    Parameter = CharacteristicName,
+    Method = ResultAnalyticalMethod.MethodName,
+    Value = ResultMeasureValue,
+    ValueDetectionQual = ResultDetectionConditionText,
+    DetectionLimit = DetectionQuantitationLimitMeasure.MeasureValue,
+    ResultValueTypeName,
+    LabComment = ResultLaboratoryCommentText,
+    ResultStatusIdentifier
+  ) %>%
+  mutate(
+    # Change Parameter names to standardized names
+    Parameter = case_when(
+      str_detect(Parameter, "^Amm") ~ "DissAmmonia",
+      str_detect(Parameter, "^Inorg") ~ "DissNitrateNitrite",
+      str_detect(Parameter, "^Ortho") ~ "DissOrthophos",
+      str_detect(Parameter, "^Chloro") ~ "Chlorophyll"
+    ),
+    # Convert Time variable to PST (a few have tz = UTC, but they are probably PST)
+    Time = if_else(TimeZone == "PDT", hms::hms(lubridate::hms(Time) - hours(1)), Time),
+    # Create Datetime variable as PST
+    Datetime = ymd_hms(paste(Date, Time), tz = "Etc/GMT+8"),
+    # Calculate difference from noon for each data point for later filtering
+    NoonDiff = abs(hms::hms(hours = 12) - Time)
+  ) %>%
+  # Select only 1 data point per station and date, choose data closest to noon
+  group_by(Station, Date, Parameter) %>%
+  filter(NoonDiff == min(NoonDiff)) %>%
+  # When points are equidistant from noon, select earlier point
+  filter(Time == min(Time)) %>%
+  ungroup() %>%
+  # Clean up data below the detection limit
+  mutate(
+    # Add a new variable to identify values below the detection limit - NA's in Value are <DL
+    Sign = case_when(
+      !is.na(Value) & ResultValueTypeName == "Actual" ~ "=",
+      !is.na(Value) & ResultValueTypeName == "Estimated" ~ "= (estimated)",
+      ValueDetectionQual == "Not Detected" & !is.na(DetectionLimit) ~ "<",
+      ValueDetectionQual == "Not Detected" & is.na(DetectionLimit) ~ "< (estimated)"
+    ),
+    # For the values below the detection limit, make them equal to the detection limit
+      # If no detection limit is available, use the most common detection limit for the method
+    Value = case_when(
+      str_detect(Sign, "=") ~ Value,
+      Sign == "<" ~ DetectionLimit,
+      Sign == "< (estimated)" & Method == "Ammonia, wf, DA sal/hypo (NWQL)" ~ 0.01,
+      Sign == "< (estimated)" & Method == "NO3+NO2, wf, FCC,NaR, DA" ~ 0.04,
+      Sign == "< (estimated)" & Method == "NO3+NO2, wf, FCC,NaR, DA, LL" ~ 0.01,
+      Sign == "< (estimated)" & Method == "Ortho-PO4, wf, DA phos/mol(NWQL)" ~ 0.004
+    )
+  ) %>%
+  # Remove a few unnecessary variables and restructure to wide format
+  # Removing ResultStatusIdentifier and keeping both Accepted and Preliminary data
+  select(
+    -c(
+      ValueDetectionQual,
+      ResultValueTypeName,
+      DetectionLimit,
+      Method,
+      LabComment,
+      ResultStatusIdentifier
+    )
+  ) %>%
+  pivot_wider(
+    names_from = Parameter,
+    values_from = c(Value, Sign),
+    names_glue = "{Parameter}_{.value}"
+  ) %>%
+  rename_with(~str_remove(.x, "_Value"), ends_with("_Value")) %>%
+  # Fill in "=" for the NA values in the _Sign variables
+  mutate(across(ends_with("_Sign"), ~ if_else(is.na(.x), "=", .x))) %>%
+  # Select variable order
+  select(
+    Source,
+    Station,
+    Latitude,
+    Longitude,
+    Date,
+    Datetime,
+    starts_with("DissAmmonia"),
+    starts_with("DissNitrateNitrite"),
+    starts_with("DissOrthophos"),
+    starts_with("Chlorophyll")
+  )
+```
+
+# EMP
+```{r}
+# Import additional DWR_EMP field data for 2022 - this includes EZ station
+  # coordinates - provided from personal data request
+df_emp_nutschl_2022 <-
+  read_excel(
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Jan"),
+    range = "A2:AC193",
+    col_types = "text",
+    skip=1
+  )
+
+df_emp_nutschl_2022_Aug <-
+  read_excel(
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data"),
+    range = "A2:AB30",
+    col_types = "text",
+    skip=1
+  )
+
+df_emp_field_2022 <-
+  read_excel(
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Jan"),
+    range = "A195:AF386",
+    col_types = "text",
+    skip=1
+  )
+
+df_emp_field_2022_Aug <-
+  read_excel(
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data"),
+    range = "A32:AH60",
+    col_types = "text",
+    skip=1
+  )
+
+df_emp_nutschl_2022 <- bind_rows(df_emp_nutschl_2022, df_emp_nutschl_2022_Aug)
+df_emp_field_2022 <- bind_rows(df_emp_field_2022, df_emp_field_2022_Aug)
+
+df_emp_coord <- read_csv(here("analysis_2022", "data_raw", "stations_emp.csv"))
+```
+
+```{r}
+# Prepare DWR_EMP station coordinates 
+df_emp_coord_c <- df_emp_coord %>%
+  select(Station, Latitude, Longitude) %>%
+  drop_na()
+
+# Prepare DWR_EMP EZ station coordinates 
+df_emp_coord_ez21 <- df_emp_field_2022 %>%
+  select(
+    SampleCode = `Sample Code`,
+    Latitude_field = contains("Latitude"),
+    Longitude_field = contains("Longitude")
+  ) %>%
+  filter(!if_any(c(Latitude_field, Longitude_field), ~ .x == "N/A")) %>%
+  mutate(across(ends_with("_field"), as.numeric))
+
+# Prepare 2022 EMP discrete nutrient and chlorophyll-a data to be combined with
+  # all other data
+df_emp_2022_c <- df_emp_nutschl_2022 %>%
+  # Select and standardize variable names
+  select(
+    Station = `Station Name`,
+    StationNumber = `Station Number`,
+    SampleCode = `Sample Code`,
+    Datetime = `Sample Date`,
+    DissAmmonia = contains("Ammonia"),
+    DissNitrateNitrite = contains("Nitrate"),
+    DissOrthophos = contains("Phosphate"),
+    Chlorophyll = contains("Chlorophyll")
+  ) %>%
+  # Parse Datetime (as PST) and create Source and Date variables
+  mutate(
+    Datetime = mdy_hm(Datetime, tz = "Etc/GMT+8"),
+    Date = date(Datetime),
+    Source = "DWR_EMP"
+  ) %>%
+  # Remove overlapping data
+  filter(year(Date) > 2021) %>%
+  # Pivot data longer to work on lab results in one column
+  pivot_longer(
+    cols = c(starts_with("Diss"), Chlorophyll),
+    names_to = "Parameter",
+    values_to = "Value"
+  ) %>%
+  # Remove some "N/A" values
+  filter(Value != "N/A") %>%
+  mutate(
+    # Standardize Stations
+    Station = case_when(
+      str_detect(Station, "^SF Estuarine") ~ StationNumber,
+      str_detect(Station, "- C3A") ~ "C3A",
+      str_detect(Station, "^NZ068") ~ "NZ068",
+      str_detect(Station, " - ") ~ str_extract(Station, ".+(?= - )")
+    ),
+    # Keep the first value of a lab replicate pair
+    Value = if_else(str_detect(Value, ","), str_extract(Value, ".+(?=,)"), Value),
+    # Add a new variable to identify values below the reporting limit
+    Sign = if_else(str_detect(Value, "^<"), "<", "="),
+    # For the values below the reporting limit, make them equal to the reporting limit and convert to numeric
+    Value = as.numeric(if_else(str_detect(Value, "^<"), str_remove(Value, "^<"), Value))
+  ) %>%
+  pivot_wider(
+    names_from = Parameter,
+    values_from = c(Value, Sign),
+    names_glue = "{Parameter}_{.value}"
+  ) %>%
+  rename_with(~str_remove(.x, "_Value"), ends_with("_Value")) %>%
+  # Fill in "=" for the NA values in the _Sign variables
+  mutate(across(ends_with("_Sign"), ~ if_else(is.na(.x), "=", .x))) %>%
+  # Add station coordinates
+  left_join(df_emp_coord_c, by = "Station") %>%
+  left_join(df_emp_coord_ez21, by = "SampleCode") %>%
+  mutate(
+    Latitude = if_else(is.na(Latitude), Latitude_field, Latitude),
+    Longitude = if_else(is.na(Longitude), Longitude_field, Longitude)
+  ) %>%
+  # Select variable order
+  select(
+    Source,
+    Station,
+    Latitude,
+    Longitude,
+    Date,
+    Datetime,
+    starts_with("DissAmmonia"),
+    starts_with("DissNitrateNitrite"),
+    starts_with("DissOrthophos"),
+    starts_with("Chlorophyll")
+  )
+```
+
+# NCRO
+```{r}
+df_ncro <-
+  read_excel(
+    path = str_subset(fp_nutr_chla, "NCRO_WQES"),
+    sheet = 1,
+    col_types = "text"
+  )
+
+df_ncro_coord <- read_excel(here("analysis_2022/data_raw/NCRO_Station_Metadata.xlsx"))
+
+df_ncro_coord_c <- df_ncro_coord %>%
+  janitor::clean_names(case = "upper_camel")%>% 
+  select(Station = Cdec, 
+         Latitude = LatitudeWgs84, 
+         Longitude = LongitudeWgs84)
+```
+
+```{r}
+df_ncro_2022_c <- df_ncro %>%
+  # Select and standardize variable names
+  select(
+    StationName = `Long Station Name`,
+    Datetime = `Collection Date`,
+    SampleCode = `Sample Code`,
+    SampleType = `Sample Type` ,
+    Parameter = Analyte,
+    Value = Result, 
+    RptLimit = `Rpt Limit`,
+    ) %>%
+  # Remove some unwanted rows at the end
+  #filter(!str_detect(Station, "\\*|Samples")) %>%
+  # Only keep "Normal Samples"
+  filter(SampleType == "Normal Sample") %>%
+  mutate(
+    # Standardize Stations
+    Station = case_when(
+      str_detect(StationName, "^Bethel") ~ "BET",
+      str_detect(StationName, "^False") ~ "FAL",
+      str_detect(StationName, "^Fisherman") ~ "FCT",
+      str_detect(StationName, "^Holland") ~ "HOL",
+      str_detect(StationName, "^Middle River at Howard") ~ "MHR",
+      str_detect(StationName, "^Middle River at Undine") ~ "MRU",
+      str_detect(StationName, "^Middle River near Holt") ~ "HLT",
+      str_detect(StationName, "^Middle River near Tracy") ~ "MRX",
+      str_detect(StationName, "^Old River at Tracy") ~ "OSJ",
+      str_detect(StationName, "^Old River near Bacon") ~ "OBI",
+      str_detect(StationName, "^Old River near Frank") ~ "OSJ",
+      str_detect(StationName, "^Old River below Headwater") ~ "OH1",
+      str_detect(StationName, "^Old River Below Clifton") ~ "ORI",
+      str_detect(StationName, "^Old River Downstream DMC") ~ "OBD",
+      str_detect(StationName, "^Old River near Doughty") ~ "ORX",
+      str_detect(StationName, "^Old River Upstream of Mountain") ~ "ORM",
+      str_detect(StationName, "^Miner Slough") ~ "MIR",
+      str_detect(StationName, "^Paradise") ~ "PDC",
+      str_detect(StationName, "^Rock Slough") ~ "RSL",
+      str_detect(StationName, "^Sacramento River Downstream") ~ "SOI",
+      str_detect(StationName, "^San Joaquin River at Blind") ~ "BLP",
+      str_detect(StationName, "Steamboat Slough") ~ "SXS",
+      str_detect(StationName, "^Sugar Cut") ~ "SGA",
+      str_detect(StationName, "^Three") ~ "TSL",
+      str_detect(StationName, "^Turner") ~ "TRN",
+      str_detect(StationName, "^Victoria") ~ "VCU",
+      str_detect(StationName, "^West Canal") ~ "WCI",
+      str_detect(StationName, "^Yolo") ~ "LIS",
+      str_detect(StationName, "^Grant Line Canal East") ~ "GLE",
+      str_detect(StationName, "^Grant Line Canal near Old River") ~ "GLE",
+      
+    )) %>%
+mutate(
+  Parameter2 = case_when(
+    grepl("Ammonia", Parameter) ~ "DissAmmonia",
+    grepl("Nitrate", Parameter) ~ "DissNitrateNitrite",
+    grepl("Phosphate", Parameter, ) ~ "DissOrthophos",
+    grepl("Chlorophyll", Parameter ) ~ "Chlorophyll"
+  )) %>%
+  filter(!is.na(Parameter2),
+          Value != "N/A") %>%
+  select(-Parameter, -SampleType) %>%
+  rename(Parameter = Parameter2) %>%
+  mutate(
+  # Parse Datetime and create Date variable
+    Datetime = mdy_hm(Datetime, tz = "Etc/GMT+8"),
+    Date = date(Datetime),
+    # Keep the first value of a lab replicate pair
+    Value = if_else(str_detect(Value, ","), str_extract(Value, ".+(?=,)"), Value),
+    # Add a new variable to identify values below the reporting limit
+    Sign = if_else(str_detect(Value, "^<"), "<", "="),
+    # For the values below the reporting limit, make them equal to the reporting limit and convert to numeric
+    Value = as.numeric(if_else(str_detect(Value, "^<"), str_remove(Value, "^<"), Value))
+  )%>%
+  group_by(StationName, Datetime, SampleCode, Station, Date, Parameter, Sign, RptLimit) %>%
+  slice(1) %>%
+  ungroup() %>%
+  pivot_wider(
+    names_from = Parameter,
+    values_from = c(Value, Sign),
+    id_cols = c(StationName, Datetime, SampleCode, Station, Date),
+    names_glue = "{Parameter}_{.value}"
+  ) %>%
+  rename_with(~str_remove(.x, "_Value"), ends_with("_Value")) %>%
+  # Fill in "=" for the NA values in the _Sign variables
+  mutate(across(ends_with("_Sign"), ~ if_else(is.na(.x), "=", .x)),
+         Source = "DWR_NCRO") %>%
+  left_join(df_ncro_coord_c, by = "Station") %>%
+  # Select variable order
+  select(
+    Source,
+    Station,
+    Latitude, 
+    Longitude, 
+    Date,
+    Datetime,
+    starts_with("DissAmmonia"),
+    starts_with("DissNitrateNitrite"),
+    starts_with("DissOrthophos"),
+    starts_with("Chlorophyll")
+  )
+```
+
+# Combine
+```{r}
+df_2022 <- bind_rows(df_cawsc_c, df_emp_2022_c, df_ncro_2022_c)
+```
+
+# Isolate stations
+```{r}
+stations_discrete <- df_2022 %>%
+  select(Source, Station, Latitude, Longitude) %>%
+  distinct()
+```
+
+# Write
+```{r}
+write_csv(df_2022, here("analysis_2022", "data_clean", "discrete_wq_2022.csv"))
+write_csv(stations_discrete, here("analysis_2022", "data_clean", "discrete_wq_stations_all_2022.csv"))
+```
+

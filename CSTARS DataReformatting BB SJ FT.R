@@ -30,8 +30,7 @@ library(sf)
 
 cstars22.start <- read_csv("https://raw.githubusercontent.com/BDO-Science/EDB-HABs-Weeds/main/analysis_2022/data_raw/Veg/FranksTract_2022_formatted.csv")
 
-view(cstars22.start)
-
+#view(cstars22.start)
 
 #gather function consolidates the species into a count column and drops out any NAs from the data.
 cstars22.gath <- cstars22.start %>% gather("species","rake_prop", Richardson:Unknown) %>%

@@ -1,3 +1,6 @@
+#final clean up of this code was consolidate in the file CSTARS DataReformatting BB SJ FT.R
+#use that file as starting point.
+
 #2022 CSTARS data reformatting to fit the CSTARS_2021_GroundTruthing_SAV.R structure
 #franks Tract data
 
@@ -42,7 +45,9 @@ cstars22.con <-cbind(cstars22.gath, wgs84conversion) %>%
   select(latitude_wgs84, longitude_wgs84, date, time, feat,rake_teeth, species, rake_prop) %>%
   rename(survey_method = feat, rake_teeth_corr = rake_teeth)
 
-view(cstars22.con)
+
 cstars22.con$time <- as.character(cstars22.con$time)
-cstars <- cstars22.con
+view(cstars22.con)
+
+#cstars <- cstars22.con
 

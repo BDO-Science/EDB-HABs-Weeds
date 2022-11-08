@@ -1,4 +1,3 @@
-
 #install.packages("devtools")
 #devtools::install_github("InteragencyEcologicalProgram/deltamapr")
 
@@ -9,18 +8,19 @@ library(deltamapr)
 #Set workspace
 #setwd("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_raw/SWB_Incident_2022only.csv")
 
-#load data from the water board's portal
+#load data from the water board's portal --------------------------------------------------
 ## SWB_Incident_All2022 includes historical data through May 2022
 ## SWB_Incident_2022only includes all 2022 data (so, more recent than May)
 
 fhabportal <- read_csv("analysis_2022/data_raw/SWB_Incident_All2022.csv")
 fhabportal22 <- read_csv("analysis_2022/data_raw/SWB_Incident_2022only.csv")
 
-#some of the lats and longs are mistakes
+#some of the lats and longs are mistakes - filter for lat/lon ----------------------------------
 
 fhabportal = filter(fhabportal, Latitude >30, Latitude <45, Longitude >-130, Longitude < -110)
 fhabportal22 = filter(fhabportal, Latitude >30, Latitude <45, Longitude >-130, Longitude < -110)
 
+# combine two files, clean up data and make sf (spatial) -----------------------------------------------------
 fhab22 = filter(fhabportal22, !is.na(Longitude)) %>%
   select(AlgaeBloomReportID, ObservationDate, WaterBodyName, Advisory = TypeofSign, OfficialWaterBodyName, Latitude, Longitude) %>%
   dplyr::mutate(Date = mdy(ObservationDate),
@@ -65,7 +65,7 @@ ggplot()+ geom_sf(data = WW_Delta)+ geom_sf(data = fhabsf)
 
   ggplot()+ geom_sf(data = WW_Delta)+ geom_sf(data = fhabsf2, aes(color = TypeofSign))
 
-# Clean up warnings
+# Clean up warnings ---------------------------------------------------------
 
   ## Standardize warnings
     fhabsf2 = mutate(fhabsf2, Advisory = case_when(
@@ -79,7 +79,7 @@ ggplot()+ geom_sf(data = WW_Delta)+ geom_sf(data = fhabsf)
 # Write data -----------------------------------------------------------
 saveRDS(fhabsf2, here("analysis_2022", "data_clean", "incident_data.rds"))
 
-# Plot multi-year -------------------------------------------------------------------
+# Plot multi-year (didn't use these for report, just taking a look) -------------------------------------------------------------------
 ggplot()+ geom_sf(data = WW_Delta)+ geom_sf(data = fhabsf2, aes(color = Advisory))+
   facet_wrap(~Year)
 

@@ -14,6 +14,7 @@ library(here)
 library(readxl)
 library(dplyr)
 library(ggplot2)
+library(readr)
 library(tidyr)
 library(sf)
 library(deltamapr)
@@ -26,16 +27,23 @@ phyto <- read_excel(here::here("analysis_2022", "data_raw", "EMP_Phytoplankton_J
 phyto_2021 <- load(here::here("analysis_2022", "data_raw", "EMPPHyto.RData"))
 emp_stations <- read_csv(here("analysis_2022", "data_raw", "stations_emp.csv")) %>%
   rename(StationCode = Station)
-load("../data/Regions.RData")
-
+load(here("data/Regions.RData"))
 ```
 
 Add spatial
 ```{r}
 phyto_sta <- left_join(phyto, emp_stations) %>%
   filter(!is.na(Latitude))
-phyto_sf <- st_as_sf(phyto_sta, coords = c("Longitude", "Latitude"))
-st_crs(phyto_sf) <- 4326
+phyto_sf <- st_as_sf(phyto_sta, coords = c("Longitude", "Latitude"), crs = 4326) %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  select(Date = SampleDate,
+         Station = StationCode,
+         AlgalType,
+         Taxon,
+         Genus,
+         UnitAbundance = UnitAbundanceNumberOfNaturalUnits,
+         OrganismsPerML)
+phyto_region <- st_intersection(phyto_sf, reg3)
 ```
 
 Map
@@ -64,8 +72,29 @@ annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
         axis.title = element_blank()))
 ```
 
+Add Zeroes
+```{r}
+phyto_full_sf = pivot_wider(phyto_region, id_cols = c("Station", "Date", "Stratum", "Stratum2"), names_from = "Genus",
+                         values_from = "OrganismsPerML", values_fill = 0, values_fn = sum) %>%
+  pivot_longer(cols = "Cocconeis":last_col(), names_to = "Genus", values_to = "CountperML") %>%
+  mutate(Month = month(Date)) %>%
+  left_join(tax) %>%
+  mutate(AlgalType = case_when(
+    `AlgalType` == "Centric diatom" ~ "Centric Diatom",
+    `AlgalType` == "Unknown Genus" ~ "Unknown",
+    `AlgalType` %in% c("Coccolithophore", "Eustigmatophyte", "Haptophyte", "Raphidophyte",
+                        "Silico-flagellate", "Synurophyte", "Xanthophyte", "Kathablepharid") ~
+      "Other",
+    TRUE ~ `AlgalType`
+  ) )
+
+ggplot(EMP_wzeros, aes(x = Station, y = CountperML, fill = Genus))+ geom_col()+facet_wrap(~Month)
+```
+
+
+
 Figure 2-29? 
-HOw to figure out which species are which groupings? 
+How to figure out which species are which groupings? 
 ```{r}
 ggplot(phyto) + geom_col(aes())
 ```

@@ -21,68 +21,175 @@ library(viridis)
 library(deltamapr)
 library(sf)
 library(ggspatial)
+library(readxl)
 
 data_root = "analysis_2022/"
 ```
 
 Read data
 ```{r}
-wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds")) %>%
-  mutate(fYear = factor(Year)) %>%
-  filter(Year > 2014)
+tucp_dates <- read_excel(here("data", "tucp_dates.xlsx"))%>%
+  mutate(BarrierStartDate = lubridate::ymd(BarrierStartDate),
+         BarrierEndDate = ymd(BarrierEndDate),
+         TUCPStart = ymd(TUCPStart),
+         TUCPEnd = ymd(TUCPEnd)) %>%
+  rename(WaterYear = `Water Year`) 
 
-wq_frk <- wq_data %>% filter(!(Site %in% c("BLP", "DSJ")))
+wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds")) %>%
+  mutate(WaterYear = ifelse(as.numeric(Month) >9, as.numeric(Year) + 1, as.numeric(Year)),
+         fWY = factor(WaterYear),
+         fYear = factor(Year)) %>%
+  filter(Year > 2014,
+         Analyte !="DO.Pct") 
+
+wq_data2 <- wq_data %>%
+  left_join(tucp_dates) %>%
+  mutate(TUCP_in_effect = case_when(TUCP == "Yes" & Date >= TUCPStart & Date <= TUCPEnd ~ "Yes",
+                                    TRUE ~ "No"))%>%
+  mutate(dailyval = case_when(Analyte %in% c("Temp", "Chl.a", "Turb") ~ Daily.Max,
+                              Analyte == "DO.Conc" ~ Daily.Min,
+                              TRUE ~ Daily.Mean),
+         Date2 = paste0(1980, "-", Month, "-", day(Date)),
+         Date2 = ymd(Date2))
+  
+
+wq_frk <- wq_data2 %>% filter(!(Site %in% c("BLP", "DSJ")))
 unique(wq_frk$Site)
-wq_bb <- wq_data %>% filter(Site %in% c("BLP", "DSJ"))
+wq_bb <- wq_data2 %>% filter(Site %in% c("BLP", "DSJ"))
 unique(wq_bb$Site)
+
 # Mean across stations: 
 # Maximum temperature, chla, turb
 # Minimum DO
 # Mean Flow, pH, SpCnd
-wq_daily_frk <- wq_frk %>%
-  mutate(dailyval = case_when(Analyte %in% c("Temp", "Chl.a", "Turb") ~ Daily.Max,
-                              Analyte == "DO.Conc" ~ Daily.Min,
-                              TRUE ~ Daily.Mean),
-         Date2 = paste0(1980, "-", Month, "-", day(Date)),
-         Date2 = ymd(Date2)) %>%
-  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte) %>%
+
+
+# Filter down to dry years and get mean as determined above across stations
+daily_frk0 <- wq_frk %>%
+  filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
+  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP) %>%
   summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
   filter(!is.na(Date)) %>%
   mutate(Location = "Frank's Tract")
 
-wq_daily_bb <- wq_bb %>%
-  mutate(dailyval = case_when(Analyte %in% c("Temp", "Chl.a", "Turb") ~ Daily.Max,
-                              Analyte == "DO.Conc" ~ Daily.Min,
-                              TRUE ~ Daily.Mean),
-         Date2 = paste0(1980, "-", Month, "-", day(Date)),
-         Date2 = ymd(Date2)) %>%
-  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte) %>%
+daily_bb0 <- wq_bb %>%
+  filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
+  group_by(Date, Date2, Year, WaterYear, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP) %>%
   summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
   filter(!is.na(Date))%>%
   mutate(Location = "Big Break")
+
+wq_summaryf <- daily_frk0 %>%
+  group_by(Analyte) %>%
+  summarize(max = max(Daily))
+wq_summaryb <- daily_bb0 %>%
+  group_by(Analyte) %>%
+  summarize(max = max(Daily))
+
+daily_frk <- left_join(daily_frk0, wq_summaryf) %>%
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0))
+daily_bb <- left_join(daily_bb0, wq_summaryb) %>%
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0))
 ```
 
-# Plots
+# Flow
+Locations = Outflow, Exports, SJR - should we look into similar locations? 
+
+```{r}
+flow_daily_frk <- filter(daily_frk, Analyte== "Flow")
+flow_daily_bb <- filter(daily_bb, Analyte== "Flow")
+flow_daily <- rbind(flow_daily_frk, flow_daily_bb)
+```
+
+
+## Plot
+```{r}
+(plot_flow <- ggplot(flow_daily) +
+   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
+   
+    facet_wrap(~Location, nrow = 2) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Flow (cfs)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top"))
+```
+
+## Table
+
+```{r}
+flow_daily %>%
+  filter(!Month %in% c("Jan", "Nov", "Dec")) %>%
+  group_by(Location, Month) %>%
+  summarize(Min_Outflow = min(Daily),
+            Max_Outflow = max(Daily))
+```
+
+# WQ
+
+WQ
+```{r}
+wq_daily_frk <- filter(daily_frk, Analyte!= "Flow")
+wq_daily_bb <- filter(daily_bb, Analyte!= "Flow")
+```
+
 
 ## 2022 only
 ```{r}
-wq_2022 <- filter(wq_data, Year == 2022)
+wq_2022_a <- wq_data2 %>% select(-Date2) %>%
+  filter(Year == 2022,
+         Analyte != "Flow") %>%
+  mutate(Location = ifelse(Site %in% c("DSJ", "BLP"), "Big Break", "Frank's Tract"))
+
+wq_summary2022 <- wq_2022_a %>%
+  group_by(Analyte, TUCPStart, TUCPEnd) %>%
+  filter(!is.na(TUCPStart)) %>%
+  summarize(max = max(dailyval))
+
+wq_2022 <- left_join(wq_2022_a, wq_summary2022)%>%
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0))
+
 pal36 <- palette36.colors(36)
 pal36 <- as.vector(t(pal36))
 
-(plot_cont_2022 <- ggplot(wq_2022) + 
-  geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + 
-  geom_point(aes(x = Date, y = Daily.Mean, color = Site), size = 0.6) + 
-  facet_wrap(~Analyte, scales = "free_y", nrow = 8, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+(plot_cont_2022 <-ggplot() + 
+    geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$TUCPStart), 
+                           xmax = ymd(wq_summary2022$TUCPEnd), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "gray95", alpha = 0.5) +
+ geom_line(data= wq_2022, aes(x = Date, y = dailyval, color = Site, linetype = Location), inherit.aes = FALSE) + 
+  #geom_point(aes(x = Date, y = Daily.Mean, color = Site), size = 0.6) + 
+  facet_wrap(~Analyte, scales = "free_y", nrow = 6, strip.position = "left", 
+             labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
+                                                                                                      #Flow = "Flow (cfs)", 
+                                                                                                      pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_viridis(option = "turbo", discrete = TRUE) +
   scale_x_date(breaks = "month", date_labels = "%b", expand = c(0,0)) + 
+    scale_linetype_manual(values = c("dashed", "solid")) +
   labs(y = "Daily Mean Value") +
-  theme_bw())
+   theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         legend.text = element_text(size = 12),
+         legend.title = element_text(size = 12),
+         legend.position = "top",
+         legend.box = "vertical"))
 ```
 
-## Across year, by parameter
+## Across year, by parameter - don't use this plot
 ```{r}
 (plot_cont_allyears <- ggplot(wq_data) + 
    geom_line(aes(x = Date, y = Daily.Mean, color = Site)) + 
@@ -97,10 +204,13 @@ pal36 <- as.vector(t(pal36))
 
 ## View by year
 ```{r}
+# Frank's Tract
 (plot_cont_jday_frk <- ggplot(wq_daily_frk) +
   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
   # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
-  facet_wrap(~Analyte, scales = "free_y", nrow = 8, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)",DO.Pct = "DO %", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+  facet_wrap(~Analyte, scales = "free_y", nrow = 6, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
+                                                                                                      #Flow = "Flow (cfs)", 
+                                                                                                      pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_viridis(option = "turbo", discrete = TRUE) +
@@ -109,8 +219,12 @@ pal36 <- as.vector(t(pal36))
   theme_bw() +
    theme(strip.text = element_text(size = 12),
          axis.text = element_text(size = 12),
-         axis.title.x = element_blank()))
+         axis.title.x = element_blank(),
+         legend.text = element_text(size = 12),
+         legend.title = element_text(size = 12),
+         legend.position = "top"))
 
+# Big Break
 (plot_cont_jday_bb <- ggplot(wq_daily_bb) +
   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
     #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
@@ -123,28 +237,37 @@ pal36 <- as.vector(t(pal36))
   theme_bw() +
    theme(strip.text = element_text(size = 12),
          axis.text = element_text(size = 12),
-         axis.title.x = element_blank()))
+         axis.title.x = element_blank(),
+         legend.text = element_text(size = 12),
+         legend.title = element_text(size = 12),
+         legend.position = "top"))
 ```
 
 Comparing Big Break and Frank's Tract, select years
 ```{r}
 wq_daily_comb <- rbind(wq_daily_bb, wq_daily_frk) %>%
-  filter(fYear %in% c("2015", "2017", "2021", "2022"))
+  filter(fYear %in% c("2015", "2020", "2021", "2022"))
 
 (plot_bb_vs_frk <- ggplot(wq_daily_comb) +
+    geom_col(aes(x = Date2, y = TUCP_value), fill = "gray87", color = "gray87") + 
   geom_line(aes(x = Date2, y = Daily, color = Location)) + 
     #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
-  facet_grid(Analyte~fYear, scales = "free_y", labeller = as_labeller(c(`2015` = "2015", `2017` = "2017 (Wet)", `2021` = "2021", `2022` = "2022", Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", DO.Pct = "DO %", Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water \nTemp \n(°C)"))) +
+  facet_grid(Analyte~fYear, scales = "free_y", 
+             labeller = as_labeller(c(`2015` = "2015", `2020` = "2020 (no TUCP)", `2021` = "2021", `2022` = "2022", Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
+                                      #Flow = "Flow (cfs)", 
+                                      pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water \nTemp \n(°C)"))) +
     #theme(strip.background = element_rect(fill="White", color = "White"),
      #     strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_brewer(palette = "Set1") +
    scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + 
   labs(y = "Daily Mean Value", color = "Location") + 
   theme_bw() +
-   theme(strip.text = element_text(size = 11),
-         axis.text = element_text(size = 11),
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
          axis.title.x = element_blank(),
-  legend.position = "top"))
+         legend.text = element_text(size = 12),
+         legend.title = element_text(size = 12),
+         legend.position = "top"))
 ```
 
 
@@ -152,15 +275,21 @@ wq_daily_comb <- rbind(wq_daily_bb, wq_daily_frk) %>%
 
 Export Figures
 ```{r}
-png(filename = here("analysis_2022", "figures", "plot_cont_2022.png"), width = 10, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+# Flow
+png(filename = here("analysis_2022", "figures", "plot_flow.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_flow
+dev.off()
+
+# 2022 WQ
+png(filename = here("analysis_2022", "figures", "plot_cont_2022.png"), width = 9, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
 plot_cont_2022
 dev.off()
 
+# png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022.png"), width = 10, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+# plot_cont_allyears
+# dev.off()
 
-png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022.png"), width = 10, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
-plot_cont_allyears
-dev.off()
-
+# WQ compared years
 png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_SDelta.png"), width = 10, height = 9, units = "in", pointsize = 12, family = "sans", res = 300)
 plot_cont_jday_frk
 dev.off()
@@ -169,6 +298,7 @@ png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_Bi
 plot_cont_jday_bb
 dev.off()
 
+# Comparison Franks and BB
 png(filename = here("analysis_2022", "figures", "plot_cont_bb_vs_frk.png"), width = 10, height = 7, units = "in", pointsize = 9, family = "sans", res = 300)
 plot_bb_vs_frk
 dev.off()

@@ -68,17 +68,20 @@ load("./data/Regions.RData")
 
 ## Map of stations
 ```{r}
-cont <- sta_sf %>%filter(WQ == "Continuous")
+cont <- sta_sf %>%filter(WQ == "Continuous") %>%
+  mutate(Location = ifelse(Station %in% c("DSJ", "BLP"), "Big Break", "Frank's Tract"))
 
 
 (cont_map <- ggplot() + 
   geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
 
   geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.1)+
-  geom_sf(data = cont)+
+  geom_sf(data = cont, aes(color = Location), inherit.aes = FALSE)+
   geom_text(data = cont, aes(x = Longitude, y = Latitude, label = Station), size = 3, vjust = 1, hjust = 1)+
+  scale_color_manual(values = c("mediumblue", "sienna3")) +
   scale_x_continuous(limits = c(-121.8, -121.4)) +
   scale_y_continuous( limits = c(37.9, 38.15))+
+    labs(fill = "Region") + 
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
@@ -95,11 +98,12 @@ cont <- sta_sf %>%filter(WQ == "Continuous")
    # geom_text(data = stations, aes(x = Longitude, y = Latitude, label = Site), size = 3, vjust = 1, hjust = 1)+
   scale_x_continuous(limits = c(-122, -121.2)) +
   scale_y_continuous( limits = c(37.7, 38.6))+
+   labs(fill = "Region") + 
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
       annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
-   scale_color_manual(values = c("coral","blue4")) + 
+   scale_color_manual(values = c("sienna3","blue4")) + 
   theme_bw())
 ```
 
@@ -110,7 +114,7 @@ png(filename = here("analysis_2022", "figures", "wq_map.png"), width = 6, height
 wq_map
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "cont_map.png"), width = 6, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "cont_map.png"), width = 6, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
 cont_map
 dev.off()
 ```

@@ -34,12 +34,18 @@ library(viridis)
 data_root = "analysis_2022/data_raw/"
 ```
 
-
+Read in data
 ```{r}
+# USGS
 fpjuly <- read_excel(here(data_root, "FP_data_USGS_T3_DeltaMapping_July2022_2022-08-29_KO.xlsx"))
 fpmay <- read_excel(here(data_root, "FP_data_USGS_T3_DeltaMapping_May2022_2022-09-08_KO.xlsx"))
+
+# EMP
+load(here(data_root, "FP_data_for_USBR_EMP.RData"))
 ```
 
+# USGS data
+## Clean data
 ```{r}
 fpm <- fpmay %>%
   janitor::clean_names(case = "upper_camel") %>%
@@ -67,10 +73,8 @@ fp_all <- rbind(fpm, fpj) %>%
 
 
 fp_sf <- fp_all %>%
-  st_as_sf(coords = c("Longitude", "Latitude"), remove = FALSE)
-
-st_crs(fp_sf) <- 4326
-
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE)
+WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_sf))
 ```
 
 
@@ -83,9 +87,9 @@ may_spatial <- as(may, "Spatial")
 july_spatial <- as(july, "Spatial")
 
 df=may_spatial
+```
 
-WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_sf))
-
+```{r}
 interp_map <- function(df, mask=WW_Delta_4326) {
 
   grd <- as.data.frame(spsample(df, "regular", n = 50000))
@@ -109,15 +113,16 @@ interp_map <- function(df, mask=WW_Delta_4326) {
 
 }
 
+
 may_interp <- interp_map(may_spatial)
 jul_interp <- interp_map(july_spatial)
 ```
 
-# Make map
+## Make map
 ```{r}
 fp_sf$period <- factor(fp_sf$period, levels = c("May 16-19", "July 18-21"))
 
-map <- ggplot() +
+(map_usgs <- ggplot() +
       geom_sf(data = WW_Delta_4326,  color = "lightsteelblue2", fill = "lightsteelblue2", inherit.aes = FALSE) +
       geom_sf(data = fp_sf, aes(color = BlueGreenAlgae), size = 0.2,inherit.aes = FALSE)+
       facet_wrap(~period) + 
@@ -129,23 +134,116 @@ map <- ggplot() +
   scale_y_continuous( limits = c(37.8, 38.6))+
      scale_colour_gradientn(colours = c("#0d0887", "#9511a1", "#a72197",
                                    "#dd5e66", "#f79044","#f0f921"),
-                       values = scales::rescale(c(min(fp_sf$BlueGreenAlgae), 1, 
-                                                2, 3, 10, 20, max(fp_sf$BlueGreenAlgae))))+
-  labs(color = "Blue Green Algae (ug/L)")+
-      theme_classic()+
-      theme(axis.text = element_blank(),
-            axis.title = element_blank(),
-            axis.ticks = element_blank())
-
-map
+                       values = scales::rescale(c(min(fp_sf$BlueGreenAlgae),
+                                                  3, 6, 9, 12, 20, max(fp_sf$BlueGreenAlgae))))+
+    #scale_color_viridis(option = "plasma") +
+  labs(color = "Cyanobacterial Chlorophyll (µg/L)")+
+  theme_classic() +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "top", 
+        strip.text = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12)))
 ```
 
-# Write figure
 ```{r}
-png(filename = here("analysis_2022", "figures", "FP_map_raw_2022.png"), width = 8, height = 5.5, units = "in", pointsize = 12, family = "sans", res = 300)
-map
+hist(fp_sf$BlueGreenAlgae)
+ggplot(fp_sf) + geom_boxplot(aes(x = factor(month), y = BlueGreenAlgae)) + theme_bw() +
+  labs(y = "Blue Green Algae (µg/L)") 
+```
+
+## Write figure
+```{r}
+png(filename = here("analysis_2022", "figures", "FP_map_raw_usgs_2022.png"), width = 6.5, height = 5, units = "in", pointsize = 12, family = "sans", res = 300)
+map_usgs
+dev.off()
+
+
+
+
+```
+
+# EMP data
+## Clean data
+```{r}
+fp_emp <- df_final %>%
+  dplyr::select(Datetime = DateTime,
+                Month,
+                Latitude,
+                Longitude,
+                Cyanobacteria = Cyanobacteria.ug.L) %>%
+  mutate(Date = date(Datetime)) %>%
+  filter(!is.na(Cyanobacteria))
+
+
+fp_emp_sf <- fp_emp %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
+  filter(Month %in% c("Mar", "Apr", "May",  "Jun", "Jul", "Aug")) %>%
+  mutate(Dates = case_when(Month == "Mar" ~ "Mar 10-17",
+                           Month == "Apr" ~ "Apr 21-28",
+                           Month == "May" ~ "May 20-27",
+                           Month == "Jun" ~ "Jun 21-27",
+                           Month == "Jul" ~ "Jul 19-22",
+                           Month == "Aug" ~ "Aug 17-23"))
+WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_sf))
+```
+
+```{r}
+hist(fp_emp_sf$Cyanobacteria)
+ggplot(fp_emp_sf) + geom_boxplot(aes(x = Month, y = Cyanobacteria)) + theme_bw() +
+  labs(y = "Cynobacterial Chlorophyll a (µg/L)") 
+```
+
+```{r}
+map_fp_emp <- ggplot() +
+  geom_sf(data = WW_Delta_4326, color = "lightsteelblue2", fill = "lightsteelblue2") +
+  geom_sf(data = fp_emp_sf, aes(color = Cyanobacteria), size = 0.7, inherit.aes = FALSE) +
+  facet_wrap(~Month, nrow = 3,
+              labeller = as_labeller(c(Mar = "Mar 10-17", Apr = "Apr 21-28", May = "May 20-27", 
+                                       Jun = "Jun 21-27", Jul = "Jul 19-22", Aug = "Aug 17-23"))) +
+  annotation_north_arrow(location = "tr",which_north = "true",pad_x = unit(.1, "in"),
+                         pad_y = unit(0.2, "in"),style = north_arrow_fancy_orienteering) +
+  annotation_scale(location = "bl",
+                   bar_cols = c("black", "white", "black", "white")) +
+  scale_x_continuous(limits = c(-122.2,-121.2)) +
+  scale_y_continuous(limits = c(37.9, 38.2)) +
+  scale_color_viridis(option = "plasma") +
+  labs(color = "Cynobacterial Chlorophyll a (µg/L)") +
+  theme_classic() +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "top", 
+        strip.text = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12))
+```
+
+Write map file
+```{r}
+png(filename = here("analysis_2022", "figures", "FP_map_raw_emp_2022.png"), width = 6.5, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+map_fp_emp
 dev.off()
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Plot
@@ -162,17 +260,11 @@ ggplot() +
                                                 2, 3, 10, 20, max(fp_sf$BlueGreenAlgae))))+
   facet_wrap(~period)+
   theme_bw()
-  
 ```
 
 ```{r}
 hist(fp_sf$BlueGreenAlgae)
-```
 
-
-
-
-```{r}
 ggplot() + 
   geom_sf(data = WW_Delta, fill = "lightblue", color = "lightblue") +
   geom_sf(data = fpm_sf, aes(color = BlueGreenAlgae), size = 0.2,inherit.aes = FALSE)+
@@ -180,5 +272,9 @@ ggplot() +
   scale_y_continuous( limits = c(37.8, 38.6))+
   scale_color_viridis(option = "plasma") +
   theme_bw()
+```
+
+```{r}
+
 ```
 

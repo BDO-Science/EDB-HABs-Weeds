@@ -7,6 +7,12 @@ editor_options:
   chunk_output_type: console
 ---
 
+# In this code we make the following maps:
+
+1) Continuous WQ
+2) Continuous WQ + Discrete WQ (Nutrients and Physical)
+3) Phytoplankton (EMP) + Microcystis Visual Index
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -94,7 +100,7 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
    # geom_text(data = stations, aes(x = Longitude, y = Latitude, label = Site), size = 3, vjust = 1, hjust = 1)+
   scale_x_continuous(limits = c(-122, -121.2)) +
   scale_y_continuous( limits = c(37.7, 38.6))+
-  scale_shape_manual(values = c(21, 22, 23)) + 
+  scale_shape_manual(values = c(21, 8,25)) + 
    labs(fill = "Region") + 
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
@@ -104,15 +110,10 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
   theme_bw())
 ```
 
-
-```{r}
-
-```
-
 ## Write
 
 ```{r}
-png(filename = here("analysis_2022", "figures", "map_wq.png"), width = 6, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "map_wq.png"), width = 6, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
 wq_map
 dev.off()
 

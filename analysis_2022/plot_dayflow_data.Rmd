@@ -1,0 +1,79 @@
+---
+title: "plot_dayflow_data"
+author: "Catarina Pien"
+date: '2022-11-10'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(here)
+library(lubridate)
+library(scales)
+library(zoo)
+```
+
+```{r}
+dayflow <- readRDS(here("analysis_2022", "data_clean", "dayflow_proxy_data_2011_2022.rds")) %>%
+  ungroup() %>%
+  mutate(month = month(date),
+         year = year(date),
+         fyear = factor(year),
+         date2 = paste0(1980, "-", month, "-", day(date)),
+         date2 = ymd(date2))
+
+dayflow2 <- dayflow %>%
+  group_by(parameter, fyear, month, date, date2) %>%
+  summarize(value_total = sum(value)) %>% # sum exports
+  ungroup() %>%
+  arrange(parameter, date) %>%
+  group_by(parameter) %>%
+  mutate(value_mean = rollapply(value_total, 7, mean, align = 'right', partial = TRUE))
+
+average_flow <- dayflow2 %>%
+  filter(fyear != "2022") %>%
+  group_by(parameter, month, date2) %>%
+  summarize(value = mean(value_total)) %>%
+  ungroup() %>%
+  mutate(period = "10-year average")
+
+flow_2022 <- dayflow2 %>%
+  filter(fyear == "2022") %>%
+  mutate(period = "2022") %>%
+  select(parameter, month, date2, value = value_mean, period) 
+
+flow_comb <- rbind(flow_2022, average_flow) %>%
+  filter(month>3 & month < 10) %>%
+  mutate(parameter = case_when(parameter == "flow" ~ "San Joaquin River Outflow",
+                            parameter == "pumping" ~ "Exports",
+                            parameter == "outflow"~ "Delta Outflow"))
+```
+
+```{r}
+(dayflow_plot <- ggplot(flow_comb) + 
+  geom_line(aes(date2, value, color = parameter, linetype = period)) +
+  theme_bw() +
+  scale_x_date(date_breaks = "1 month", labels = date_format("%b")) +
+  facet_wrap(~parameter, nrow = 3, scales = "free_y") +
+  scale_color_brewer(palette = "Dark2") + 
+  labs(y = "Flow (cfs)") +
+  theme_bw() + 
+  theme(axis.title.x = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "top"))
+```
+
+```{r}
+png(filename = here("analysis_2022", "figures", "dayflow_proxy_plot.png"), width = 7, height = 6.5, units = "in", pointsize = 12, family = "sans", res = 300)
+dayflow_plot
+dev.off()
+```
+
+

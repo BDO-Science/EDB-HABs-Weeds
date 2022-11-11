@@ -27,17 +27,19 @@ data_root = "analysis_2022/data_raw/"
 
 Based on df_WQ_daily.RData:
   * Stations: **CDEC: FAL, FRK, HLT, HOL, MDM, ORQ, OSJ**
+  * Additional Flow stations: **SJR, DTO, HBP, TRP** - DTO is sensor 23
   * Parameters: **Chl.a, DO, SpCond, Temp, Turb, pH, Flow**
+
 
 NCRO: FAL, HLT, HOL, OSJ
 EMP: FRK
 USGS: MDM USGS 11312676, ORQ = USGS 11313434 
 
-
 ## Define cdec stations, time period
 ```{r}
 ### Define list of stations ----------------------------------
 stations <- c("FAL", "FRK", "HLT", "HOL", "OSJ")
+stations_flowplot <- c("DTO", "HBP", "TRP")
 
 # Define start and end dates - these will remain the same throughout
 start <- "2015-01-01"
@@ -48,7 +50,7 @@ end <- "2022-10-01"
 ```{r}
 interval <- "E" # Event = every 15 minutes, H = Hourly, A = Annual
 ### Download data, bind, write --------------------------------------------
-flow <- lapply(stations, 
+flow <- lapply(stations_flowplot, 
                  function(x){
                    cdec_query(station = x,
                               sensor_num = 20,

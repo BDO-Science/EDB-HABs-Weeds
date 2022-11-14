@@ -1,0 +1,117 @@
+---
+title: "get_dayflow_data"
+author: "Catarina Pien"
+date: '2022-11-10'
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(data.table) #rbindlist()
+library(lubridate) #today()
+library(CDECRetrieve) #cdec_datasets
+library(readr)
+library(here)
+library(readxl)
+
+data_root = "analysis_2022/data_raw/"
+```
+
+# Download CDEC
+
+Based on df_WQ_daily.RData:
+  * "Dayflow" stations: **SJR, DTO, HBO, TRP** - DTO is sensor 23
+  * DTO = 23; daily
+  * HRO = 70; daily
+  * TRP = 70; daily
+  * SJR = USGS station 11303500
+
+## Define cdec stations, time period
+```{r}
+# Define start and end dates - these will remain the same throughout
+start <- "2011-01-01"
+end <- "2022-10-01"
+```
+
+## get outflow data 
+```{r}
+outflow <- cdec_query(station = "DTO" ,sensor_num = 23, dur_code = "D", start_date = start,end_date = end)
+
+outflow_df <- bind_rows(outflow)
+outflow_clean <- outflow_df %>%
+    mutate(parameter = "outflow", 
+           date = ymd(datetime)) %>%
+  select(date,station = location_id,parameter,value = parameter_value) %>%
+  filter(!is.na(value),
+         !is.na(station)) 
+```
+
+## get pumping data
+```{r}
+stations_exp <- c("TRP", "HRO")
+pumping <- lapply(stations_exp, function(x) {cdec_query(station = x ,sensor_num = 70, dur_code = "D", start_date = start,end_date = end)})
+
+pumping_df <- bind_rows(pumping)
+pumping_clean <- pumping_df %>%
+    mutate(parameter = "pumping", 
+           date = ymd(datetime)) %>%
+  select(date,station = location_id,parameter,value = parameter_value) %>%
+  filter(!is.na(value),
+         !is.na(station)) 
+```
+
+## get Vernalis Flow
+```{r}
+f_get_NWIS_flow <- function(siteNumbers=11303500, parameterCd = c('00060'), startDate = start, endDate = end, tz = "Etc/GMT+8"){
+
+  # get data
+  print("Downloading data...")
+  data <- dataRetrieval::readNWISuv(siteNumbers, parameterCd, startDate, endDate, tz)
+
+  # fix names
+
+  data2 <- dataRetrieval::renameNWISColumns(data)
+
+  print("Data downloaded!")
+
+  # clean names
+  data2 <- janitor::clean_names(data2)
+
+  # write out
+  saveRDS(data2, paste0("data_raw/USGS_NWIS_", siteNumbers, "_flow.rds"))
+
+  # print message!
+  print("Data saved in data_raw")
+}
+
+```
+
+```{r}
+f_get_NWIS_flow(siteNumbers = 11303500) 
+flow_Vernalis <- readRDS(here(data_root, "USGS_NWIS_11303500_flow.rds")) %>%
+  rename(Datetime = date_time, 
+         flow = flow_inst)%>%
+  mutate(station = "SJR",
+         date = date(Datetime),
+         datetime = Datetime) %>%
+  select(datetime, date, station, flow) %>%
+  pivot_longer(cols = flow,
+               names_to = "parameter",
+               values_to = "value") 
+
+flow_vernalis_daily <- flow_Vernalis %>%
+  rename(value_all = value) %>%
+  group_by(date, station, parameter) %>%
+  summarize(value = mean(value_all, na.rm = TRUE))
+```
+
+# Combine data
+```{r}
+flow_combined <- rbind(flow_vernalis_daily, pumping_clean, outflow_clean)
+```
+
+# Write data
+```{r}
+saveRDS(flow_combined, here(data_root, "../data_clean", "dayflow_proxy_data_2011_2022.rds"))
+```
+

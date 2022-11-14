@@ -1,4 +1,4 @@
-#final clean up of this code was consolidate in the file CSTARS DataReformatting BB SJ FT.R
+#this code was consolidated in the file CSTARS DataReformatting BB SJ FT.R
 #use that file as starting point.
 
 #2022 CSTARS data reformatting to fit the CSTARS_2021_GroundTruthing_SAV.R structure

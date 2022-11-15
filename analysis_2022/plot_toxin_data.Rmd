@@ -55,26 +55,25 @@ reg3crop = st_crop(reg3, xmin = -121.9, xmax = -121.2, ymin = 37.65, ymax = 38.4
 
 ## Map all the toxin stations
 ```{r}
-
 #This is plot 2-4 in the report
 (map_cyano <- ggplot()+
-  geom_sf(data =reg3crop, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.4)+
   geom_sf(data = WW_Delta, color = "grey", fill = "lightblue", alpha = 0.5, lwd = 0.5)+
+  geom_sf(data =reg3crop, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
   geom_sf(data =ct_stations, aes(color = Study, shape = Study), inherit.aes = FALSE, size = 1.5)+
   scale_color_brewer(palette = "Dark2", direction = -1)+
   scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
   #scale_shape_manual(values = c(12,21,24, 25,22, 23)) +
   theme_bw()+
   scale_x_continuous(limits = c(-122, -121.2)) +
-  scale_y_continuous( limits = c(37.65, 38.41))+
+  scale_y_continuous(limits = c(37.65, 38.4))+
   #geom_sf_text(data = Alltoxsf, aes(label = Station), size = 2)
-#geom_sf_text(data = reg3crop, aes(label = Stratum2))+
-annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
-annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
+  #geom_sf_text(data = reg3crop, aes(label = Stratum2))+
+  annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
+  annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
-      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
+  annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
   theme(legend.position = c(0.15, 0.2),
         panel.border = element_rect(colour = "black", fill = NA),
         legend.background = element_rect(linetype = 2, size = 0.5, colour = 1),
@@ -149,17 +148,17 @@ advisories <- advis %>%
   filter(Advisory != "No Advisory")
 
 (map_advisories <- ggplot()+
+  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.3) +
   geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
-  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.4) +
   scale_fill_manual(values = reg3$colors, guide = NULL)+
   theme_bw()+ylab("")+xlab("")+
   geom_sf(data = advisories, aes(color = Advisory, shape = Study), size = 3)+
   scale_color_manual(values = c("yellow",  "orange"), labels = c("Caution", "Warning"), name = "Incident Reports\nAdvisory Level")+
   theme_bw()+ 
-   annotation_north_arrow(location = "tr", which_north = "true",
+  annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
-      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
+  annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
   scale_x_continuous(limits = c(-121.9, -121.2)) +
   scale_y_continuous( limits = c(37.7, 38.4)))
 ```
@@ -177,8 +176,8 @@ levels(all_data$Advisory)
 
 ```{r}
 (map_advisories_all <- ggplot()+
-  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.4) +
-   geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
+  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
+  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.3) +
   scale_fill_manual(values = reg3$colors, guide = NULL)+
   theme_bw()+ylab("")+xlab("")+
   geom_sf(data = all_data, aes(color = Advisory, shape = Study), size = 3)+

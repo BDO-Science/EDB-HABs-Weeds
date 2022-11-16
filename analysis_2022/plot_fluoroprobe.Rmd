@@ -19,12 +19,6 @@ library(here)
 library(sf)
 library(deltamapr)
 
-library(sp)
-library(gstat)
-library(raster)
-library(tmap)
-library(rgdal)
-
 # Visualization
 library(ggmap)
 library(ggspatial)
@@ -92,45 +86,11 @@ fp_sf <- fp_all %>%
 WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_sf))
 ```
 
-
-## Try making raster - too slow right now, not working
 ```{r}
-may <- filter(fp_sf, month ==5)
-july <- filter(fp_sf, month ==7)
-
-may_spatial <- as(may, "Spatial")
-july_spatial <- as(july, "Spatial")
-
-df=may_spatial
-```
-
-```{r}
-interp_map <- function(df, mask=WW_Delta_4326) {
-
-  grd <- as.data.frame(spsample(df, "regular", n = 50000))
-  names(grd)       <- c("X", "Y")
-  coordinates(grd) <- c("X", "Y")
-  gridded(grd)     <- TRUE  # Create SpatialPixel object
-  fullgrid(grd)    <- TRUE  # Create SpatialGrid object
-
-  # Add projection information to the empty grid
-  proj4string(df) <- proj4string(df) # Temp fix until new proj env is adopted
-  proj4string(grd) <- proj4string(df)
-
-  # Interpolate the grid cells using a power value of 2 (idp=2.0)
-  idw <- gstat::idw(BlueGreenAlgae ~ 1, df, newdata=grd, idp=2.0)
-
-  # Convert to raster object then clip to Texas
-  raster       <- raster(idw)
-  raster_mask     <- mask(raster, mask)
-
-  return(raster_mask)
-
-}
-
-
-may_interp <- interp_map(may_spatial)
-jul_interp <- interp_map(july_spatial)
+fp_all %>%
+  group_by(month) %>%
+  summarize(mean = mean(BlueGreenAlgae),
+            max = max(BlueGreenAlgae))
 ```
 
 ## Make map
@@ -174,10 +134,6 @@ ggplot(fp_sf) + geom_boxplot(aes(x = factor(month), y = BlueGreenAlgae)) + theme
 png(filename = here("analysis_2022", "figures", "FP_map_raw_usgs_2022.png"), width = 6.5, height = 5, units = "in", pointsize = 12, family = "sans", res = 300)
 map_usgs
 dev.off()
-
-
-
-
 ```
 
 # EMP data
@@ -206,9 +162,17 @@ WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_sf))
 ```
 
 ```{r}
+fp_emp %>%
+  group_by(Month) %>%
+  summarize(mean = mean(Cyanobacteria),
+            max = max(Cyanobacteria))
+```
+
+
+```{r}
 hist(fp_emp_sf$Cyanobacteria)
 ggplot(fp_emp_sf) + geom_boxplot(aes(x = Month, y = Cyanobacteria)) + theme_bw() +
-  labs(y = "Cynobacterial Chlorophyll a (µg/L)") 
+  labs(y = "Cyanobacterial Chlorophyll a (µg/L)") 
 ```
 
 ```{r}
@@ -225,7 +189,7 @@ map_fp_emp <- ggplot() +
   scale_x_continuous(limits = c(-122.2,-121.2)) +
   scale_y_continuous(limits = c(37.9, 38.2)) +
   scale_color_viridis(option = "plasma") +
-  labs(color = "Cynobacterial Chlorophyll a (µg/L)") +
+  labs(color = "Cyanobacterial Chlorophyll a (µg/L)") +
   theme_classic() +
   theme(axis.text = element_blank(),
         axis.title = element_blank(),

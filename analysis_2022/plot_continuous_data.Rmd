@@ -26,7 +26,7 @@ library(readxl)
 data_root = "analysis_2022/"
 ```
 
-Read data
+# Read data
 ```{r}
 tucp_dates <- read_excel(here("data", "tucp_dates.xlsx"))%>%
   mutate(BarrierStartDate = lubridate::ymd(BarrierStartDate),
@@ -45,7 +45,9 @@ wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds")) 
 wq_data2 <- wq_data %>%
   left_join(tucp_dates) %>%
   mutate(TUCP_in_effect = case_when(TUCP == "Yes" & Date >= TUCPStart & Date <= TUCPEnd ~ "Yes",
-                                    TRUE ~ "No"))%>%
+                                    TRUE ~ "No"),
+         Barrier_in_effect = case_when(Barrier == "Barrier" & Date >=BarrierStartDate & Date <=BarrierEndDate ~ "Yes",
+                                       TRUE ~ "No"))%>%
   mutate(dailyval = case_when(Analyte %in% c("Temp", "Chl.a", "Turb") ~ Daily.Max,
                               Analyte == "DO.Conc" ~ Daily.Min,
                               TRUE ~ Daily.Mean),
@@ -67,14 +69,14 @@ unique(wq_bb$Site)
 # Filter down to dry years and get mean as determined above across stations
 daily_frk0 <- wq_frk %>%
   filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
-  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP) %>%
+  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
   summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
   filter(!is.na(Date)) %>%
   mutate(Location = "Frank's Tract")
 
 daily_bb0 <- wq_bb %>%
   filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
-  group_by(Date, Date2, Year, WaterYear, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP) %>%
+  group_by(Date, Date2, Year, WaterYear, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
   summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
   filter(!is.na(Date))%>%
   mutate(Location = "Big Break")
@@ -87,9 +89,11 @@ wq_summaryb <- daily_bb0 %>%
   summarize(max = max(Daily))
 
 daily_frk <- left_join(daily_frk0, wq_summaryf) %>%
-  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0))
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0),
+         Barrier_value = ifelse(Barrier_in_effect == "Yes", max, 0))
 daily_bb <- left_join(daily_bb0, wq_summaryb) %>%
-  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0))
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0),
+         Barrier_value = ifelse(Barrier_in_effect == "Yes", max, 0))
 ```
 
 # Flow
@@ -141,7 +145,7 @@ wq_daily_bb <- filter(daily_bb, Analyte!= "Flow")
 
 ## 2022 only
 ```{r}
-wq_2022_a <- wq_data2 %>% select(-Date2) %>%
+wq_2022_a <- wq_data2 %>% dplyr::select(-Date2) %>%
   filter(Year == 2022,
          Analyte != "Flow") %>%
   mutate(Location = ifelse(Site %in% c("DSJ", "BLP"), "Big Break", "Frank's Tract"))
@@ -249,18 +253,18 @@ wq_daily_comb <- rbind(wq_daily_bb, wq_daily_frk) %>%
   filter(fYear %in% c("2015", "2020", "2021", "2022"))
 
 (plot_bb_vs_frk <- ggplot(wq_daily_comb) +
-    geom_col(aes(x = Date2, y = TUCP_value), fill = "gray87", color = "gray87") + 
+  geom_col(aes(x = Date2, y = TUCP_value), fill = "gray87", color = "gray87") + 
+  geom_col(aes(x = Date2, y = Barrier_value), fill = "bisque", color = "bisque", alpha = 0.3) + 
   geom_line(aes(x = Date2, y = Daily, color = Location)) + 
     #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
   facet_grid(Analyte~fYear, scales = "free_y", 
              labeller = as_labeller(c(`2015` = "2015", `2020` = "2020 (no TUCP)", `2021` = "2021", `2022` = "2022", Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
                                       #Flow = "Flow (cfs)", 
                                       pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water \nTemp \n(°C)"))) +
-    #theme(strip.background = element_rect(fill="White", color = "White"),
-     #     strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_brewer(palette = "Set1") +
    scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + 
   labs(y = "Daily Mean Value", color = "Location") + 
+    scale_y_continuous(expand = c(0,0))+
   theme_bw() +
    theme(strip.text = element_text(size = 12),
          axis.text = element_text(size = 12),
@@ -269,10 +273,6 @@ wq_daily_comb <- rbind(wq_daily_bb, wq_daily_frk) %>%
          legend.title = element_text(size = 12),
          legend.position = "top"))
 ```
-
-
-
-
 Export Figures
 ```{r}
 # Flow

@@ -28,16 +28,19 @@ library(deltamapr)
 library(sf)
 library(ggspatial)
 library(readxl)
+library(tigris)
 
 data_root = "analysis_2022/"
 ```
 
-# Regions Data
+# Regions and States Data
 ```{r}
 
 load("./data/Regions.RData")
 reg3crop = st_crop(reg3, xmin = -121.9, xmax = -121.2, ymin = 37.65, ymax = 38.4)
-
+ca <- states(cb = TRUE, resolution = "500k") %>%
+  dplyr::filter(NAME == "California")
+ca_sf <- st_transform(ca, crs = 4326)
 ```
 
 # Water Quality
@@ -99,6 +102,13 @@ delta_4326 <- st_transform(WW_Delta, crs = st_crs(sta_sf))
         axis.text.x = element_text(angle = 45, vjust = 0.5)))
 ```
 
+California shapefile
+```{r}
+
+
+ggplot() + geom_sf(data = ca)
+```
+
 ```{r}
 png(filename = here("analysis_2022", "figures", "map_regions.png"), width = 6, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
 regions_map
@@ -127,7 +137,7 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
-      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
+  annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
   theme_bw())
 ```
 
@@ -142,7 +152,7 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
   scale_y_continuous( limits = c(37.7, 38.6))+
   scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
   scale_shape_manual(values = c(21, 8,25)) + 
-   scale_size_manual(values = c(3, 1)) +
+  scale_size_manual(values = c(3, 1)) +
   labs(fill = "Region") + 
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),

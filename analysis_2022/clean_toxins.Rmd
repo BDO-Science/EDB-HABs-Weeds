@@ -97,22 +97,24 @@ Had to estimate Latitude and Longitude for Lake Del Valle, Barker Slough PP, Ban
 #Get the species into a consistent format
 unique(ct_swp0$`PTOX Species 1`)
 ct_swp = ct_swp0 %>%
-  mutate(Species = case_when(
-  `PTOX Species 1` %in% c("Aphanizomenon cf. flos-aquae/klebahnii",
-                        "Aphanizomenon flos-aquae/klebahnii", "cf. Aphanizomenon") ~ "Aphanizomenon",
-  `PTOX Species 1` %in% c("Oscillatoria cf. perornata", "Oscillatorialean filament(s)") ~ "Oscillatoria",
-  `PTOX Species 1` %in% c("cf. Phormidium", "Phormidium/Microcoleus") ~ "Phormidium",
-  `PTOX Species 1` == "cf. Planktothrix" ~ "Planktothrix",
-  TRUE ~ `PTOX Species 1`
-), Concentration = parse_number(`Result (ng/mL)`))
+  select(Date, Station, Analyte, Result=`Result (ng/mL)`, Notes) 
+  
+  #mutate(Concentration = parse_number(`Result (ng/mL)`))
+  #mutate(Species = case_when(
+#   `PTOX Species 1` %in% c("Aphanizomenon cf. flos-aquae/klebahnii",
+#                         "Aphanizomenon flos-aquae/klebahnii", "cf. Aphanizomenon") ~ "Aphanizomenon",
+#   `PTOX Species 1` %in% c("Oscillatoria cf. perornata", "Oscillatorialean filament(s)") ~ "Oscillatoria",
+#   `PTOX Species 1` %in% c("cf. Phormidium", "Phormidium/Microcoleus") ~ "Phormidium",
+#   `PTOX Species 1` == "cf. Planktothrix" ~ "Planktothrix",
+#   TRUE ~ `PTOX Species 1`
+# ))
 
 #Now pivot wider then longer so I can add in zeros
-swp = pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Species,
-                       values_from = Concentration, values_fill = 0, values_fn = sum) %>%
-  dplyr::select(!`none observed`) %>%
-  pivot_longer(cols = Dolichospermum:`Microcystis wesenbergii`, names_to = "Species") %>%
-  filter(!is.na(value)) %>%
-  
+swp = ct_swp %>%
+  filter(!is.na(Result)) %>%
+  mutate(Result = case_when(Result == "ND" ~ "0",
+                            TRUE ~ as.character(Result)),
+         Result = as.numeric(Result)) %>%
   mutate(SampleID = paste0(Date, Station),
          Site_Name = case_when(Station == "NBA Barker Sl PP" ~ "Barker Slough Pumping Plant",
                                   Station == "Banks PP" ~ "Banks Pumping Plant",
@@ -134,9 +136,15 @@ swp = pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Specie
                               TRUE ~ as.numeric(Longitude)),
          Date = date(Date),
          Study = "SWP")%>%
-  dplyr::select(SampleID, Station_Code = Station, Site_Name , Latitude, Longitude, Method, Analyte=Species, Result = value, Comments, SampleDate = Date, Study)
-
-
+  dplyr::select(SampleID, Station_Code = Station, Site_Name , Latitude, Longitude, Method, Analyte, Result, Comments, SampleDate = Date, Study)
+  
+  
+  
+#  pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Species,
+#                       values_from = Concentration, values_fill = 0, values_fn = sum) %>%
+#  dplyr::select(!`none observed`) %>%
+#pivot_longer(cols = Dolichospermum:`Microcystis wesenbergii`, names_to = "Species") %>%
+#  filter(!is.na(value)) %>%
 glimpse(swp)
 
 #quick plot
@@ -244,10 +252,11 @@ prop1 <- ct_prop1 %>%
 ```{r}
 ct_all <- rbind(swp, wb, ebparks, naut, usgs, prop1) %>%
   mutate(Analyte2 = case_when(grepl("MC",Analyte) |grepl("Microcys", Analyte) | grepl("D-Asp3-", Analyte)|grepl("Leu1", Analyte)|grepl("Dha-LR", Analyte) ~ "Microcystins",
-                              grepl("Anatoxin", Analyte) ~ "Anatoxins",
+                              grepl("Anatoxin", Analyte)|grepl("ANTX", Analyte)|grepl("anatoxin", Analyte) ~ "Anatoxins",
                               grepl("Dolicho", Analyte) ~ "Dolichopspermum",
                               grepl("Anabaen", Analyte)|grepl("Oscillamide", Analyte) ~ "Anabaenopeptins",
-                              grepl("Cylindrospermopsin", Analyte) ~ "Cylindrospermopsins",
+                              grepl("STX", Analyte) ~ "Saxitoxin",
+                              grepl("Cylindrospermopsin", Analyte)|grepl("CYN", Analyte) ~ "Cylindrospermopsins",
                              TRUE ~ Analyte),
          Longitude = ifelse(Longitude>0, Longitude * -1, Longitude)) %>%
          filter(!is.na(Result))

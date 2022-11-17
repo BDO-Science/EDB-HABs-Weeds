@@ -26,7 +26,8 @@ root <- "analysis_2022/" # this is to tell here where to start
 
 Read data
 ```{r}
-ct_all <- readRDS(here(root, "data_clean", "ct_all_2022.rds")) 
+ct_all <- readRDS(here(root, "data_clean", "ct_all_2022.rds")) %>%
+  filter(!Analyte %in% c("Chlorophyll a", "Pheophytin a"))
 ct_all_years <- readRDS(here(root, "data_clean", "ct_years_to_2022.rds")) %>%
   select(-Month) %>%
   mutate(Month = month(Date))
@@ -92,6 +93,20 @@ health = data.frame(Analyte = c("Microcystins", "Microcystins", "Microcystins", 
   mutate(AdviseType = factor(AdviseType, levels = c("Caution\nTier I", "Warning \nTier II","Danger \nTier III")))
 ```
 
+### All data
+```{r}
+ggplot(ct_all, aes(x = Date, y = Result)) +
+  geom_point(aes(shape = Study))+
+  geom_hline(data = filter(health, AdviseType != "Danger \nTier III"), aes(yintercept = Advisory, color = AdviseType))+
+  scale_color_manual(values = c("yellow", "orange", "red"), name = "Recreational \nAdvisory")+
+  facet_grid(Analyte~Stratum2, scales = "free_y") +
+  xlab("Month of 2022")+ ylab("Concentration ug/L")+
+  scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0))+
+  theme_bw()+
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 90))
+```
+
 Combine data to plot advisories
 ```{r}
 mic_only <- ct_all %>%
@@ -127,11 +142,17 @@ Divided by region (Figure 2-16)
 
 ## Non-zeros
 ```{r}
+library(ggnewscale)
+
 nonzero <- ct_all %>%
-  filter(Analyte %in% c("Microcystins", "Anabaenopeptins", "Anatoxins", "Cylindrospermopsins"))
+  filter(Analyte %in% c("Microcystins", "Anabaenopeptins", "Anatoxins", "Cylindrospermopsins")) %>%
+  mutate(nonzero = ifelse(Result == 0, "zero", "nonzero"))
 unique(nonzero$Analyte)
 
-(plot_advisories_by_region2 <- ggplot(nonzero, aes(x = Date, y = Result)) + geom_point(aes(shape = Study))+
+(plot_advisories_by_region2 <- ggplot(nonzero, aes(x = Date, y = Result, color = nonzero)) + geom_point(aes(shape = Study))+
+    scale_color_manual(values = c("black", "gray")) +
+    guides(color = "none") + 
+    new_scale_colour() +
   geom_hline(data = filter(health, AdviseType != "Danger \nTier III"), aes(yintercept = Advisory, color = AdviseType))+
   scale_color_manual(values = c("yellow", "orange", "red"), name = "Recreational \nAdvisory")+
   facet_grid(Analyte~Stratum2, scales = "free_y") +
@@ -142,10 +163,11 @@ unique(nonzero$Analyte)
         axis.text.x = element_text(angle = 90)))
 ```
 
-## Map of advisory areas (2-18): Incident Reports + Cyanotoxin - 2022
+## Map of 2022 cyanotoxin data only
 ```{r}
-advisories <- advis %>%
-  filter(Advisory != "No Advisory")
+advisories <- mic_only %>%
+  filter(Advisory != "No Advisory",
+         Year > 2021) 
 
 (map_advisories <- ggplot()+
   geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.3) +
@@ -153,6 +175,9 @@ advisories <- advis %>%
   scale_fill_manual(values = reg3$colors, guide = NULL)+
   theme_bw()+ylab("")+xlab("")+
   geom_sf(data = advisories, aes(color = Advisory, shape = Study), size = 3)+
+  annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
+  annotate("text", x = -121.71, y = 37.99, label = "Big Break")+
+  annotate("text", x = -121.3, y = 37.93, label = "Stockton")+
   scale_color_manual(values = c("yellow",  "orange"), labels = c("Caution", "Warning"), name = "Incident Reports\nAdvisory Level")+
   theme_bw()+ 
   annotation_north_arrow(location = "tr", which_north = "true",
@@ -163,7 +188,7 @@ advisories <- advis %>%
   scale_y_continuous( limits = c(37.7, 38.4)))
 ```
 
-## Map of 2020, 2021, 2022
+## Map of 2020, 2021, 2022 incident reports
 ```{r}
 all_data <- incidents %>%
   mutate(fYear = factor(Year),

@@ -49,7 +49,14 @@ flow_2022 <- dayflow2 %>%
   mutate(period = "2022") %>%
   select(parameter, month, date2, value = value_mean, period) 
 
-flow_comb <- rbind(flow_2022, average_flow) %>%
+average_drought_flow <- dayflow2 %>%
+  filter(fyear %in% c("2014", "2015", "2020", "2021")) %>%
+  group_by(parameter, month, date2) %>%
+  summarize(value = mean(value_total)) %>%
+  ungroup() %>%
+  mutate(period = "Drought average")
+
+flow_comb <- rbind(flow_2022, average_flow, average_drought_flow) %>%
   filter(month>3 & month < 10) %>%
   mutate(parameter = case_when(parameter == "flow" ~ "San Joaquin River Outflow",
                             parameter == "pumping" ~ "Exports",
@@ -63,11 +70,14 @@ flow_comb <- rbind(flow_2022, average_flow) %>%
   scale_x_date(date_breaks = "1 month", labels = date_format("%b")) +
   facet_wrap(~parameter, nrow = 3, scales = "free_y") +
   scale_color_brewer(palette = "Dark2") + 
+   scale_linetype_manual(values = c("longdash", "solid", "dotted"))+
   labs(y = "Flow (cfs)") +
-  theme_bw() + 
+  theme_bw() +
   theme(axis.title.x = element_blank(),
         legend.title = element_blank(),
-        legend.position = "top"))
+        legend.position = "top",
+        legend.box = "vertical",
+        legend.spacing.y = unit(0.5, "mm")))
 ```
 
 ```{r}

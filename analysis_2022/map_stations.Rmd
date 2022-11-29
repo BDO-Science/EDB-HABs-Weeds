@@ -29,6 +29,7 @@ library(sf)
 library(ggspatial)
 library(readxl)
 library(tigris)
+library(cowplot)
 
 data_root = "analysis_2022/"
 ```
@@ -40,7 +41,7 @@ load("./data/Regions.RData")
 reg3crop = st_crop(reg3, xmin = -121.9, xmax = -121.2, ymin = 37.65, ymax = 38.4)
 ca <- states(cb = TRUE, resolution = "500k") %>%
   dplyr::filter(NAME == "California")
-ca_sf <- st_transform(ca, crs = 4326)
+ca_sf <- st_transform(ca, crs = 4269)
 ```
 
 # Water Quality
@@ -52,7 +53,7 @@ sta_cont <- read_excel(here(data_root, "data_clean", "continuous_stations.xlsx")
   mutate(WQ = "Continuous") %>%
   mutate(Source = case_when(
     Station == "FRK" ~ "DWR_EMP",
-    Station %in% c("MDM", "ORQ", "DSJ") ~ "USGS_CAWSC",
+    Station %in% c("MDM", "ORQ", "DSJ", "SJG", "VNS") ~ "USGS_CAWSC",
     TRUE ~ "DWR_NCRO"
   ))
 
@@ -88,10 +89,10 @@ delta_4326 <- st_transform(WW_Delta, crs = st_crs(sta_sf))
                nudge_x = c(-0.05, 0.05, -0.08, 0.07, 0.09, 0.1, 0, -0.01))+
   scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
   scale_color_manual(values = c("mediumblue", "sienna3")) +
-  scale_x_continuous(limits = c(-122, -121.2)) +
+  scale_x_continuous(limits = c(-121.9, -121.2)) +
   scale_y_continuous(limits = c(37.7, 38.6))+
   labs(fill = "Region") + 
-  annotation_north_arrow(location = "tr", which_north = "true",
+  annotation_north_arrow(location = "tl", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
       annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
@@ -104,14 +105,29 @@ delta_4326 <- st_transform(WW_Delta, crs = st_crs(sta_sf))
 
 California shapefile
 ```{r}
+(map_ca <- ggplot() + geom_sf(data = ca_sf, fill = "gray95") + 
+  geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
+   theme_classic() + theme(axis.text = element_blank(),
+                           panel.grid.major = element_blank(), 
+                           panel.grid.minor = element_blank(),
+                           panel.background = element_rect(fill = "transparent",colour = NA),
+                           plot.background = element_rect(fill = "transparent",colour = NA),
+                           axis.ticks = element_blank(),
+                           axis.line = element_blank(),
+                           panel.border = element_rect(colour = "black", fill=NA, size=1)))
 
-
-ggplot() + geom_sf(data = ca)
 ```
 
 ```{r}
-png(filename = here("analysis_2022", "figures", "map_regions.png"), width = 6, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
-regions_map
+(inset_map = ggdraw() +
+  draw_plot(regions_map) +
+  draw_plot(map_ca, x = 0.63, y = 0.72, width = 0.28, height = 0.25))
+```
+
+
+```{r}
+png(filename = here("analysis_2022", "figures", "map_regions.png"), width = 5, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+inset_map
 dev.off()
 ```
 
@@ -121,7 +137,11 @@ dev.off()
 ### Continuous
 ```{r}
 cont <- sta_sf %>%filter(WQ == "Continuous") %>%
-  mutate(Location = ifelse(Station %in% c("DSJ", "BLP"), "Big Break", "Frank's Tract"))
+  mutate(Location = ifelse(Station %in% c("DSJ", "BLP"), "Big Break", 
+                           ifelse(Station %in% c("MDM", "HLT"), "Mildred Island",
+                                  ifelse(Station %in% c("SJG", "SJC", "VNS"), "San Joaquin",
+                           "Frank's Tract")))) %>%
+  filter(Location != "San Joaquin")
 
 
 (cont_map <- ggplot() + 
@@ -130,7 +150,7 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
   geom_sf(data = cont, aes(color = Location), inherit.aes = FALSE)+
   geom_text(data = cont, aes(x = Longitude, y = Latitude, label = Station), size = 3, vjust = 1, hjust = 1)+
   scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
-  scale_color_manual(values = c("mediumblue", "sienna3")) +
+  scale_color_manual(values = c("mediumblue", "sienna3", "gold2")) +
   scale_x_continuous(limits = c(-121.8, -121.4)) +
   scale_y_continuous( limits = c(37.9, 38.15))+
   labs(fill = "Region") + 
@@ -141,15 +161,38 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
   theme_bw())
 ```
 
+```{r}
+(cont_map2 <- ggplot() + 
+  geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
+  geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
+  geom_sf(data = cont, aes(color = Location), inherit.aes = FALSE)+
+  geom_text(data = cont, aes(x = Longitude, y = Latitude, label = Station), size = 3, vjust = 1, hjust = 1)+
+  scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  scale_color_manual(values = c("mediumblue", "sienna3", "gold2", "darkgray")) +
+ scale_x_continuous(limits = c(-121.8, -121.25)) +
+  scale_y_continuous( limits = c(37.64, 38.15))+
+  labs(fill = "Region") + 
+  annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+  annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
+  theme_bw())
+```
+
+
+
 ### Discrete and Continuous
 ```{r}
+sta_noSJ <- sta_sf %>%
+  filter(!Station %in% c("SJC", "SJG", "VNS"))
+
 (wq_map <- ggplot() + 
   geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
   geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
-  geom_sf(data = sta_sf, aes(color = WQ, shape = Source, size = WQ), inherit.aes = FALSE)+
-  geom_text(data = sta_sf %>% filter(WQ == "Continuous"), aes(x = Longitude, y = Latitude, label =  Station), nudge_x = c(-0.02, -0.005, 0.05, 0.05, 0.02, -0.005, -0.005, -0.005, -0.02), nudge_y = c(0.02,-0.01, 0.01, 0.01, 0.03, 0, 0, -0.01), size = 3, vjust = 1, hjust = 1)+
-  scale_x_continuous(limits = c(-122, -121.2)) +
-  scale_y_continuous( limits = c(37.7, 38.6))+
+  geom_sf(data = sta_noSJ, aes(color = WQ, shape = Source, size = WQ), inherit.aes = FALSE)+
+  geom_text(data = sta_noSJ %>% filter(WQ == "Continuous"), aes(x = Longitude, y = Latitude, label =  Station), nudge_x = c(-0.02, -0.005, 0.05, 0.05, 0.02, -0.005, -0.005, -0.005, -0.02, -0.02), nudge_y = c(0.02,-0.01, 0.01, 0.01, 0.03, 0, 0, -0.01,0), size = 3, vjust = 1, hjust = 1)+
+  scale_x_continuous(limits = c(-121.9, -121.25)) +
+  scale_y_continuous( limits = c(37.75, 38.57))+
   scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
   scale_shape_manual(values = c(21, 8,25)) + 
   scale_size_manual(values = c(3, 1)) +
@@ -159,7 +202,9 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
                              style = north_arrow_fancy_orienteering) +
       annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
    scale_color_manual(values = c("red","blue4")) + 
-  theme_bw())
+  theme_bw()) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5),
+        axis.title = element_blank())
 ```
 
 ## Write

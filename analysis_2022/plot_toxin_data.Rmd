@@ -20,6 +20,7 @@ library(here)
 library(readr)
 library(lubridate)
 library(sf)
+library(ggnewscale)
 
 root <- "analysis_2022/" # this is to tell here where to start
 ```
@@ -32,11 +33,11 @@ ct_all_years <- readRDS(here(root, "data_clean", "ct_years_to_2022.rds")) %>%
   select(-Month) %>%
   mutate(Month = month(Date))
   
-ct_all_years2 <- unnest(ct_all_years, geometry)
+#ct_all_years2 <- unnest(ct_all_years, geometry)
 
 
-sf::st_as_sf(ct_all_years, wkt = "geometry")
-class(ct_all_years$geometry) <- "geometry"
+# sf::st_as_sf(ct_all_years, wkt = "geometry")
+# class(ct_all_years$geometry) <- "geometry"
   
 ct_stations <- ct_all %>%
   select(Study, Station, StationName, geometry) %>%
@@ -145,7 +146,7 @@ Divided by region (Figure 2-16)
 library(ggnewscale)
 
 nonzero <- ct_all %>%
-  filter(Analyte %in% c("Microcystins", "Anabaenopeptins", "Anatoxins", "Cylindrospermopsins")) %>%
+  filter(Analyte %in% c("Microcystins", "Anabaenopeptins", "Anatoxins", "Cylindrospermopsins", "Saxitoxins")) %>%
   mutate(nonzero = ifelse(Result == 0, "zero", "nonzero"))
 unique(nonzero$Analyte)
 
@@ -175,9 +176,10 @@ advisories <- mic_only %>%
   scale_fill_manual(values = reg3$colors, guide = NULL)+
   theme_bw()+ylab("")+xlab("")+
   geom_sf(data = advisories, aes(color = Advisory, shape = Study), size = 3)+
-  annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
-  annotate("text", x = -121.71, y = 37.99, label = "Big Break")+
+  annotate("text", x = -121.6, y = 37.8, label = "Clifton Court")+
+  annotate("text", x = -121.48, y = 37.95, label = "Mildred Island")+
   annotate("text", x = -121.3, y = 37.93, label = "Stockton")+
+  annotate("text", x = -121.75, y = 37.99, label = "Big Break")+
   scale_color_manual(values = c("yellow",  "orange"), labels = c("Caution", "Warning"), name = "Incident Reports\nAdvisory Level")+
   theme_bw()+ 
   annotation_north_arrow(location = "tr", which_north = "true",
@@ -195,6 +197,11 @@ all_data <- incidents %>%
          Advisory = factor(Advisory, levels = c("Caution", "Warning", "Danger")))%>%
   filter(!(Advisory == "No Advisory"),
          fYear %in% c("2020", "2021", "2022"))
+
+incidents_2022 <- incidents %>%
+  filter(!(Advisory == "No Advisory"),
+         fYear == "2022") %>%
+  mutate(fMonth = lubridate::month(Date, label = TRUE))
 
 levels(all_data$Advisory)
 ```
@@ -220,6 +227,29 @@ levels(all_data$Advisory)
         legend.position = "top"))
 ```
 
+2022 only
+```{r}
+(map_advisories_month <- ggplot()+
+  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
+  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.3, inherit.aes = FALSE) +
+  scale_fill_manual(values = reg3$colors, guide = NULL)+
+  
+  geom_sf(data = incidents_2022, aes(color = Advisory),  size = 2, inherit.aes = FALSE) +
+  scale_color_manual(values = c("yellow", "red"), labels = c("Caution", "Danger"), 
+                  name = "Incident Reports\nAdvisory Level") +
+  facet_wrap(~factor(fMonth)) +
+  annotation_north_arrow(location = "tr", which_north = "true",
+                          pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                          style = north_arrow_fancy_orienteering) +
+  annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
+  scale_x_continuous(limits = c(-121.9, -121.2)) +
+  scale_y_continuous(limits = c(37.7, 38.4)) +
+  theme_bw()+ 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.6),
+        strip.text = element_text(size = 12),
+        legend.position = "top",
+        axis.title = element_blank()))
+```
 
 ## Write plots
 ```{r}
@@ -237,6 +267,10 @@ dev.off()
 
 png(filename = here("analysis_2022", "figures", "map_advisories_all.png"), width = 8, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
 map_advisories_all
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "map_advisories_2022month.png"), width = 8, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+map_advisories_month
 dev.off()
 ```
 

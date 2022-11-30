@@ -39,7 +39,7 @@ load(here(data_root, "FP_data_for_USBR_EMP.RData"))
 ```
 
 **Notes from Ted**
-I’ve attached the FluoroProbe data from 2022 that you requested, as both a CSV and an .RData file. You can find the scripts and the raw data that we used in EMP’s GitHub (link here). The script we used is called “FP_data_join.R” and was jointly written by myself and Sarah Perry (cc’d). Sarah wrote the code that bins each data point into a region (they used Brian Mahardja’s EDSM subregions). The data is averaged in 1 minute increments and includes our EXO2 sonde data and the FluoroProbe. The units for the sonde data are as follows:
+I’ve attached the FluoroProbe data from 2022 that you requested, as both a CSV and an .RData file. You can find the scripts and the raw data that we used in EMP’s GitHub (https://github.com/emp-des/emp-projects/tree/main/03_Phyto/fluoroprobe-data-cleaning). The script we used is called “FP_data_join.R” and was jointly written by myself and Sarah Perry (cc’d). Sarah wrote the code that bins each data point into a region (they used Brian Mahardja’s EDSM subregions). The data is averaged in 1 minute increments and includes our EXO2 sonde data and the FluoroProbe. The units for the sonde data are as follows:
 •	Water Temp = degrees Celsius
 •	pH = pH units
 •	Specific Conductance = microsiemens per centimenter (uS/cm)

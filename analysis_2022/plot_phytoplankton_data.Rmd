@@ -27,6 +27,8 @@ Read data
 ```{r}
 phyto <- read_excel(here::here("analysis_2022", "data_raw", "EMP_Phytoplankton_Jan-Sept-2022.xlsx")) %>%
   janitor::clean_names(case = "upper_camel") %>%
+  filter(FullCode != "D19 Microcystis Tow",
+         StationCode!= "D19 MC Tow") %>%
   select(Date = SampleDate,
          Station = StationCode,
          AlgalType,
@@ -47,23 +49,28 @@ load(here("data/Regions.RData"))
 ```
 
 ```{r}
-phyto_test <- phyto_sta %>%
+phyto_test <- phyto_region %>%
   mutate(year = factor(year(Date)),
          month = factor(month(Date)))%>%
+  filter(CountperML >0) %>%
   filter(Genus %in% c("Aphanizomenon", "Anabaena", "Dolichospermum",
                       "Microcystis", "Oscillatoria", "Cylindrospermopsis",  "Anabaenopsis",
                       "Planktothrix")) %>%
   mutate(Genus = case_when(Genus == "Anabaena" ~"Dolichospermum",
-                           TRUE ~ Genus)) 
+                           TRUE ~ Genus)) %>%
+  arrange(Date)
+write_csv(phyto_test, "analysis_2022/phyto_data_emp_multiyear_filtered.csv")
 
+# Look at original data - where is the high Microcystis coming from? 
 phyto_orig <- phyto %>%
   filter(Genus %in% c("Aphanizomenon", "Anabaena", "Dolichospermum",
                       "Microcystis", "Oscillatoria", "Cylindrospermopsis",  "Anabaenopsis",
                       "Planktothrix")) %>%
   mutate(Genus = case_when(Genus == "Anabaena" ~"Dolichospermum",
                            TRUE ~ Genus)) 
+write_csv(phyto_orig, "phyto_data_emp_filtered.csv")
 
-ggplot(phyto_orig) + geom_col(aes(x = factor(month(Date)), y = OrganismsPerML))
+ggplot(phyto_orig) + geom_col(aes(x = factor(month(Date)), y = OrganismsPerML, fill = Genus)) + facet_wrap(~Station) + theme_bw()
 
 ggplot(phyto_test) + geom_col(aes(x = factor(month(Date)), y = OrganismsPerML)) + facet_wrap(~year)
 
@@ -87,7 +94,8 @@ franks2021 <- phyto_2021 %>%
 # Clean up data
 ```{r}
 phyto_sta <- left_join(phyto_all, emp_stations) %>%
-  filter(!is.na(Latitude))
+  filter(!is.na(Latitude)) %>%
+  filter()
 
 phyto_tax <- phyto %>%
   select(AlgalType, Genus) %>%
@@ -114,6 +122,7 @@ phyto_region <- st_intersection(phyto_sf, reg3)
 
 ```{r}
 saveRDS(phyto_region, here("analysis_2022","data_clean", "emp_phyto_data_through2022.rds"))
+phyto_region <- readRDS(here("analysis_2022","data_clean", "emp_phyto_data_through2022.rds"))
 ```
 
 
@@ -126,9 +135,9 @@ phyto_2021 <- filter(phyto_region, fYear == "2021")
 
 ## All
 ```{r}
-ggplot(phyto_region, aes(x = Station, y = CountperML, fill = Genus))+ geom_col()+facet_wrap(~fMonth)
 ggplot(phyto_2022, aes(x = Station, y = CountperML, fill = AlgalType))+ geom_col()+facet_wrap(~fMonth)+ scale_fill_brewer(palette = "Set3") + theme_bw()
 ggplot(phyto_2022, aes(x = fMonth, y = CountperML, fill = AlgalType))+ geom_col()+facet_wrap(~Stratum, scales = "free_y")+ scale_fill_brewer(palette = "Set3") + theme_bw()
+ggplot(phyto_2021, aes(x = fMonth, y = CountperML, fill = AlgalType))+ geom_col()+facet_wrap(~Stratum, scales = "free_y")+ scale_fill_brewer(palette = "Set3") + theme_bw()
 ```
 
 ## No cyanobacteria

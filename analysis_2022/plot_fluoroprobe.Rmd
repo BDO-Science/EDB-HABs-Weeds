@@ -18,6 +18,7 @@ library(readxl)
 library(here)
 library(sf)
 library(deltamapr)
+library(readr)
 
 # Visualization
 library(ggmap)
@@ -33,7 +34,7 @@ Read in data
 # USGS
 fpjuly <- read_excel(here(data_root, "FP_data_USGS_T3_DeltaMapping_July2022_2022-08-29_KO.xlsx"))
 fpmay <- read_excel(here(data_root, "FP_data_USGS_T3_DeltaMapping_May2022_2022-09-08_KO.xlsx"))
-
+fixed <- read_csv(here(data_root, "FP_data_USGS_fixed_OBI.csv"))
 # EMP
 load(here(data_root, "FP_data_for_USBR_EMP.RData"))
 ```
@@ -54,7 +55,9 @@ Just an additional piece of info: for last year’s report we sent our data to U
 
 
 # USGS data
-## Clean data
+
+## Continuous 
+### Clean data
 ```{r}
 fpm <- fpmay %>%
   janitor::clean_names(case = "upper_camel") %>%
@@ -93,7 +96,7 @@ fp_all %>%
             max = max(BlueGreenAlgae))
 ```
 
-## Make map
+### Make map
 ```{r}
 fp_sf$period <- factor(fp_sf$period, levels = c("May 16-19", "July 18-21"))
 
@@ -129,12 +132,35 @@ ggplot(fp_sf) + geom_boxplot(aes(x = factor(month), y = BlueGreenAlgae)) + theme
   labs(y = "Blue Green Algae (µg/L)") 
 ```
 
-## Write figure
+### Write figure
 ```{r}
 png(filename = here("analysis_2022", "figures", "FP_map_raw_usgs_2022.png"), width = 6.5, height = 5, units = "in", pointsize = 12, family = "sans", res = 300)
 map_usgs
 dev.off()
 ```
+
+## Discrete at OBI
+
+```{r}
+fp_discrete <- fixed %>%
+  mutate(Datetime = mdy_hms(Datetime))
+```
+
+### Plot data
+```{r}
+ggplot(fp_discrete) + aes(x = Datetime, y = Cyanobacteria) + 
+  geom_line() + 
+  geom_point()+ 
+  labs(y = "Cyanobacterial Chlorophyll a (µg/L)") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+
+```
+
+
+
+
+
 
 # EMP data
 ## Clean data

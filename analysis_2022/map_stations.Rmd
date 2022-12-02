@@ -46,34 +46,37 @@ ca_sf <- st_transform(ca, crs = 4269)
 
 # Water Quality
 ```{r}
+# continuous stations -----------------------
 sta_cont <- read_excel(here(data_root, "data_clean", "continuous_stations.xlsx")) %>%
-  filter(Type == "WQ") %>%
+  filter(Type != "Air Temp") %>%
   dplyr::select(-Type) %>%
   rename(Station = StationCode) %>%
-  mutate(WQ = "Continuous") %>%
   mutate(Source = case_when(
     Station == "FRK" ~ "DWR_EMP",
     Station %in% c("MDM", "ORQ", "DSJ", "SJG", "VNS") ~ "USGS_CAWSC",
-    TRUE ~ "DWR_NCRO"
-  ))
+    Station %in% c("DTO", "HRO", "TRP") ~ "DWR_O&M",
+    TRUE ~ "DWR_NCRO")) %>%
+    mutate(Data = case_when(Source == "DWR_O&M" | Station == "VNS" ~ "Flow", 
+                          TRUE ~ "Continuous WQ"))
 
-sta_discrete <- read_csv(here(data_root, "data_clean", "discrete_wq_stations_all_2022.csv")) %>%
-  mutate(WQ = "Discrete")
+# discrete stations -------------------------
+#sta_discrete <- read_csv(here(data_root, "data_clean", "discrete_wq_stations_all_2022.csv")) %>%
+#  mutate(WQ = "Discrete")
 
 habsnuts <-  read_csv("analysis_2022/data_clean/HABs_FinalNuts.csv") %>%
   select(Source, Station, Latitude, Longitude) %>%
   distinct() %>%
-  mutate(WQ = "Nutrients")
+  mutate(Data = "Discrete WQ")
 
 # The ones that don't join are just named the same. Just ignore the nutrients then. 
 anti_join(habsnuts, sta_discrete, by = c("Source", "Station"))
 anti_join(sta_discrete, habsnuts, by = c("Source", "Station"))
 
-sta_combined <- bind_rows(sta_cont, sta_discrete) %>%
+sta_combined <- bind_rows(sta_cont, habsnuts) %>%
   filter(!is.na(Latitude))
 
 sta_sf <- st_as_sf(sta_combined, coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
-  filter(Longitude > -121.85)
+  filter(ifelse(Data == "Flow", Longitude > -122.1, Longitude > -121.85))
 
 delta_4326 <- st_transform(WW_Delta, crs = st_crs(sta_sf))
 
@@ -184,24 +187,25 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
 ### Discrete and Continuous
 ```{r}
 sta_noSJ <- sta_sf %>%
-  filter(!Station %in% c("SJC", "SJG", "VNS"))
+  filter(!Station %in% c("SJC", "SJG", "BLP", "DSJ"))
 
 (wq_map <- ggplot() + 
   geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
   geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
-  geom_sf(data = sta_noSJ, aes(color = WQ, shape = Source, size = WQ), inherit.aes = FALSE)+
-  geom_text(data = sta_noSJ %>% filter(WQ == "Continuous"), aes(x = Longitude, y = Latitude, label =  Station), nudge_x = c(-0.02, -0.005, 0.05, 0.05, 0.02, -0.005, -0.005, -0.005, -0.02, -0.02), nudge_y = c(0.02,-0.01, 0.01, 0.01, 0.03, 0, 0, -0.01,0), size = 3, vjust = 1, hjust = 1)+
-  scale_x_continuous(limits = c(-121.9, -121.25)) +
-  scale_y_continuous( limits = c(37.75, 38.57))+
+  geom_sf(data = sta_noSJ, aes(color = Data, shape = Source, size = Data), inherit.aes = FALSE)+
+  geom_text(data = sta_noSJ %>% filter(Data %in% c("Continuous WQ", "Flow")), aes(x = Longitude, y = Latitude, label =  Station), nudge_x = c(-0.02, -0.005, 0.05, 0.06, 0.02, -0.005, -0.005, 0, 0.05, 0, 0.04), nudge_y = c(0.02,-0.01, -0.005, 0.01, 0.03, 0, 0, 0,-0.02, -0.02, -0.02), size = 3, vjust = 1, hjust = 1)+
+    
+  scale_x_continuous(limits = c(-122.05, -121.26)) +
+  scale_y_continuous( limits = c(37.67, 38.57))+
   scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
-  scale_shape_manual(values = c(21, 8,25)) + 
-  scale_size_manual(values = c(3, 1)) +
+  scale_shape_manual(values = c(21, 8,25, 3)) + 
+  scale_size_manual(values = c(2, 1, 3)) +
   labs(fill = "Region") + 
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
       annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
-   scale_color_manual(values = c("red","blue4")) + 
+   scale_color_manual(values = c("red","blue4", "orange")) + 
   theme_bw()) +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5),
         axis.title = element_blank())

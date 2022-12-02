@@ -24,7 +24,7 @@ Based on df_WQ_daily.RData:
   * DTO = 23; daily
   * HRO = 70; daily
   * TRP = 70; daily
-  * SJR = USGS station 11303500
+  * VNS = USGS station 11303500
 
 ## Define cdec stations, time period
 ```{r}

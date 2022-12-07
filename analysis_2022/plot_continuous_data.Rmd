@@ -28,6 +28,7 @@ data_root = "analysis_2022/"
 
 # Read data
 ```{r}
+# TUCP Dates
 tucp_dates <- read_excel(here("data", "tucp_dates.xlsx"))%>%
   mutate(BarrierStartDate = lubridate::ymd(BarrierStartDate),
          BarrierEndDate = ymd(BarrierEndDate),
@@ -35,7 +36,8 @@ tucp_dates <- read_excel(here("data", "tucp_dates.xlsx"))%>%
          TUCPEnd = ymd(TUCPEnd)) %>%
   rename(WaterYear = `Water Year`) 
 
-wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds")) %>%
+# Continuous WQ
+wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2013_2022.rds")) %>%
   mutate(WaterYear = ifelse(as.numeric(Month) >9, as.numeric(Year) + 1, as.numeric(Year)),
          fWY = factor(WaterYear),
          fYear = factor(Year)) %>%
@@ -65,6 +67,7 @@ unique(wq_frk$Site)
 wq_mil <- wq_data2 %>% filter(Site %in% c("HLT", "MDM"))
 unique(wq_mil$Site)
 wq_sj <-  wq_data2 %>% filter(Site %in% c("SJC", "SJG"))
+wq_lib <- wq_data2 %>% filter(Site %in% c("LIB"))
 
 # Mean across stations: 
 # Maximum temperature, chla, turb
@@ -87,15 +90,27 @@ daily_mil0 <- wq_mil %>%
   filter(!is.na(Date))%>%
   mutate(Location = "Mildred Island")
 
+daily_lib0 <- wq_lib %>%
+filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
+  group_by(Date, Date2, Year, WaterYear, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
+  summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
+  filter(!is.na(Date))%>%
+  mutate(Location = "Liberty Island")
+
 wq_summaryf <- daily_frk0 %>%
   group_by(Analyte) %>%
   summarize(max = max(Daily))
 wq_summarym <- daily_mil0 %>%
   group_by(Analyte) %>%
   summarize(max = max(Daily))
-wq_summary_all <- rbind(wq_summaryf, wq_summarym) %>%
+wq_summaryl <- daily_lib0 %>%
+  group_by(Analyte) %>%
+  summarize(max = max(Daily))
+
+wq_summary_all <- rbind(wq_summaryf, wq_summarym, wq_summaryl) %>%
   group_by(Analyte) %>%
   summarize(max = max(max))
+
 wq_summary <- wq_data2 %>%
   group_by(Analyte, TUCPStart, TUCPEnd, BarrierStartDate, BarrierEndDate) %>%
   filter(!is.na(TUCPStart)) %>%
@@ -107,6 +122,9 @@ daily_frk <- left_join(daily_frk0, wq_summary_all) %>%
   mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0),
          Barrier_value = ifelse(Barrier_in_effect == "Yes", max, 0))
 daily_mil <- left_join(daily_mil0, wq_summary_all) %>%
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0),
+         Barrier_value = ifelse(Barrier_in_effect == "Yes", max, 0))
+daily_lib <- left_join(daily_lib0, wq_summary_all) %>%
   mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0),
          Barrier_value = ifelse(Barrier_in_effect == "Yes", max, 0))
 ```
@@ -310,21 +328,60 @@ wq_daily_comb <- rbind(wq_daily_mil, wq_daily_frk) %>%
          legend.position = "top"))
 ```
 
+# Salinity
+```{r}
+spc <- readRDS(here(data_root, "data_raw", "CDEC_spc_EMM_TMS_2013_2022.rds")) %>%
+  mutate(Date2 = paste0(1980, "-", Month, "-", day(Date)),
+         Date2 = ymd(Date2))
+spc_dry <- filter(spc, Year %in% c(2016, 2018, 2020, 2022))
+```
+
+```{r}
+(plot_spc<-ggplot() + 
+  geom_rect(data = 
+                data.frame(xmin = lubridate::ymd("1980-04-01"), 
+                           xmax = lubridate::ymd("1980-06-30"), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "gray95", alpha = 0.5) +
+  geom_line(data = spc_dry, aes(x = Date2, y= Daily.Mean, color = factor(Year))) + 
+  scale_color_viridis(discrete = TRUE, option = "turbo") + 
+   
+  facet_wrap(~factor(Site), nrow = 2) +
+  labs(y = "Daily Mean SPCond (uS/cm)") + 
+   scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + theme_bw() +
+  theme(axis.title.x = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "top"))
+```
+
+Write plot
+```{r}
+png(filename = here("analysis_2022", "figures", "plot_spc.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_spc
+dev.off()
+```
+
 
 
 # Flow
-Locations = Outflow, Exports, SJR - should we look into similar locations? 
 
 ```{r}
 flow_daily_frk <- filter(daily_frk, Analyte== "Flow")
 flow_daily_mil <- filter(daily_mil, Analyte== "Flow")
-flow_daily <- rbind(flow_daily_frk, flow_daily_mil)
+flow_daily_lib <- filter(daily_lib, Analyte == "Flow")
+flow_daily <- rbind(flow_daily_frk, flow_daily_mil, flow_daily_lib)
+
 flow_2022 <- wq_data2 %>%
   filter(Year == "2022",
          Analyte == "Flow") %>%
   mutate(Location = ifelse(Site %in% c("MDM", "HLT"), "Mildred Island", 
                            ifelse(Site %in% c("SJC", "SJG"), "San Joaquin",
-                           "Frank's Tract"))) %>%
+                                  ifelse(Site == "LIB", "Liberty Island",
+                           "Frank's Tract")))) %>%
   select(-Date2) %>%
   filter(Location != "San Joaquin")
 ```
@@ -335,7 +392,7 @@ flow_2022 <- wq_data2 %>%
 (plot_flow <- ggplot(flow_daily %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
    geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
    
-    facet_wrap(~Location, nrow = 2) + 
+    facet_wrap(~Location, nrow = 3) + 
   # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
   scale_color_viridis(option = "turbo", discrete = TRUE) +
    scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
@@ -373,6 +430,7 @@ flow_2022 <- wq_data2 %>%
   # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
   scale_color_viridis(option = "turbo", discrete = TRUE) +
    scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+   scale_linetype_manual(values = c("solid", "dotdash", "longdash")) + 
   labs(y = "Flow (cfs)", color = "Year") + 
   theme_bw() +
    theme(strip.text = element_text(size = 12),
@@ -409,13 +467,15 @@ write_csv(table_flow, "analysis_2022/data_clean/table_deltaflows.csv")
 ```{r}
 vel_daily_frk <- filter(daily_frk, Analyte== "Velocity")
 vel_daily_mil <- filter(daily_mil, Analyte== "Velocity")
-vel_daily <- rbind(vel_daily_frk, vel_daily_mil)
+vel_daily_lib <- filter(daily_lib, Analyte== "Velocity")
+vel_daily <- rbind(vel_daily_frk, vel_daily_mil, vel_daily_lib)
 vel_2022 <- wq_data2 %>%
   filter(Year == "2022",
          Analyte == "Velocity") %>%
   mutate(Location = ifelse(Site %in% c("MDM", "HLT"), "Mildred Island", 
                            ifelse(Site %in% c("SJC", "SJG"), "San Joaquin",
-                           "Frank's Tract"))) %>%
+                                  ifelse(Site == "LIB", "Liberty Island",
+                           "Frank's Tract")))) %>%
   select(-Date2) %>%
   filter(Location != "San Joaquin")
 ```
@@ -425,7 +485,7 @@ vel_2022 <- wq_data2 %>%
 (plot_vel <- ggplot(vel_daily %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
    geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
    
-    facet_wrap(~Location, nrow = 2) + 
+    facet_wrap(~Location, nrow = 3) + 
   # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
   scale_color_viridis(option = "turbo", discrete = TRUE) +
    scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 

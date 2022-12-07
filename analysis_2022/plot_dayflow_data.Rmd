@@ -18,6 +18,7 @@ library(here)
 library(lubridate)
 library(scales)
 library(zoo)
+library(tidyr)
 ```
 
 ```{r}
@@ -29,30 +30,42 @@ dayflow <- readRDS(here("analysis_2022", "data_clean", "dayflow_proxy_data_2011_
          date2 = paste0(1980, "-", month, "-", day(date)),
          date2 = ymd(date2))
 
+# For VNS, use monthly rolling mean
+# For DTO, use 14-day mean
+# For Exports, use daily 
+
 dayflow2 <- dayflow %>%
   group_by(parameter, fyear, month, date, date2) %>%
   summarize(value_total = sum(value)) %>% # sum exports
   ungroup() %>%
   arrange(parameter, date) %>%
   group_by(parameter) %>%
-  mutate(value_mean = rollapply(value_total, 7, mean, align = 'right', partial = TRUE))
+  mutate(value_1d = value_total,
+        value_14dmean = rollapply(value_total, 14, mean, align = 'right', partial = TRUE, fill = NA),
+         value_30dmean = rollapply(value_total, 30, mean, align = 'right', partial = TRUE, fill = NA )) %>%
+  ungroup() %>%
+  mutate(value_used = case_when(parameter == "flow" ~ value_30dmean,
+                                parameter == "outflow" ~ value_14dmean,
+                                parameter == "pumping" ~ value_1d))
 
+# For comparison data (10-year mean)
 average_flow <- dayflow2 %>%
   filter(fyear != "2022") %>%
   group_by(parameter, month, date2) %>%
-  summarize(value = mean(value_total)) %>%
+  summarize(value = mean(value_used)) %>%
   ungroup() %>%
   mutate(period = "10-year average")
 
+# 2022 data
 flow_2022 <- dayflow2 %>%
   filter(fyear == "2022") %>%
   mutate(period = "2022") %>%
-  select(parameter, month, date2, value = value_mean, period) 
+  select(parameter, month, date2, value = value_used, period) 
 
 average_drought_flow <- dayflow2 %>%
   filter(fyear %in% c("2014", "2015", "2020", "2021")) %>%
   group_by(parameter, month, date2) %>%
-  summarize(value = mean(value_total)) %>%
+  summarize(value = mean(value_used)) %>%
   ungroup() %>%
   mutate(period = "Drought average")
 
@@ -60,16 +73,22 @@ flow_comb <- rbind(flow_2022, average_flow, average_drought_flow) %>%
   filter(month>3 & month < 10) %>%
   mutate(parameter = case_when(parameter == "flow" ~ "San Joaquin River Outflow",
                             parameter == "pumping" ~ "Exports",
-                            parameter == "outflow"~ "Delta Outflow"))
+                            parameter == "outflow"~ "Delta Outflow"))%>%
+  mutate(hline = case_when(parameter == "San Joaquin River Outflow" & month > 3 & month < 7 ~ 710,
+                           parameter == "Exports" & month > 3 & month < 7 ~ 1500,
+                           parameter == "Delta Outflow" & month > 3 & month < 7 ~ 4000))
+
 ```
 
 ```{r}
 (dayflow_plot <- ggplot(flow_comb) + 
+   geom_rect(aes(xmin = min(date2), xmax = ymd("1980-06-30"), ymin = -Inf, ymax = hline, fill = parameter), alpha = 0.2)+
   geom_line(aes(date2, value, color = parameter, linetype = period)) +
-  theme_bw() +
+   theme_bw() +
   scale_x_date(date_breaks = "1 month", labels = date_format("%b")) +
   facet_wrap(~parameter, nrow = 3, scales = "free_y") +
   scale_color_brewer(palette = "Dark2") + 
+   scale_fill_manual(values = c("bisque1", "honeydew2", "bisque1"), ) +
    scale_linetype_manual(values = c("longdash", "solid", "dotted"))+
   labs(y = "Flow (cfs)") +
   theme_bw() +

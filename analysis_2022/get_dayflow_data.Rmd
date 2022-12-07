@@ -91,7 +91,7 @@ f_get_NWIS_flow(siteNumbers = 11303500)
 flow_Vernalis <- readRDS(here(data_root, "USGS_NWIS_11303500_flow.rds")) %>%
   rename(Datetime = date_time, 
          flow = flow_inst)%>%
-  mutate(station = "SJR",
+  mutate(station = "VNS",
          date = date(Datetime),
          datetime = Datetime) %>%
   select(datetime, date, station, flow) %>%

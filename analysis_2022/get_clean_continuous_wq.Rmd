@@ -76,7 +76,7 @@ flow_sum <- flow_clean %>%
 ```
 
 ```{r}
-saveRDS(flow_clean, here(data_root,"CDEC_flow_SJC_LIB_2013_2022.rds"))
+saveRDS(flow_clean, here(data_root,"CDEC_flow_SJC_LIB_2013_2022.rds"), compress = "xz")
 flow_clean <- readRDS(here(data_root,"CDEC_flow_SJC_LIB_2013_2022.rds"))
 ```
 
@@ -116,7 +116,7 @@ ggplot(vel_clean) + geom_point(aes(x = datetime, y = value)) + facet_wrap(~stati
 
 
 ```{r}
-saveRDS(vel_clean, here("analysis_2022", "data_raw", "CDEC_velocity_2013_2022.rds"))
+saveRDS(vel_clean, here("analysis_2022", "data_raw", "CDEC_velocity_2013_2022.rds"), compress = "xz")
 vel_clean <- readRDS(here("analysis_2022", "data_raw", "CDEC_velocity_2013_2022.rds"))
 ```
 

@@ -1,0 +1,35 @@
+---
+title: "model_microcystis"
+author: "Catarina Pien"
+date: '2022-12-07'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(sf)
+library(deltamapr)
+library(brms)
+library(DHARMa)
+library(visreg)
+library(MASS)
+library(car)
+library(DroughtData)
+library(lubridate)
+library(cmdstanr)
+library(here)
+```
+
+```{r}
+load("analysis_2022/data_clean/HABsw2022.RData")
+regions = st_read("data/HABregions.shp")
+HABS2 <- read_csv("analysis_2022/data_clean/HABS_FinalNuts.csv")
+```
+

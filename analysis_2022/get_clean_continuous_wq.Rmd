@@ -26,7 +26,7 @@ data_root = "analysis_2022/data_raw/"
 # Download CDEC
 
 Based on df_WQ_daily.RData:
-  * Stations: **CDEC: FAL, FRK, HLT, HOL, MDM, ORQ, OSJ**
+  * Stations: **CDEC: OSJ, SJC, LIB**
   * Additional Flow stations: **SJR, DTO, HBP, TRP** - DTO is sensor 23
   * Parameters: **Chl.a, DO, SpCond, Temp, Turb, pH, Flow**
 
@@ -39,12 +39,12 @@ USGS: MDM USGS 11312676, ORQ = USGS 11313434
 ## Define cdec stations, time period
 ```{r}
 ### Define list of stations ----------------------------------
-stations <- c("FAL", "FRK", "HLT", "HOL", "OSJ", "SJC")
+stations <- c("SJC", "LIB")
 stations_flowplot <- c("DTO", "HBP", "TRP")
 
 # Define start and end dates - these will remain the same throughout
-start <- "2015-01-01"
-end <- "2022-10-01"
+start <- "2013-01-01"
+end <- "2022-11-01"
 ```
 
 ## get flow data
@@ -76,8 +76,8 @@ flow_sum <- flow_clean %>%
 ```
 
 ```{r}
-saveRDS(flow_clean, here(data_root,"CDEC_flow_FAL_HLT_HOL_OSJ_SJC_2015_2022.rds"))
-flow_clean <- readRDS(here(data_root,"CDEC_flow_FAL_HLT_HOL_OSJ_SJC_2015_2022.rds"))
+saveRDS(flow_clean, here(data_root,"CDEC_flow_SJC_LIB_2013_2022.rds"))
+flow_clean <- readRDS(here(data_root,"CDEC_flow_SJC_LIB_2013_2022.rds"))
 ```
 
 ## get velocity data
@@ -102,12 +102,22 @@ vel_clean <- velocity_df %>%
          !is.na(station))
 velocity_sum <- vel_clean %>%
   group_by(station) %>%
-  summarize(n = n())
+  summarize(n = n(), 
+            max = max(value),
+            min = min(value),
+            mean= mean(value))
 ```
 
+plot velocity for outliers
 ```{r}
-saveRDS(vel_clean, here("analysis_2022", "data_clean", "CDEC_velocity_2015_2022.rds"))
-vel_clean <- readRDS(here("analysis_2022", "data_clean", "CDEC_velocity_2015_2022.rds"))
+
+ggplot(vel_clean) + geom_point(aes(x = datetime, y = value)) + facet_wrap(~station)
+```
+
+
+```{r}
+saveRDS(vel_clean, here("analysis_2022", "data_raw", "CDEC_velocity_2013_2022.rds"))
+vel_clean <- readRDS(here("analysis_2022", "data_raw", "CDEC_velocity_2013_2022.rds"))
 ```
 
 # Read in other data
@@ -363,7 +373,7 @@ https://help.waterdata.usgs.gov/codes-and-parameters/parameters
 https://help.waterdata.usgs.gov/code/parameter_cd_query?fmt=rdb&group_cd=PHY&inline=true
 
 ```{r}
-f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '00095', '00400', '00300', '32316'), startDate = "2022-01-01", endDate = "2022-10-01", tz = "Etc/GMT+8"){
+f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '00095', '00400', '00300', '32316'), startDate = "2022-01-01", endDate = "2022-11-01", tz = "Etc/GMT+8"){
 
   # get data
   print("Downloading data...")
@@ -385,7 +395,7 @@ f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '0
   print("Data saved in data_raw")
 }
 
-f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), startDate = "2015-01-01", endDate = "2022-10-01", tz = "Etc/GMT+8"){
+f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), startDate = "2013-01-01", endDate = "2022-11-01", tz = "Etc/GMT+8"){
 
   # get data
   print("Downloading data...")
@@ -407,7 +417,7 @@ f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), star
   print("Data saved in data_raw")
 }
 
-f_get_NWIS_vel <- function(siteNumbers=11312676, parameterCd = c('72255'), startDate = "2015-01-01", endDate = "2022-10-01", tz = "Etc/GMT+8"){
+f_get_NWIS_vel <- function(siteNumbers=11312676, parameterCd = c('72255'), startDate = "2013-01-01", endDate = "2022-11-01", tz = "Etc/GMT+8"){
 
   # get data
   print("Downloading data...")
@@ -434,14 +444,21 @@ f_get_NWIS_vel <- function(siteNumbers=11312676, parameterCd = c('72255'), start
 MDM: Latitude 37°56'34",   Longitude 121°31'59"   NAD27
 ORQ: Latitude 38°01'38",   Longitude 121°33'52"   NAD83
 DSJ: Latitude 38°00'49",   Longitude 121°40'00"   NAD27 38.01361 -121.6667
+DUTCH SLOUGH BL JERSEY ISLAND RD A JERSEY ISLAND
 
 
-DUTCH SLOUGH BL JERSEY ISLAND RD A JERSEY ISLAND: 
 ```{r}
-f_get_NWIS(siteNumbers = 11312676)
+f_get_NWIS(siteNumbers = 11312676) # MDM
 f_get_NWIS_flow(siteNumbers=11312676)
+f_get_NWIS_vel(siteNumbers=11312676)
+f_get_NWIS_flow(siteNumbers=11312685) # HLT
+f_get_NWIS_vel(siteNumbers=11312685) # HLT
+f_get_NWIS_flow(siteNumbers=11313431) # HOL
+f_get_NWIS_vel(siteNumbers=11313431) # HOL
 f_get_NWIS_flow(siteNumbers=11313434) # ORQ
-f_get_NWIS(siteNumbers = 11313433, startDate = "2015-01-01")
+f_get_NWIS_flow(siteNumbers=11313452) # OSJ
+f_get_NWIS_vel(siteNumbers=11313452) # OSJ
+f_get_NWIS(siteNumbers = 11313433, startDate = "2013-01-01") # DSJ
 f_get_NWIS_flow(siteNumbers = 11313433)
 f_get_NWIS(siteNumbers = 11304810) # SJG
 f_get_NWIS_flow(siteNumbers = 11304810) # SJG
@@ -453,6 +470,17 @@ f_get_NWIS_vel(siteNumbers = 11313440) # FAL
 MDM <- read_csv(here(data_root, "USGS_NWIS_11312676_WQ.csv"))
 MDMf <- readRDS(here(data_root, "USGS_NWIS_11312676_flow.rds")) %>%
   mutate(site_no = as.numeric(site_no)) 
+MDM_vel <- readRDS(here(data_root, "USGS_NWIS_11312676_vel.rds"))%>%
+  rename(Datetime = date_time, 
+         velocity = x_72255_inst)%>%
+  mutate(station = "MDM",
+         date = date(Datetime),
+         datetime = Datetime) %>%
+  select(datetime, date, station, velocity) %>%
+  pivot_longer(cols = velocity,
+               names_to = "parameter",
+               values_to = "value")
+
 MDM_comb <- left_join(MDMf, MDM) %>%
   rename(Datetime = date_time, 
          wtemp = wtemp_inst,
@@ -470,6 +498,45 @@ MDM_comb <- left_join(MDMf, MDM) %>%
                names_to = "parameter",
                values_to = "value") %>%
   filter(!is.na(value))
+summary(MDM_comb)
+unique(MDM_comb$parameter)
+
+HLTf <- readRDS(here(data_root, "USGS_NWIS_11312685_flow.rds")) %>%
+  mutate(site_no = as.numeric(site_no)) 
+HLT_vel <- readRDS(here(data_root, "USGS_NWIS_11312685_vel.rds")) %>%
+  mutate(site_no = as.numeric(site_no)) 
+HLT <- left_join(HLTf, HLT_vel)%>%
+  rename(Datetime = date_time, 
+         flow = flow_inst,
+         velocity = x_72255_inst)%>%
+  mutate(station = "HLT",
+         date = date(Datetime),
+         datetime = Datetime) %>%
+  select(datetime, date, station, flow, velocity) %>%
+  pivot_longer(cols = flow:velocity,
+               names_to = "parameter",
+               values_to = "value")
+summary(HLT)
+unique(HLT$parameter)
+
+HOLf <- readRDS(here(data_root, "USGS_NWIS_11313431_flow.rds")) %>%
+  mutate(site_no = as.numeric(site_no)) 
+HOL_vel <- readRDS(here(data_root, "USGS_NWIS_11313431_vel.rds"))%>%
+  mutate(site_no = as.numeric(site_no)) 
+HOL <- left_join(HOLf, HOL_vel)%>%
+  rename(Datetime = date_time, 
+         flow = flow_inst,
+         velocity = x_72255_inst)%>%
+  mutate(station = "HOL",
+         date = date(Datetime),
+         datetime = Datetime) %>%
+  select(datetime, date, station, flow, velocity) %>%
+  pivot_longer(cols = flow:velocity,
+               names_to = "parameter",
+               values_to = "value")
+
+summary(HOL)
+unique(HOL$parameter)
 
 ORQ <- readRDS(here(data_root, "USGS_NWIS_11313434_flow.rds")) %>%
   rename(Datetime = date_time, 
@@ -482,6 +549,24 @@ ORQ <- readRDS(here(data_root, "USGS_NWIS_11313434_flow.rds")) %>%
                names_to = "parameter",
                values_to = "value")
 
+OSJf <- readRDS(here(data_root, "USGS_NWIS_11313452_flow.rds")) %>%
+  mutate(site_no = as.numeric(site_no)) 
+OSJ_vel <- readRDS(here(data_root, "USGS_NWIS_11313452_vel.rds"))%>%
+  mutate(site_no = as.numeric(site_no)) 
+OSJ <- left_join(OSJf, OSJ_vel)%>%
+  rename(Datetime = date_time, 
+         flow = flow_inst,
+         velocity = x_72255_inst)%>%
+  mutate(station = "OSJ",
+         date = date(Datetime),
+         datetime = Datetime) %>%
+  select(datetime, date, station, flow, velocity) %>%
+  pivot_longer(cols = flow:velocity,
+               names_to = "parameter",
+               values_to = "value")
+summary(OSJ)
+unique(OSJ$parameter)
+
 FAL <- readRDS(here(data_root, "USGS_NWIS_11313440_flow.rds")) %>%
   rename(Datetime = date_time, 
          flow = flow_inst)%>%
@@ -492,6 +577,8 @@ FAL <- readRDS(here(data_root, "USGS_NWIS_11313440_flow.rds")) %>%
   pivot_longer(cols = flow,
                names_to = "parameter",
                values_to = "value")
+
+# Is only getting me through 2021-06
 FAL_vel <- readRDS(here(data_root, "USGS_NWIS_11313440_vel.rds")) %>%
   rename(Datetime = date_time, 
          velocity = x_72255_inst)%>%
@@ -536,7 +623,7 @@ SJG <- left_join(SJG_WQ, SJG_flow) %>%
                names_to = "parameter",
                values_to = "value")
 
-data_USGS <- rbind(MDM_comb, ORQ, DSJ, SJG, FAL, FAL_vel) 
+data_USGS <- rbind(MDM_comb, MDM_vel, ORQ, DSJ, SJG, FAL, FAL_vel, HLT, HOL, OSJ) 
 ```
 
 # Combine data from different programs
@@ -601,7 +688,7 @@ wq_2022_latlon <- left_join(wq_2022_daily, stalatlon)
 
 ### Write file
 ```{r}
-saveRDS(wq_all, here(data_root, "../data_clean", "continuous_wq_2015_2022.rds"))
+saveRDS(wq_all, here(data_root, "../data_clean", "continuous_wq_2013_2022.rds"))
 saveRDS(wq_2022, here(data_root, "../data_clean", "continuous_wq_2022_allvals.rds"), compress = "xz")
 ```
 

@@ -120,6 +120,49 @@ saveRDS(vel_clean, here("analysis_2022", "data_raw", "CDEC_velocity_2013_2022.rd
 vel_clean <- readRDS(here("analysis_2022", "data_raw", "CDEC_velocity_2013_2022.rds"))
 ```
 
+## get salinity data
+```{r}
+stations_ec <-  c("EMM", "TMS")
+interval <- "E" # Event = every 15 minutes, H = Hourly, A = Annual
+### Download data, bind, write --------------------------------------------
+sal <- lapply(stations_ec, 
+                 function(x){
+                   cdec_query(station = x,
+                              sensor_num = 100,
+                              dur_code = interval,
+                              start_date = start,
+                              end_date = end)
+                 })
+sal_df <- bind_rows(sal) # bind rows into data frame
+sal_clean <- sal_df %>%
+    mutate(parameter = "SpCond", 
+           datetime = ymd_hms(datetime),
+           date = date(datetime)) %>%
+  select(datetime,date,station = location_id,parameter,value = parameter_value) %>%
+  filter(!is.na(value),
+         !is.na(station))
+
+spc_daily <- sal_clean %>%
+  group_by(station, date, parameter) %>%
+  summarize(Daily.Mean = round(mean(value, na.rm = TRUE),2),
+            Daily.Max = max(value, na.rm = TRUE),
+            Daily.Min = min(value, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(Year = lubridate::year(date),
+         Julian = lubridate::yday(date),
+         Month = lubridate::month(date, label = TRUE)) %>%
+rename(Site = station,
+       Analyte = parameter, 
+       Date = date) %>%
+  select(Site, Date, Analyte, Daily.Mean, Daily.Max, Daily.Min, Year, Julian, Month) %>%
+  filter(!is.infinite(Daily.Min),
+         !is.na(Date))
+```
+
+```{r}
+saveRDS(spc_daily,here("analysis_2022", "data_raw", "CDEC_spc_EMM_TMS_2013_2022.rds"), compress = "xz")
+```
+
 # Read in other data
 * NCRO
 * EMP

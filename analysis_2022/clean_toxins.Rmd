@@ -250,6 +250,24 @@ prop1 <- ct_prop1 %>%
   select(SampleID, Station_Code = Site, Site_Name = Site, Latitude = TargetLatitude, Longitude = TargetLongitude, Method, Analyte, Result, Comments, SampleDate = CollectionDate, Study)
 ```
 
+## EDB
+```{r}
+contsta <- read_excel("analysis_2022/data_clean/continuous_stations.xlsx") %>%
+  rename(Station = StationCode)
+
+edb <- ct_edb %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  filter(!is.na(Date)) %>%
+  mutate(Comments = NA,
+         Resultf = case_when(Concentration == "ND" ~ "0",
+                            TRUE ~ as.character(Concentration)),
+         Result = as.numeric(Resultf),
+         Study = "EDB", 
+         Method = NA) %>%
+  left_join(contsta, by = "Station") %>%
+  select(SampleID=SampleId, Station_Code = Station, Site_Name = Name, Latitude, Longitude, Method, Analyte, Result=Resultf, Comments, SampleDate = Date, Study)
+```
+
 ## Restore the Delta
 ```{r}
 restore <- ct_restore %>%
@@ -273,17 +291,27 @@ restore <- ct_restore %>%
 * SWP, Spatt, Stockton, Prop1, Nautilus, EastBay
 
 ```{r}
-ct_all <- rbind(swp, wb, ebparks, naut, usgs, prop1, restore) %>%
+ct_all0 <- rbind(swp, wb, ebparks, naut, usgs, prop1, restore, edb) %>%
   mutate(Analyte2 = case_when(grepl("MC",Analyte) |grepl("Microcys", Analyte) | grepl("D-Asp3-", Analyte)|grepl("Leu1", Analyte)|grepl("Dha-LR", Analyte)|grepl("Nodularin", Analyte) ~ "Microcystins/Nodularins",
                               grepl("Anatoxin", Analyte)|grepl("ANTX", Analyte)|grepl("anatoxin", Analyte) ~ "Anatoxins",
                               grepl("Dolicho", Analyte) ~ "Dolichopspermum",
                               grepl("Anabaen", Analyte)|grepl("Oscillamide", Analyte) ~ "Anabaenopeptins",
                               grepl("STX", Analyte) ~ "Saxitoxin",
-                              grepl("Cylindrospermopsin", Analyte)|grepl("CYN", Analyte) ~ "Cylindrospermopsins",
+                              grepl("Cylindrospermopsin", Analyte)|grepl("CYN", Analyte)|grepl("Cylidrospermopsin", Analyte) ~ "Cylindrospermopsins",
                              TRUE ~ Analyte),
          Longitude = ifelse(Longitude>0, Longitude * -1, Longitude)) %>%
-         filter(!is.na(Result))
+         filter(!is.na(Result)) %>%
+  mutate(Result = as.numeric(Result))
 
+ct_all <- ct_all0 %>%
+  select(-Analyte, -Comments) %>%
+  group_by(SampleID, Station_Code, Site_Name, Latitude, Longitude, Method, SampleDate, Study, Analyte2) %>%
+  summarize(Result = sum(Result))
+
+unique(ct_all0$SampleID)
+unique(ct_all$SampleID)
+  
+  
 glimpse(ct_all)
 unique(ct_all$Analyte2)
 ```
@@ -349,16 +377,16 @@ ct_2022 <- st_join(ct_all_sf, reg3)%>%
          Date = SampleDate,
          Year, Month,
          Analyte = Analyte2,
-         AnalyteOrig = Analyte,
          Method,
          Result,
          Advisory,
          Study,
          Stratum2, 
          geometry)%>%
-  mutate(Advisory = replace(Advisory, Advisory == "NA", NA))
+  mutate(Advisory = replace(Advisory, Advisory == "NA", NA)) %>%
+  mutate(Stratum2 = ifelse(Station %in% c("Dyer Res Outlet", "Clifton Court Forebay", "Banks PP"), "CCF", Stratum2))
 
-ct_2021_2022 <- rbind(ct_2021, ct_2022 %>% select(-Advisory, -AnalyteOrig, -StationName, -Method))
+ct_2021_2022 <- rbind(ct_2021, ct_2022 %>% select(-Advisory, -StationName, -Method)) 
 
 str(ct_2022)
 ```

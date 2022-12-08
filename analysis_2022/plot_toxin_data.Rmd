@@ -28,11 +28,13 @@ root <- "analysis_2022/" # this is to tell here where to start
 Read data
 ```{r}
 ct_all <- readRDS(here(root, "data_clean", "ct_all_2022.rds")) %>%
-  filter(!Analyte %in% c("Chlorophyll a", "Pheophytin a"))
+  filter(!Analyte %in% c("Chlorophyll a", "Pheophytin a"),
+         !is.na(Stratum2))
 ct_all_years <- readRDS(here(root, "data_clean", "ct_years_to_2022.rds")) %>%
   select(-Month) %>%
   mutate(Month = month(Date))
-  
+
+unique(ct_all$Analyte)
 #ct_all_years2 <- unnest(ct_all_years, geometry)
 
 
@@ -62,9 +64,9 @@ reg3crop = st_crop(reg3, xmin = -121.9, xmax = -121.2, ymin = 37.65, ymax = 38.4
   geom_sf(data = WW_Delta, color = "grey", fill = "lightblue", alpha = 0.5, lwd = 0.5)+
   geom_sf(data =reg3crop, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
   geom_sf(data =ct_stations, aes(color = Study, shape = Study), inherit.aes = FALSE, size = 1.8)+
-  scale_color_brewer(palette = "Dark2", direction = -1)+
+  viridis::scale_color_viridis(option = "turbo", discrete = TRUE)+
   scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
-  scale_shape_manual(values = c(18, 2, 15, 3, 7, 8, 1)) +
+  scale_shape_manual(values = c(18, 2, 15, 3, 7, 8, 1, 6)) +
   theme_bw()+
   scale_x_continuous(limits = c(-122, -121.2)) +
   scale_y_continuous(limits = c(37.65, 38.4))+
@@ -78,7 +80,7 @@ reg3crop = st_crop(reg3, xmin = -121.9, xmax = -121.2, ymin = 37.65, ymax = 38.4
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
   annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
-  theme(legend.position = c(0.15, 0.2),
+  theme(legend.position = c(0.18, 0.25),
         panel.border = element_rect(colour = "black", fill = NA),
         legend.background = element_rect(linetype = 2, size = 0.5, colour = 1),
         axis.title = element_blank()))
@@ -87,28 +89,39 @@ reg3crop = st_crop(reg3, xmin = -121.9, xmax = -121.2, ymin = 37.65, ymax = 38.4
 
 ## Map of recreational advisories and toxin concentrations
 
-### Filter only Microcystins and Anatoxins 
+### Filter only Microcystins and Anatoxins and Cylindrospermopsins
 ```{r}
 #To plot the toxin data, I want to put it in terms of the health
 #advisory levels from OEHHA. Here is a dataframe of those levels:
-health = data.frame(Analyte = c("Microcystins", "Microcystins", "Microcystins", "Anatoxins","Anatoxins", "Cylindrospermopsins", "Cylindrospermopsins"), Advisory = c(0.8, 6,20, .5, 20, 1, 4),
+health = data.frame(Analyte = c("Microcystins/Nodularins", "Microcystins/Nodularins", "Microcystins/Nodularins", "Anatoxins","Anatoxins", "Cylindrospermopsins", "Cylindrospermopsins"), Advisory = c(0.8, 6,20, .5, 20, 1, 4),
                     AdviseType = c("Caution\nTier I", "Warning \nTier II","Danger \nTier III", "Caution\nTier I", "Warning \nTier II", "Caution\nTier I", "Warning \nTier II")) %>%
   mutate(AdviseType = factor(AdviseType, levels = c("Caution\nTier I", "Warning \nTier II","Danger \nTier III")))
 ```
 
 ### All data
+This one is in the report
 ```{r}
-ggplot(ct_all, aes(x = Date, y = Result)) +
-  geom_point(aes(shape = Study))+
+ct_all_zeros <- ct_all %>%
+  mutate(nonzero = ifelse(Result == 0, "zero", "nonzero"))
+
+(plot_data_regions <- ggplot(ct_all_zeros, aes(x = Date, y = Result, color = nonzero)) + 
+    geom_point(aes(shape = Study))+
+    scale_color_manual(values = c("black", "gray")) +
+    guides(color = "none") + 
+    new_scale_colour() +
   geom_hline(data = filter(health, AdviseType != "Danger \nTier III"), aes(yintercept = Advisory, color = AdviseType))+
   scale_color_manual(values = c("yellow", "orange", "red"), name = "Recreational \nAdvisory")+
- scale_shape_manual(values = c(18, 2, 15, 3, 7, 8, 1)) +
-  facet_grid(Analyte~Stratum2, scales = "free_y") +
+   scale_shape_manual(values = c(18, 2, 15, 3, 7, 8, 1, 6)) +
+  facet_grid(Analyte~Stratum2, scales = "free_y",
+             labeller = as_labeller(c(Anabaenopeptins = "Anabaenopeptins", Anatoxins = "Anatoxins", Cylindrospermopsins = "Cylindrospermopsins", Saxitoxin = "Saxitoxins", `Microcystins/Nodularins` = "Microcystis/\nNodularins",
+                                      CCF = "CCF", `Lower Sac` = "Lower Sac", `South Delta` = "South Delta", `Upper Sac` = "Upper Sac", `Lower SJ` = "Lower SJ", OMR = "OMR", `Cache/Liberty` = "Cache/Liberty",
+                                      `East Delta` = "East Delta",
+                                      Franks = "Franks"))) +
   xlab("Month of 2022")+ ylab("Concentration ug/L")+
-  scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0))+
+  scale_x_date(breaks = "2 months", date_labels = "%b")+
   theme_bw()+
   theme(legend.position = "bottom",
-        axis.text.x = element_text(angle = 90))
+        axis.text.x = element_text(angle = 90)))
 ```
 
 Combine data to plot advisories
@@ -263,8 +276,8 @@ png(filename = here("analysis_2022", "figures", "map_cyano.png"), width = 6, hei
 map_cyano
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "cyano_by_region.png"), width = 8, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
-plot_advisories_by_region2
+png(filename = here("analysis_2022", "figures", "cyano_by_region.png"), width = 8.5, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_data_regions
 dev.off()
 
 png(filename = here("analysis_2022", "figures", "map_advisories.png"), width = 6, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)

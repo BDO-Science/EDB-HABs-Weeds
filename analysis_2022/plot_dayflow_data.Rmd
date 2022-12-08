@@ -62,15 +62,22 @@ flow_2022 <- dayflow2 %>%
   mutate(period = "2022") %>%
   select(parameter, month, date2, value = value_used, period) 
 
-average_drought_flow <- dayflow2 %>%
-  filter(fyear %in% c("2014", "2015", "2020", "2021")) %>%
+average_drought_notucp <- dayflow2 %>%
+  filter(fyear %in% c("2013", "2020")) %>%
   group_by(parameter, month, date2) %>%
   summarize(value = mean(value_used)) %>%
   ungroup() %>%
-  mutate(period = "Drought average")
+  mutate(period = "Non TUCO Drought Years")
 
-flow_comb <- rbind(flow_2022, average_flow, average_drought_flow) %>%
-  filter(month>3 & month < 10) %>%
+average_drought_tucp <- dayflow2 %>%
+  filter(fyear %in% c("2014", "2015", "2021")) %>%
+  group_by(parameter, month, date2) %>%
+  summarize(value = mean(value_used)) %>%
+  ungroup() %>%
+  mutate(period = "TUCO Drought Years")
+
+flow_comb <- rbind(flow_2022, average_flow, average_drought_tucp, average_drought_notucp) %>%
+  filter(month>2 & month < 10) %>%
   mutate(parameter = case_when(parameter == "flow" ~ "San Joaquin River Outflow",
                             parameter == "pumping" ~ "Exports",
                             parameter == "outflow"~ "Delta Outflow"))%>%
@@ -82,15 +89,16 @@ flow_comb <- rbind(flow_2022, average_flow, average_drought_flow) %>%
 
 ```{r}
 (dayflow_plot <- ggplot(flow_comb) + 
-   geom_rect(aes(xmin = min(date2), xmax = ymd("1980-06-30"), ymin = -Inf, ymax = hline, fill = parameter), alpha = 0.2)+
+   geom_rect(aes(xmin = ymd("1980-04-01"), xmax = ymd("1980-06-30"), ymin = -Inf, ymax = hline, fill = parameter), alpha = 0.2)+
   geom_line(aes(date2, value, color = parameter, linetype = period)) +
    theme_bw() +
   scale_x_date(date_breaks = "1 month", labels = date_format("%b")) +
   facet_wrap(~parameter, nrow = 3, scales = "free_y") +
   scale_color_brewer(palette = "Dark2") + 
    scale_fill_manual(values = c("bisque1", "honeydew2", "bisque1"), ) +
-   scale_linetype_manual(values = c("longdash", "solid", "dotted"))+
+   scale_linetype_manual(values = c("longdash", "solid", "dotted", "dotdash"))+
   labs(y = "Flow (cfs)") +
+   guides(fill = "none", color = "none") + 
   theme_bw() +
   theme(axis.title.x = element_blank(),
         legend.title = element_blank(),

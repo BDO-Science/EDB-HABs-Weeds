@@ -39,7 +39,7 @@ USGS: MDM USGS 11312676, ORQ = USGS 11313434
 ## Define cdec stations, time period
 ```{r}
 ### Define list of stations ----------------------------------
-stations <- c("SJC", "LIB")
+stations <- c("SJC", "LIB", "FCT")
 stations_flowplot <- c("DTO", "HBP", "TRP")
 
 # Define start and end dates - these will remain the same throughout
@@ -76,8 +76,8 @@ flow_sum <- flow_clean %>%
 ```
 
 ```{r}
-saveRDS(flow_clean, here(data_root,"CDEC_flow_SJC_LIB_2013_2022.rds"), compress = "xz")
-flow_clean <- readRDS(here(data_root,"CDEC_flow_SJC_LIB_2013_2022.rds"))
+saveRDS(flow_clean, here(data_root,"CDEC_flow_SJC_LIB__FCT_2013_2022.rds"), compress = "xz")
+flow_clean <- readRDS(here(data_root,"CDEC_flow_SJC_LIB_FCT_2013_2022.rds"))
 ```
 
 ## get velocity data
@@ -378,6 +378,7 @@ data_HOL <- map(plist[1:6], ~ f_cleanparam2(sta = "HOL", param = .x, enddate = "
 data_BLP <- map(plist[c(1, 3:8)], ~ f_cleanparam4(sta = "BLP", param = .x, startdate = "2015", enddate = "2022")) %>%
   bind_rows()
 data_NCRO <- rbind(data_FAL, data_HOL, data_HLT, data_OSJ, data_BLP)
+saveRDS(data_NCRO, "analysis_2022/data_raw/NCRO_combined_2022.rds")
 ```
 
 ## EMP
@@ -499,10 +500,12 @@ f_get_NWIS_vel(siteNumbers=11312685) # HLT
 f_get_NWIS_flow(siteNumbers=11313431) # HOL
 f_get_NWIS_vel(siteNumbers=11313431) # HOL
 f_get_NWIS_flow(siteNumbers=11313434) # ORQ
+f_get_NWIS_vel(siteNumbers=11313434) # ORQ
 f_get_NWIS_flow(siteNumbers=11313452) # OSJ
 f_get_NWIS_vel(siteNumbers=11313452) # OSJ
 f_get_NWIS(siteNumbers = 11313433, startDate = "2013-01-01") # DSJ
-f_get_NWIS_flow(siteNumbers = 11313433)
+f_get_NWIS_flow(siteNumbers = 11313433) # DSJ
+f_get_NWIS_vel(siteNumbers = 11313433)# DSJ
 f_get_NWIS(siteNumbers = 11304810) # SJG
 f_get_NWIS_flow(siteNumbers = 11304810) # SJG
 f_get_NWIS_flow(siteNumbers = 11313440) # FAL
@@ -581,14 +584,19 @@ HOL <- left_join(HOLf, HOL_vel)%>%
 summary(HOL)
 unique(HOL$parameter)
 
-ORQ <- readRDS(here(data_root, "USGS_NWIS_11313434_flow.rds")) %>%
+ORQf <- readRDS(here(data_root, "USGS_NWIS_11313434_flow.rds")) %>%
+ mutate(site_no = as.numeric(site_no)) 
+ORQ_vel <- readRDS(here(data_root, "USGS_NWIS_11313434_vel.rds")) %>%
+   mutate(site_no = as.numeric(site_no)) 
+ORQ <- left_join(ORQf, ORQ_vel) %>%
   rename(Datetime = date_time, 
-         flow = flow_inst)%>%
+         flow = flow_inst,
+         velocity = x_72255_inst)%>%
   mutate(station = "ORQ",
          date = date(Datetime),
          datetime = Datetime) %>%
-  select(datetime, date, station, flow) %>%
-  pivot_longer(cols = flow,
+  select(datetime, date, station, flow, velocity) %>%
+  pivot_longer(cols = flow:velocity,
                names_to = "parameter",
                values_to = "value")
 
@@ -633,19 +641,26 @@ FAL_vel <- readRDS(here(data_root, "USGS_NWIS_11313440_vel.rds")) %>%
                names_to = "parameter",
                values_to = "value")
 
-DSJ_WQ <- readRDS(here(data_root, "USGS_NWIS_11313433_WQ.rds"))
-DSJ_flow <- readRDS(here(data_root, "USGS_NWIS_11313433_flow.rds"))
+DSJ_WQ <- readRDS(here(data_root, "USGS_NWIS_11313433_WQ.rds"))%>%
+  mutate(site_no = as.numeric(site_no)) 
+DSJ_flow <- readRDS(here(data_root, "USGS_NWIS_11313433_flow.rds"))%>%
+  mutate(site_no = as.numeric(site_no)) 
+DSJ_vel <- readRDS(here(data_root, "USGS_NWIS_11313433_vel.rds")) %>%
+  mutate(site_no = as.numeric(site_no)) 
+  
 DSJ <- left_join(DSJ_WQ, DSJ_flow) %>%
+  left_join(DSJ_vel) %>%
   rename(Datetime = date_time, 
          flow = flow_inst,
          wtemp = wtemp_inst,
          spc = spec_cond_inst,
-         turbidity = ts213_ysi_exo_turb_inst)%>%
+         turbidity = ts213_ysi_exo_turb_inst,
+         velocity = x_72255_inst)%>%
   mutate(station = "DSJ",
          date = date(Datetime),
          datetime = Datetime) %>%
-  select(datetime, date, station, wtemp, spc, turbidity, flow) %>%
-  pivot_longer(cols = wtemp:flow,
+  select(datetime, date, station, wtemp, spc, turbidity, flow, velocity) %>%
+  pivot_longer(cols = wtemp:velocity,
                names_to = "parameter",
                values_to = "value")
 

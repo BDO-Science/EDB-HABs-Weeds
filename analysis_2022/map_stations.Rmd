@@ -68,10 +68,6 @@ habsnuts <-  read_csv("analysis_2022/data_clean/HABs_FinalNuts.csv") %>%
   distinct() %>%
   mutate(Data = "Discrete WQ")
 
-# The ones that don't join are just named the same. Just ignore the nutrients then. 
-anti_join(habsnuts, sta_discrete, by = c("Source", "Station"))
-anti_join(sta_discrete, habsnuts, by = c("Source", "Station"))
-
 sta_combined <- bind_rows(sta_cont, habsnuts) %>%
   filter(!is.na(Latitude))
 
@@ -187,13 +183,13 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
 ### Discrete and Continuous
 ```{r}
 sta_noSJ <- sta_sf %>%
-  filter(!Station %in% c("SJC", "SJG", "BLP", "DSJ"))
+  filter(!Station %in% c("SJC", "SJG", "BLP", "LIS", "FCT"))
 
 (wq_map <- ggplot() + 
   geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
   geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
   geom_sf(data = sta_noSJ, aes(color = Data, shape = Source, size = Data), inherit.aes = FALSE)+
-  geom_text(data = sta_noSJ %>% filter(Data %in% c("Continuous WQ", "Flow")), aes(x = Longitude, y = Latitude, label =  Station), nudge_x = c(-0.02, -0.005, 0.05, 0.06, 0.02, -0.005, -0.005, 0, 0.05, 0, 0.04), nudge_y = c(0.02,-0.01, -0.005, 0.01, 0.03, 0, 0, 0,-0.02, -0.02, -0.02), size = 3, vjust = 1, hjust = 1)+
+  geom_text(data = sta_noSJ %>% filter(Data %in% c("Continuous WQ", "Flow")), aes(x = Longitude, y = Latitude, label =  Station), nudge_x = c(-0.02, -0.005, 0.05, 0.05, 0.02, -0.005, -0.005,-0.01, 0, 0.05, 0, 0.04), nudge_y = c(0.02,-0.01, -0.005, 0.01, 0.03, 0, 0, 0, 0,-0.02, -0.02, -0.02), size = 3, vjust = 1, hjust = 1)+
     
   scale_x_continuous(limits = c(-122.05, -121.26)) +
   scale_y_continuous( limits = c(37.67, 38.57))+
@@ -214,7 +210,7 @@ sta_noSJ <- sta_sf %>%
 ## Write
 
 ```{r}
-png(filename = here("analysis_2022", "figures", "map_wq.png"), width = 6, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "map_wq.png"), width = 6, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
 wq_map
 dev.off()
 

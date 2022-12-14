@@ -63,7 +63,7 @@ flow_2022 <- dayflow2 %>%
   select(parameter, month, date2, value = value_used, period) 
 
 average_drought_notucp <- dayflow2 %>%
-  filter(fyear %in% c("2013", "2020")) %>%
+  filter(fyear %in% c("2013", "2016", "2020")) %>%
   group_by(parameter, month, date2) %>%
   summarize(value = mean(value_used)) %>%
   ungroup() %>%

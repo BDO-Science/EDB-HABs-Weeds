@@ -62,7 +62,7 @@ site_usgs0 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_SiteLatLon.tsv")
 ct_prop1 <- read_excel(here(root, "data_raw", "Prop1_cyanotoxin_watersamples_July2022.xlsx"), skip=4)
 ct_restore <- read_excel(here(root, "data_raw", "RestoreDelta_StocktonHABS_2022_AllData.xlsx"))
 ct_edb <- read_excel(here(root, "data_raw", "ToxinResults_Barriersampling_EH.xlsx"), sheet = "Toxindata")
-ptox_edb <- read_excel(here(root, "data_raw", "ToxinResults_Barriersampling_EH.xlsx"), sheet = "PTOX results")
+
 
 plot(R_EDSM_Subregions_Mahardja)
 ```
@@ -233,6 +233,14 @@ usgs <- ct_usgs0 %>%
   #filter(detect_tox == "Yes") %>%
 left_join(site_usgs0 %>% select(NWIS_site_no, Site, dec_lat_va, dec_long_va)) %>%
   dplyr::select(SampleID = UniqueID, Station_Code = NWIS_site_no, Site_Name = Site, Latitude = dec_lat_va, Longitude = dec_long_va, Method, Analyte = Tox_class, Result, Comments, SampleDate = Date, Study)
+
+samples <- usgs %>%
+  select(SampleDate, Site_Name) %>%
+  unique() %>%
+  mutate(month = month(SampleDate)) %>%
+  group_by(Site_Name, month) %>%
+  summarize(n = n())
+    
 ```
 
 ## Prop 1
@@ -264,7 +272,9 @@ edb <- ct_edb %>%
          Result = as.numeric(Resultf),
          Study = "EDB", 
          Method = NA) %>%
-  left_join(contsta, by = "Station") %>%
+  left_join(contsta, by = "Station") %>%  
+  mutate(Latitude = ifelse(Station == "BET", 38.041092, Latitude),
+         Longitude = ifelse(Station == "BET", -121.632187, Longitude)) %>%
   select(SampleID=SampleId, Station_Code = Station, Site_Name = Name, Latitude, Longitude, Method, Analyte, Result=Resultf, Comments, SampleDate = Date, Study)
 ```
 
@@ -395,6 +405,32 @@ str(ct_2022)
 mapview::mapview(ct_all_sf)
 ggplot() + geom_sf(data = R_EDSM_Subregions_Mahardja) +
   geom_sf(data = ct_2022)
+```
+
+```{r}
+ct_2022_forICF <- st_join(ct_all_sf, reg3)%>%
+  mutate(Year = lubridate::year(SampleDate),
+         Month = lubridate::month(SampleDate)) %>%
+  dplyr::select(Station = Station_Code, 
+                StationName = Site_Name,
+         Date = SampleDate,
+         Year, Month,
+         Analyte = Analyte2,
+         Method,
+         Result,
+         Advisory,
+         Study,
+         Stratum2,
+         Latitude,
+         Longitude,
+         geometry)%>%
+  mutate(Advisory = replace(Advisory, Advisory == "NA", NA)) %>%
+  mutate(Stratum2 = ifelse(Station %in% c("Dyer Res Outlet", "Clifton Court Forebay", "Banks PP"), "CCF", Stratum2)) %>%
+  filter(Analyte!= "Pheophytin a",
+         Analyte!= "Chlorophyll a")
+
+write_csv(ct_2022_forICF, "analysis_2022/data_clean/cyano_data_for_ICF.csv")
+st_write(ct_2022_forICF, "analysis_2022/data_clean/cyano_data_for_ICF.shp")
 ```
 
 

@@ -417,7 +417,7 @@ https://help.waterdata.usgs.gov/codes-and-parameters/parameters
 https://help.waterdata.usgs.gov/code/parameter_cd_query?fmt=rdb&group_cd=PHY&inline=true
 
 ```{r}
-f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '00095', '00400', '00300', '32316'), startDate = "2022-01-01", endDate = "2022-11-01", tz = "Etc/GMT+8"){
+f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '00095', '00400', '00300', '32316'), startDate = "2013-01-01", endDate = "2022-11-01", tz = "Etc/GMT+8"){
 
   # get data
   print("Downloading data...")

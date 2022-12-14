@@ -143,17 +143,24 @@ dev.off()
 
 ```{r}
 fp_discrete <- fixed %>%
-  mutate(Datetime = mdy_hms(Datetime))
+  mutate(Datetime = mdy_hms(Datetime),
+         Date = date(Datetime)) %>%
+  rename(Cyanobacteria = `Blue Green Algae`) %>%
+  filter(Date > ymd("2022-08-04"))
 ```
 
 ### Plot data
 ```{r}
-ggplot(fp_discrete) + aes(x = Datetime, y = Cyanobacteria) + 
-  geom_line() + 
-  geom_point()+ 
+fp_obi <- ggplot() + 
+  geom_line(data = fp_discrete, aes(x = Datetime, y = Cyanobacteria)) + 
+  geom_point(data = fp_discrete, aes(x = Datetime, y = Cyanobacteria))+ 
   labs(y = "Cyanobacterial Chlorophyll a (µg/L)") +
   theme_bw() +
   theme(axis.title.x = element_blank())
+
+png(filename = here("analysis_2022", "figures", "FP_OBI.png"), width = 6.5, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+fp_obi
+dev.off()
 
 ```
 

@@ -184,7 +184,7 @@ unique(nonzero$Analyte)
         axis.text.x = element_text(angle = 90)))
 ```
 
-## Map of 2022 cyanotoxin data only
+## Map of 2022 cyanotoxin data only (not incidents)
 ```{r}
 advisories <- mic_only %>%
   filter(Advisory != "No Advisory",
@@ -200,8 +200,10 @@ advisories <- mic_only %>%
   annotate("text", x = -121.48, y = 37.95, label = "Mildred Island")+
   annotate("text", x = -121.3, y = 37.93, label = "Stockton")+
   annotate("text", x = -121.75, y = 37.99, label = "Big Break")+
-  scale_color_manual(values = c("yellow",  "orange"), labels = c("Caution", "Warning"), name = "Incident Reports\nAdvisory Level")+
+  scale_color_manual(values = c("yellow",  "orange"), labels = c("Caution", "Warning"), name = "Advisory Level")+
   theme_bw()+ 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          axis.title = element_blank()) + 
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +

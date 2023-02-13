@@ -26,37 +26,79 @@ library(readxl)
 data_root = "analysis_2022/"
 ```
 
-Read data
+# Read data
 ```{r}
+# TUCP Dates
 tucp_dates <- read_excel(here("data", "tucp_dates.xlsx"))%>%
   mutate(BarrierStartDate = lubridate::ymd(BarrierStartDate),
          BarrierEndDate = ymd(BarrierEndDate),
          TUCPStart = ymd(TUCPStart),
          TUCPEnd = ymd(TUCPEnd)) %>%
-  rename(WaterYear = `Water Year`) 
+  rename(WY = `Water Year`) 
 
-wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds")) %>%
-  mutate(WaterYear = ifelse(as.numeric(Month) >9, as.numeric(Year) + 1, as.numeric(Year)),
-         fWY = factor(WaterYear),
+# Continuous WQ
+wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2013_2022.rds")) %>%
+  mutate(WY = ifelse(as.numeric(Month) >9, as.numeric(Year) + 1, as.numeric(Year)),
+         fWY = factor(WY),
          fYear = factor(Year)) %>%
   filter(Year > 2014,
-         Analyte !="DO.Pct") 
+         Analyte !="DO.Pct",
+         Date < ymd("2022-10-01"),
+         !Site %in% c("BLP")) 
+
+flow_stations <- wq_data %>% filter(Analyte == "Flow") 
+unique(flow_stations$Site)
 
 wq_data2 <- wq_data %>%
   left_join(tucp_dates) %>%
   mutate(TUCP_in_effect = case_when(TUCP == "Yes" & Date >= TUCPStart & Date <= TUCPEnd ~ "Yes",
-                                    TRUE ~ "No"))%>%
+                                    TRUE ~ "No"),
+         Barrier_in_effect = case_when(Barrier == "Barrier" & Date >=BarrierStartDate & Date <=BarrierEndDate ~ "Yes",
+                                       TRUE ~ "No"))%>%
   mutate(dailyval = case_when(Analyte %in% c("Temp", "Chl.a", "Turb") ~ Daily.Max,
                               Analyte == "DO.Conc" ~ Daily.Min,
                               TRUE ~ Daily.Mean),
          Date2 = paste0(1980, "-", Month, "-", day(Date)),
-         Date2 = ymd(Date2))
+         Date2 = ymd(Date2)) %>%
+  mutate(Region = case_when(Site %in% c("HLT", "MDM") ~ "Mildred Island",
+                            Site %in% c("SJC", "SJG") ~ "San Joaquin",
+                            Site == "LIB" ~ "Liberty Island",
+                            Site %in% c("FAL", "HOL", "FRK", "OSJ", "ORQ", "DSJ", "FCT")~"Franks/OMR")) %>%
+  mutate(TUCOComp = case_when(WY %in% c(2013, 2020)~ "DroughtNoTUCO", 
+                            WY %in% c(2014, 2015, 2016, 2021)~ "DroughtTUCO", 
+                            WY == 2022 ~ "2022",
+                            #Year %in% c(2013, 2016, 2018, 2020) ~ "DryNoTUCO",
+                            WY %in% c(2017, 2019) ~ "Wet",
+                            TRUE ~ "Other"),
+       EDBComp = case_when(WY %in% c(2013, 2014, 2016, 2020)~ "DroughtNoEDB",
+                           WY %in% c(2015, 2021)~ "DroughtEDB",
+                           #Year %in% c(2014, 2016, 2018, 2020) ~ "DryNoEDB",
+                           WY == 2022 ~ "2022",
+                           WY %in% c(2017, 2019) ~ "Wet",
+                           TRUE ~ "Other"))
+  
+wq_daily_summary_Year <- wq_data2 %>%
+  group_by(Region, Analyte, Date2, fYear, Year, Month) %>%
+  summarize(Daily = mean(dailyval, na.rm = TRUE))
+
+wq_data_summary_TUCO <- wq_data2 %>%
+  group_by(TUCOComp, Month, Region, Analyte, Date2) %>%
+  summarize(Daily = mean(dailyval, na.rm = TRUE))
+
+wq_data_summary_EDB <- wq_data2 %>%
+  group_by(EDBComp,  Month,Region, Analyte, Date2) %>%
+  summarize(Daily = mean(dailyval, na.rm = TRUE))
   
 
-wq_frk <- wq_data2 %>% filter(!(Site %in% c("BLP", "DSJ")))
-unique(wq_frk$Site)
-wq_bb <- wq_data2 %>% filter(Site %in% c("BLP", "DSJ"))
-unique(wq_bb$Site)
+
+# Make individuals
+wq_frk <- wq_data2 %>% filter(Region == "Franks/OMR")
+
+wq_mil <- wq_data2 %>% filter(Region == "Mildred Island")
+
+wq_sj <-  wq_data2 %>% filter(Region == "San Joaquin")
+
+wq_lib <- wq_data2 %>% filter(Region == "Liberty Island")
 
 # Mean across stations: 
 # Maximum temperature, chla, turb
@@ -67,47 +109,304 @@ unique(wq_bb$Site)
 # Filter down to dry years and get mean as determined above across stations
 daily_frk0 <- wq_frk %>%
   filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
-  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP) %>%
+  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
   summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
   filter(!is.na(Date)) %>%
   mutate(Location = "Frank's Tract")
 
-daily_bb0 <- wq_bb %>%
+daily_mil0 <- wq_mil %>%
   filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
-  group_by(Date, Date2, Year, WaterYear, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP) %>%
+  group_by(Date, Date2, Year, WaterYear, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
   summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
   filter(!is.na(Date))%>%
-  mutate(Location = "Big Break")
+  mutate(Location = "Mildred Island")
+
+daily_lib0 <- wq_lib %>%
+filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
+  group_by(Date, Date2, Year, WaterYear, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
+  summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
+  filter(!is.na(Date))%>%
+  mutate(Location = "Liberty Island")
 
 wq_summaryf <- daily_frk0 %>%
   group_by(Analyte) %>%
   summarize(max = max(Daily))
-wq_summaryb <- daily_bb0 %>%
+wq_summarym <- daily_mil0 %>%
+  group_by(Analyte) %>%
+  summarize(max = max(Daily))
+wq_summaryl <- daily_lib0 %>%
   group_by(Analyte) %>%
   summarize(max = max(Daily))
 
-daily_frk <- left_join(daily_frk0, wq_summaryf) %>%
-  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0))
-daily_bb <- left_join(daily_bb0, wq_summaryb) %>%
-  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0))
+wq_summary_all <- rbind(wq_summaryf, wq_summarym, wq_summaryl) %>%
+  group_by(Analyte) %>%
+  summarize(max = max(max))
+
+wq_summary <- wq_data2 %>%
+  group_by(Analyte, TUCPStart, TUCPEnd, BarrierStartDate, BarrierEndDate) %>%
+  filter(!is.na(TUCPStart)) %>%
+  summarize(max = max(dailyval),
+            max2 = Inf,
+            min2 = -Inf)
+
+daily_frk <- left_join(daily_frk0, wq_summary_all) %>%
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0),
+         Barrier_value = ifelse(Barrier_in_effect == "Yes", max, 0))
+daily_mil <- left_join(daily_mil0, wq_summary_all) %>%
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0),
+         Barrier_value = ifelse(Barrier_in_effect == "Yes", max, 0))
+daily_lib <- left_join(daily_lib0, wq_summary_all) %>%
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0),
+         Barrier_value = ifelse(Barrier_in_effect == "Yes", max, 0))
 ```
 
-# Flow
-Locations = Outflow, Exports, SJR - should we look into similar locations? 
+```{r}
+frk_wq_stats <- daily_frk %>%
+  group_by(Year, Analyte) %>%
+  summarize(mean = mean(Daily),
+            min = min(Daily),
+            max = max(Daily))
+```
+
+
+# NEW
+
+## WQ
+Dataframe without flow, velocity, san joaquin region
+```{r}
+# 2022 data
+unique(wq_data2$Region)
+wq_a <- wq_data2 %>% 
+  filter(Analyte != "Flow",
+         Analyte != "Velocity",
+         !Region %in% c("Liberty Island", "San Joaquin")) 
+
+wq_summary2022 <- wq_a %>%
+  dplyr::select(-Date2) %>%
+  filter(!is.na(TUCPStart),
+         Year == 2022) %>%
+  group_by(Analyte, TUCPStart, TUCPEnd, BarrierStartDate, BarrierEndDate) %>%
+  summarize(max = max(dailyval)) %>%
+  ungroup()
+
+wq_2022 <- wq_a %>%
+  filter(!Month %in% c("Jan", "Feb", "Nov", "Dec"),
+         Year == 2022)
+
+# All years 
+wq_yearcomp <- wq_a %>%
+  filter(Year %in% c(2015, 2016,2020, 2021, 2022))  %>%
+  ungroup() %>%
+  droplevels()
+
+wq_yearcomp <- subset(wq_yearcomp, Year%in% c(2015, 2016, 2020, 2021, 2022))
+
+
+
+
+
+wq_EDB <- wq_data_summary_EDB %>%
+  filter(!Region %in% c("San Joaquin", "Liberty Island"),
+         !Analyte %in% c("Flow", "Velocity"),
+         !EDBComp %in% c("Other", "Wet"),
+         !Month %in% c("Nov", "Dec"))
+
+
+```
+
+### 2022 
+Individual stations - 2022
+```{r}
+templine <- data.frame(Analyte = c("Temp"), int = c(19))
+
+(plot_cont_2022 <- ggplot() +
+    # shaded box
+    geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$TUCPStart), 
+                           xmax = ymd(wq_summary2022$TUCPEnd), 
+                           ymin = -Inf, ymax = Inf),
+                aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+                fill = "gray95", alpha = 0.5) +
+    # line for temperature at 19
+    geom_hline(data = templine, aes(yintercept = int)) + 
+    geom_vline(xintercept = date("2022-04-15"), linetype = "dotted") +
+    geom_vline(xintercept = date("2022-11-02"), linetype = "dotted") +
+    # WQ data
+    geom_line(data= wq_2022, aes(x = Date, y = dailyval, color = Site, linetype = Region), 
+              inherit.aes = FALSE) + 
+    # facet all the panels
+    facet_wrap(~Analyte, scales = "free_y", nrow = 6, strip.position = "left", 
+             labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
+            #Flow = "Flow (cfs)", 
+    pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    
+    theme(strip.background = element_rect(fill="White", color = "White"),
+          strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+    scale_color_viridis(option = "turbo", discrete = TRUE) +
+    scale_x_date(breaks = "month", date_labels = "%b", expand = c(0,0)) + 
+    scale_linetype_manual(values = c("dashed", "solid", "dotted")) +
+    labs(y = "Daily Mean Value") +
+    theme_bw() +
+    theme(strip.text = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.title.x = element_blank(),
+          legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          legend.position = "top",
+          legend.box = "vertical"))
+```
+
+### Across years
+```{r}
+
+analytes <- data.frame(Analyte = rep(unique(wq_yearcomp$Analyte),5),
+                       fYear = c(rep("2015", 6), rep("2016", 6), rep("2020", 6), rep("2021", 6), rep("2022", 6)))
+
+tucp.df <- tucp_dates %>%
+  mutate(fYear = factor(WY)) %>%
+  filter(fYear %in% c("2015", "2016", "2020", "2021", "2022")) %>%
+  select(fYear, TUCPStart, TUCPEnd, BarrierStartDate, BarrierEndDate) %>%
+  left_join(analytes) %>%
+  mutate(xmin = ymd(paste0("1980-", lubridate::month(TUCPStart),"-", day(TUCPStart))), 
+         xmax = ymd(paste0("1980-", lubridate::month(TUCPEnd), "-",day(TUCPEnd))), 
+         ymin = -Inf, 
+         ymax = Inf,
+         EDBStart = ymd(paste0("1980-", month(BarrierStartDate),"-", day(BarrierStartDate))),
+         EDBEnd = ymd(paste0("1980-",month(BarrierEndDate), "-",day(BarrierEndDate))),
+         EDBEnd = ifelse(fYear == "2021", NA, EDBEnd)) %>%
+  mutate(fYear = factor(fYear))
+
+str(tucp.df)
+str(wq_yearcomp)
+```
 
 ```{r}
-flow_daily_frk <- filter(daily_frk, Analyte== "Flow")
-flow_daily_bb <- filter(daily_bb, Analyte== "Flow")
-flow_daily <- rbind(flow_daily_frk, flow_daily_bb)
+# Frank's and Mildred Island
+(plot_cont_jday <- ggplot() +
+   geom_rect(data = tucp.df,
+             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), fill = "gray", alpha = 0.3) + 
+  geom_line(data = wq_yearcomp, aes(x = Date2, y = dailyval, color = Site, linetype = Region)) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+   # line for temperature at 19
+    geom_hline(data = templine, aes(yintercept = int)) + 
+   geom_vline(data = tucp.df, aes(xintercept = EDBStart), linetype = "dotted") +
+   geom_vline(data = tucp.df, aes(xintercept = EDBEnd), linetype = "dotted") + 
+  facet_grid(Analyte~fYear, scales = "free_y",  labeller = as_labeller(c(
+    `2016` = "2016", `2015` = "2015 (E/T)", `2020` = "2020", `2021` = "2021 (E/T)", `2022` = "2022 (E/T)",
+    Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)",                                                          pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    theme(strip.background = element_rect(fill="White", color = "White"),
+          strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Daily Mean Value", color = "Station") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+         axis.title.x = element_blank(),
+         legend.text = element_text(size = 12),
+         legend.title = element_text(size = 12),
+         legend.position = "top",
+         legend.box = "vertical"))
+```
+
+#### Write
+```{r}
+png(filename = here("analysis_2022", "figures", "plot_wq_years.png"), width = 8, height = 8.5, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_cont_jday
+dev.off()
+```
+
+
+### Frk vs MI - EDB
+```{r}
+(plot_mil_vs_frk <- ggplot(wq_EDB) +
+ # geom_point(aes(x = Date2, y = TUCP_value), fill = "gray87", color = "gray87") + 
+ # geom_col(aes(x = Date2, y = Barrier_value), fill = "bisque", color = "bisque", alpha = 0.3) + 
+  geom_line(aes(x = Date2, y = Daily, color = Region)) + 
+    #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  facet_grid(Analyte~EDBComp, scales = "free_y", 
+             labeller = as_labeller(c(`DroughtEDB` = "EDB Drought Year", `DroughtNoEDB` = "No EDB Drought Year", `2022` = "2022", Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
+                                      #Flow = "Flow (cfs)", 
+                                      pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water \nTemp \n(°C)"))) +
+  scale_color_brewer(palette = "Set1") +
+   scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Daily Mean Value", color = "Location") + 
+    scale_y_continuous(expand = c(0,0))+
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         legend.text = element_text(size = 12),
+         legend.title = element_text(size = 12),
+         legend.position = "top"))
+```
+
+```{r}
+(plot_mil_vs_frk <- ggplot(wq_EDB) +
+ # geom_point(aes(x = Date2, y = TUCP_value), fill = "gray87", color = "gray87") + 
+ # geom_col(aes(x = Date2, y = Barrier_value), fill = "bisque", color = "bisque", alpha = 0.3) + 
+  geom_line(aes(x = Date2, y = Daily, color = Region)) + 
+    #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  facet_grid(Analyte~EDBComp, scales = "free_y", 
+             labeller = as_labeller(c(`DroughtEDB` = "EDB Drought Year", `DroughtNoEDB` = "No EDB Drought Year", `2022` = "2022", Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
+                                      #Flow = "Flow (cfs)", 
+                                      pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water \nTemp \n(°C)"))) +
+  scale_color_brewer(palette = "Set1") +
+   scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Daily Mean Value", color = "Location") + 
+    scale_y_continuous(expand = c(0,0))+
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         legend.text = element_text(size = 12),
+         legend.title = element_text(size = 12),
+         legend.position = "top"))
+```
+
+```{r}
+
+```
+
+
+## Flow
+```{r}
+flow_daily <- wq_daily_summary_Year %>%
+  filter(Region!= "San Joaquin",
+         Analyte == "Flow")
+
+flow_daily_EDB <- wq_data_summary_EDB%>%
+  filter(Region!= "San Joaquin",
+         Analyte == "Flow",
+         Month != "Jan",
+         Month!="Feb",
+         EDBComp %in% c("2022", "DroughtEDB", "DroughtNoEDB"))
+
+flow_daily_TUCO <- wq_data_summary_TUCO%>%
+  filter(Region!= "San Joaquin",
+         Analyte == "Flow",
+         Month != "Jan",
+         Month!="Feb",
+         TUCOComp %in% c("2022", "DroughtTUCO", "DroughtNoTUCO"))
+```
+
+```{r}
+flow_2022 <- wq_data2 %>%
+  filter(Year == "2022") %>%
+  filter(Region!="San Joaquin",
+         Analyte == "Flow") %>%
+
+  select(-Date2) %>%
+    group_by(Site, Date, Month, Region) %>%
+  summarize(Daily = max(dailyval))
 ```
 
 
 ## Plot
 ```{r}
-(plot_flow <- ggplot(flow_daily) +
-   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
-   
-    facet_wrap(~Location, nrow = 2) + 
+(plot_flow_edb <- ggplot(flow_daily_EDB) +
+  geom_line(aes(x = Date2, y = Daily, color = EDBComp)) + 
+  facet_wrap(~Region, nrow = 3, scales = "free_y") + 
   # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
   scale_color_viridis(option = "turbo", discrete = TRUE) +
    scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
@@ -120,44 +419,53 @@ flow_daily <- rbind(flow_daily_frk, flow_daily_bb)
          legend.position = "top"))
 ```
 
-## Table
 
 ```{r}
-flow_daily %>%
-  filter(!Month %in% c("Jan", "Nov", "Dec")) %>%
-  group_by(Location, Month) %>%
-  summarize(Min_Outflow = min(Daily),
-            Max_Outflow = max(Daily))
+(plot_flow_tuco <- ggplot(flow_daily_TUCO) +
+  geom_line(aes(x = Date2, y = Daily, color = TUCOComp)) + 
+  facet_wrap(~Region, nrow = 3, scales = "free_y") + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Flow (cfs)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top"))
 ```
 
-# WQ
-
-WQ
 ```{r}
-wq_daily_frk <- filter(daily_frk, Analyte!= "Flow")
-wq_daily_bb <- filter(daily_bb, Analyte!= "Flow")
+png(filename = here("analysis_2022", "figures", "plot_flow_tuco.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_flow_tuco
+dev.off()
+
+
+png(filename = here("analysis_2022", "figures", "plot_flow_edb.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_flow_edb
+dev.off()
 ```
 
 
-## 2022 only
 ```{r}
-wq_2022_a <- wq_data2 %>% select(-Date2) %>%
-  filter(Year == 2022,
-         Analyte != "Flow") %>%
-  mutate(Location = ifelse(Site %in% c("DSJ", "BLP"), "Big Break", "Frank's Tract"))
+(plot_flow <- ggplot(flow_daily %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
+  geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
+  facet_grid(fYear~Region) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Flow (cfs)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top"))
+```
 
-wq_summary2022 <- wq_2022_a %>%
-  group_by(Analyte, TUCPStart, TUCPEnd) %>%
-  filter(!is.na(TUCPStart)) %>%
-  summarize(max = max(dailyval))
-
-wq_2022 <- left_join(wq_2022_a, wq_summary2022)%>%
-  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0))
-
-pal36 <- palette36.colors(36)
-pal36 <- as.vector(t(pal36))
-
-(plot_cont_2022 <-ggplot() + 
+```{r}
+(plot_flow_2022 <- ggplot(flow_2022 %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec", "Oct"))) +
     geom_rect(data = 
                 data.frame(xmin = ymd(wq_summary2022$TUCPStart), 
                            xmax = ymd(wq_summary2022$TUCPEnd), 
@@ -167,26 +475,368 @@ pal36 <- as.vector(t(pal36))
                    ymin = ymin, 
                    ymax = ymax),
                 fill = "gray95", alpha = 0.5) +
- geom_line(data= wq_2022, aes(x = Date, y = dailyval, color = Site, linetype = Location), inherit.aes = FALSE) + 
-  #geom_point(aes(x = Date, y = Daily.Mean, color = Site), size = 0.6) + 
-  facet_wrap(~Analyte, scales = "free_y", nrow = 6, strip.position = "left", 
-             labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
-                                                                                                      #Flow = "Flow (cfs)", 
-                                                                                                      pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
-    theme(strip.background = element_rect(fill="White", color = "White"),
-          strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+     geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$BarrierStartDate), 
+                           xmax = ymd(wq_summary2022$BarrierEndDate), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "azure1", alpha = 0.05) +
+   geom_line(aes(x = Date, y = Daily, color = Site)) + 
+   facet_wrap(~Region, nrow = 3) + 
+   
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
   scale_color_viridis(option = "turbo", discrete = TRUE) +
-  scale_x_date(breaks = "month", date_labels = "%b", expand = c(0,0)) + 
-    scale_linetype_manual(values = c("dashed", "solid")) +
-  labs(y = "Daily Mean Value") +
-   theme_bw() +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Flow (cfs)", color = "Station") +  
+  theme_bw() +
    theme(strip.text = element_text(size = 12),
          axis.text = element_text(size = 12),
          axis.title.x = element_blank(),
-         legend.text = element_text(size = 12),
-         legend.title = element_text(size = 12),
+         axis.title.y = element_text(size = 12),
          legend.position = "top",
          legend.box = "vertical"))
+```
+
+## Table
+
+```{r}
+table_flow <- flow_daily %>%
+  filter(fYear == "2022") %>%
+  filter(!Month %in% c("Jan", "Nov", "Dec", "Feb")) %>%
+  group_by(Region, Month) %>%
+  summarize(Min_Outflow = round(min(Daily),2),
+            Max_Outflow = round(max(Daily),2),
+            Mean_Outflow = round(mean(Daily),2),
+            SD_Outflow = round(sd(Daily)),2) %>%
+  ungroup() %>%
+  pivot_wider(names_from = "Region", values_from = c("Min_Outflow", "Max_Outflow", "Mean_Outflow", "SD_Outflow"), id_cols = "Month")
+
+write_csv(table_flow, "analysis_2022/data_clean/table_deltaflows.csv")
+```
+
+## Velocity
+```{r}
+vel_daily <- wq_daily_summary_Year %>%
+  filter(Region!= "San Joaquin",
+         Analyte == "Velocity")
+
+vel_daily_EDB <- wq_data_summary_EDB%>%
+  filter(Region!= "San Joaquin",
+         Analyte == "Velocity",
+         Month != "Jan",
+         Month!="Feb",
+         EDBComp %in% c("2022", "DroughtEDB", "DroughtNoEDB"))
+
+vel_daily_TUCO <- wq_data_summary_TUCO%>%
+  filter(Region!= "San Joaquin",
+         Analyte == "Velocity",
+         Month != "Jan",
+         Month!="Feb",
+         TUCOComp %in% c("2022", "DroughtTUCO", "DroughtNoTUCO"))
+```
+
+```{r}
+vel_2022 <- wq_data2 %>%
+  filter(Year == "2022") %>%
+  filter(Region!="San Joaquin",
+         Analyte == "Velocity") %>%
+
+  select(-Date2) %>%
+    group_by(Site, Date, Month, Region) %>%
+  summarize(Daily = max(dailyval))
+```
+
+
+## Plot
+```{r}
+(plot_vel_edb <- ggplot(vel_daily_EDB) +
+  geom_line(aes(x = Date2, y = Daily, color = EDBComp)) + 
+  facet_wrap(~Region, nrow = 3, scales = "free_y") + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Velocity", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top"))
+```
+
+
+```{r}
+(plot_vel_tuco <- ggplot(vel_daily_TUCO) +
+  geom_line(aes(x = Date2, y = Daily, color = TUCOComp)) + 
+  facet_wrap(~Region, nrow = 3, scales = "free_y") + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Velocity (cfs)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top"))
+```
+
+```{r}
+png(filename = here("analysis_2022", "figures", "plot_vel_tuco.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_vel_tuco
+dev.off()
+
+
+png(filename = here("analysis_2022", "figures", "plot_vel_edb.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_vel_edb
+dev.off()
+```
+
+
+```{r}
+(plot_vel <- ggplot(vel_daily %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
+  geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
+  facet_grid(fYear~Region) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Flow (cfs)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top"))
+```
+
+```{r}
+(plot_vel_2022 <- ggplot(vel_2022 %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec", "Oct"))) +
+    geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$TUCPStart), 
+                           xmax = ymd(wq_summary2022$TUCPEnd), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "gray95", alpha = 0.5) +
+     geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$BarrierStartDate), 
+                           xmax = ymd(wq_summary2022$BarrierEndDate), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "azure1", alpha = 0.05) +
+   geom_line(aes(x = Date, y = Daily, color = Site)) + 
+   facet_wrap(~Region, nrow = 3) + 
+   
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Velocity (cfs)", color = "Station") +  
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top",
+         legend.box = "vertical"))
+```
+
+```{r}
+png(filename = here("analysis_2022", "figures", "plot_vel_tuco.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_vel_tuco
+dev.off()
+
+
+png(filename = here("analysis_2022", "figures", "plot_vel_edb.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_vel_edb
+dev.off()
+
+
+png(filename = here("analysis_2022", "figures", "plot_velocity_2022.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_vel_2022
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+
+# Velocity
+```{r}
+vel_daily_frk <- filter(daily_frk, Analyte== "Velocity")
+vel_daily_mil <- filter(daily_mil, Analyte== "Velocity")
+vel_daily_lib <- filter(daily_lib, Analyte== "Velocity")
+vel_daily <- rbind(vel_daily_frk, vel_daily_mil, vel_daily_lib)
+vel_2022 <- wq_data2 %>%
+  filter(Year == "2022",
+         Analyte == "Velocity") %>%
+  mutate(Location = ifelse(Site %in% c("MDM", "HLT"), "Mildred Island", 
+                           ifelse(Site %in% c("SJC", "SJG"), "San Joaquin",
+                                  ifelse(Site == "LIB", "Liberty Island",
+                           "Frank's Tract")))) %>%
+  select(-Date2) %>%
+  filter(Location != "San Joaquin")
+```
+
+## Plot
+```{r}
+(plot_vel <- ggplot(vel_daily %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
+   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
+   
+    facet_wrap(~Location, nrow = 3) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Velocity (ft/s)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top"))
+```
+
+
+```{r}
+(plot_velocity_2022 <- ggplot(vel_2022 %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
+    geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$TUCPStart), 
+                           xmax = ymd(wq_summary2022$TUCPEnd), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "gray95", alpha = 0.5) +
+    geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$BarrierStartDate), 
+                           xmax = ymd(wq_summary2022$BarrierEndDate), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "bisque3", alpha = 0.05) +
+   geom_line(aes(x = Date, y = dailyval, color = Site, linetype = Location)) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Velocity (ft/s)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top",
+         legend.box = "vertical"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# WQ
+
+WQ
+```{r}
+wq_daily_frk <- filter(daily_frk, Analyte!= "Flow", Analyte!= "Velocity")
+wq_daily_mil <- filter(daily_mil, Analyte!= "Flow", Analyte!= "Velocity")
+wq_daily_lib <- filter(daily_lib, Analyte!= "Flow", Analyte!= "Velocity")
+```
+
+
+## 2022 only
+```{r}
+wq_2022_a <- wq_data2 %>% dplyr::select(-Date2) %>%
+  filter(Year == 2022,
+         Analyte != "Flow",
+         Analyte != "Velocity") 
+
+wq_summary2022 <- wq_2022_a %>%
+  group_by(Analyte, TUCPStart, TUCPEnd, BarrierStartDate, BarrierEndDate) %>%
+  filter(!is.na(TUCPStart)) %>%
+  summarize(max = max(dailyval))
+
+wq_2022 <- left_join(wq_2022_a, wq_summary2022)%>%
+  mutate(TUCP_value = ifelse(TUCP_in_effect == "Yes", max, 0))
+
+templine <- data.frame(Analyte = c("Temp"), int = c(19))
+
+(plot_cont_2022 <- ggplot() +
+    # shaded box
+    geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$TUCPStart), 
+                           xmax = ymd(wq_summary2022$TUCPEnd), 
+                           ymin = -Inf, ymax = Inf),
+                aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+                fill = "gray95", alpha = 0.5) +
+    # line for temperature at 19
+    geom_hline(data = templine, aes(yintercept = int)) + 
+    # WQ data
+    geom_line(data= wq_2022, aes(x = Date, y = dailyval, color = Site, linetype = Location), 
+              inherit.aes = FALSE) + 
+    # facet all the panels
+    facet_wrap(~Analyte, scales = "free_y", nrow = 6, strip.position = "left", 
+             labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
+            #Flow = "Flow (cfs)", 
+    pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    
+    theme(strip.background = element_rect(fill="White", color = "White"),
+          strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+    scale_color_viridis(option = "turbo", discrete = TRUE) +
+    scale_x_date(breaks = "month", date_labels = "%b", expand = c(0,0)) + 
+    scale_linetype_manual(values = c("dashed", "solid")) +
+    labs(y = "Daily Mean Value") +
+    theme_bw() +
+    theme(strip.text = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.title.x = element_blank(),
+          legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          legend.position = "top",
+          legend.box = "vertical"))
+```
+
+When did temps>19 start?
+```{r}
+temp <- wq_2022 %>% filter(Analyte == "Temp") %>% 
+    select(Site, Year, Month, Date, Daily.Max) %>%
+  mutate(HOT = ifelse(Daily.Max > 19, 1,0),
+         daysrow = HOT + lag(HOT))
+
+
+temp_hot <- temp %>% 
+  filter(HOT == "Y") %>%
+  group_by(Site) %>%
+  summarize(n = n(),
+            firstDate = first(Date),
+            lastDate = last(Date))
+
+# April in Frank's Tract, April 7 in Mildred Island
+# Consistent: May 17 (FAL), May 13-15 for all other sites
+
 ```
 
 ## Across year, by parameter - don't use this plot
@@ -224,8 +874,8 @@ pal36 <- as.vector(t(pal36))
          legend.title = element_text(size = 12),
          legend.position = "top"))
 
-# Big Break
-(plot_cont_jday_bb <- ggplot(wq_daily_bb) +
+# Mildred Island
+(plot_cont_jday_mil <- ggplot(wq_daily_mil) +
   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
     #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
   facet_wrap(~Analyte, scales = "free_y", nrow = 8, strip.position = "left", labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", DO.Pct = "DO %",Flow = "Flow (cfs)", pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
@@ -243,24 +893,37 @@ pal36 <- as.vector(t(pal36))
          legend.position = "top"))
 ```
 
-Comparing Big Break and Frank's Tract, select years
+Comparing Mildred Island and Frank's Tract, select years
 ```{r}
-wq_daily_comb <- rbind(wq_daily_bb, wq_daily_frk) %>%
+wq_daily_comb <- rbind(wq_daily_mil, wq_daily_frk) %>%
   filter(fYear %in% c("2015", "2020", "2021", "2022"))
 
-(plot_bb_vs_frk <- ggplot(wq_daily_comb) +
-    geom_col(aes(x = Date2, y = TUCP_value), fill = "gray87", color = "gray87") + 
+# df <- data.frame(xmin = ymd(wq_summary$BarrierStartDate), 
+#                            xmax = ymd(wq_summary2022$BarrierEndDate), 
+#                            ymin = -Inf, ymax = Inf)
+# 
+# 
+#                aes(xmin = xmin, 
+#                    xmax = xmax, 
+#                    ymin = ymin, 
+#                    ymax = ymax),
+#                 fill = "bisque3", alpha = 0.05) 
+
+
+
+(plot_mil_vs_frk <- ggplot(wq_daily_comb) +
+  geom_point(aes(x = Date2, y = TUCP_value), fill = "gray87", color = "gray87") + 
+  geom_col(aes(x = Date2, y = Barrier_value), fill = "bisque", color = "bisque", alpha = 0.3) + 
   geom_line(aes(x = Date2, y = Daily, color = Location)) + 
     #geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
   facet_grid(Analyte~fYear, scales = "free_y", 
              labeller = as_labeller(c(`2015` = "2015", `2020` = "2020 (no TUCP)", `2021` = "2021", `2022` = "2022", Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
                                       #Flow = "Flow (cfs)", 
                                       pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water \nTemp \n(°C)"))) +
-    #theme(strip.background = element_rect(fill="White", color = "White"),
-     #     strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
   scale_color_brewer(palette = "Set1") +
    scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + 
   labs(y = "Daily Mean Value", color = "Location") + 
+    scale_y_continuous(expand = c(0,0))+
   theme_bw() +
    theme(strip.text = element_text(size = 12),
          axis.text = element_text(size = 12),
@@ -270,15 +933,244 @@ wq_daily_comb <- rbind(wq_daily_bb, wq_daily_frk) %>%
          legend.position = "top"))
 ```
 
+# Salinity
+```{r}
+spc <- readRDS(here(data_root, "data_raw", "CDEC_spc_EMM_TMS_2013_2022.rds")) %>%
+  mutate(Date2 = paste0(1980, "-", Month, "-", day(Date)),
+         Date2 = ymd(Date2))
+spc_dry <- filter(spc, Year %in% c(2013, 2016, 2020, 2022),
+                  !Month %in% c("Jan", "Feb", "Nov", "Dec"))
+
+table <- spc_dry %>%
+  mutate(Group = ifelse(Year == 2022, "2022", "Other")) %>%
+  group_by(Group, Site, Month) %>%
+  summarize(mean = mean(Daily.Mean))
+```
+
+```{r}
+(plot_spc<-ggplot() + 
+  geom_rect(data = 
+                data.frame(xmin = lubridate::ymd("1980-04-01"), 
+                           xmax = lubridate::ymd("1980-06-30"), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "gray95", alpha = 0.5) +
+  geom_line(data = spc_dry, aes(x = Date2, y= Daily.Mean, color = factor(Year))) + 
+  scale_color_viridis(discrete = TRUE, option = "turbo") + 
+   
+  facet_wrap(~factor(Site), nrow = 2) +
+  labs(y = "Daily Mean SPCond (uS/cm)") + 
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + theme_bw() +
+  theme(axis.title.x = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "top"))
+```
+
+Write plot
+```{r}
+png(filename = here("analysis_2022", "figures", "plot_spc.png"), width = 6, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_spc
+dev.off()
+```
 
 
 
-Export Figures
+# Flow
+
+```{r}
+flow_daily_frk <- filter(daily_frk, Analyte== "Flow")
+flow_daily_mil <- filter(daily_mil, Analyte== "Flow")
+flow_daily_lib <- filter(daily_lib, Analyte == "Flow")
+flow_daily <- rbind(flow_daily_frk, flow_daily_mil, flow_daily_lib)
+
+flow_2022 <- wq_data2 %>%
+  filter(Year == "2022",
+         Analyte == "Flow") %>%
+  mutate(Location = ifelse(Site %in% c("MDM", "HLT"), "Mildred Island", 
+                           ifelse(Site %in% c("SJC", "SJG"), "San Joaquin",
+                                  ifelse(Site == "LIB", "Liberty Island",
+                           "Frank's Tract")))) %>%
+  select(-Date2) %>%
+  filter(Location != "San Joaquin")
+```
+
+
+## Plot
+```{r}
+(plot_flow <- ggplot(flow_daily %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
+   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
+   
+    facet_wrap(~Location, nrow = 3) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Flow (cfs)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top"))
+```
+
+```{r}
+(plot_flow_2022 <- ggplot(flow_2022 %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
+    geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$TUCPStart), 
+                           xmax = ymd(wq_summary2022$TUCPEnd), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "gray95", alpha = 0.5) +
+     geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$BarrierStartDate), 
+                           xmax = ymd(wq_summary2022$BarrierEndDate), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "bisque3", alpha = 0.05) +
+   geom_line(aes(x = Date, y = dailyval, color = Site, linetype = Location)) + 
+   
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+   scale_linetype_manual(values = c("solid", "dotdash", "longdash")) + 
+  labs(y = "Flow (cfs)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top",
+         legend.box = "vertical"))
+```
+
+
+
+## Table
+
+```{r}
+table_flow <- flow_daily %>%
+  filter(fYear == "2022") %>%
+  filter(!Month %in% c("Jan", "Nov", "Dec", "Feb")) %>%
+  group_by(Location, Month) %>%
+  summarize(Min_Outflow = round(min(Daily),2),
+            Max_Outflow = round(max(Daily),2),
+            Mean_Outflow = round(mean(Daily),2),
+            SD_Outflow = round(sd(Daily)),2) %>%
+  ungroup() %>%
+  pivot_wider(names_from = "Location", values_from = c("Min_Outflow", "Max_Outflow", "Mean_Outflow", "SD_Outflow"), id_cols = "Month")
+
+write_csv(table_flow, "analysis_2022/data_clean/table_deltaflows.csv")
+```
+
+
+
+
+# Velocity
+```{r}
+vel_daily_frk <- filter(daily_frk, Analyte== "Velocity")
+vel_daily_mil <- filter(daily_mil, Analyte== "Velocity")
+vel_daily_lib <- filter(daily_lib, Analyte== "Velocity")
+vel_daily <- rbind(vel_daily_frk, vel_daily_mil, vel_daily_lib)
+vel_2022 <- wq_data2 %>%
+  filter(Year == "2022",
+         Analyte == "Velocity") %>%
+  mutate(Location = ifelse(Site %in% c("MDM", "HLT"), "Mildred Island", 
+                           ifelse(Site %in% c("SJC", "SJG"), "San Joaquin",
+                                  ifelse(Site == "LIB", "Liberty Island",
+                           "Frank's Tract")))) %>%
+  select(-Date2) %>%
+  filter(Location != "San Joaquin")
+```
+
+## Plot
+```{r}
+(plot_vel <- ggplot(vel_daily %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
+   geom_line(aes(x = Date2, y = Daily, color = fYear)) + 
+   
+    facet_wrap(~Location, nrow = 3) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Velocity (ft/s)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top"))
+```
+
+
+```{r}
+(plot_velocity_2022 <- ggplot(vel_2022 %>% filter(!Month%in% c("Jan", "Feb", "Nov", "Dec"))) +
+    geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$TUCPStart), 
+                           xmax = ymd(wq_summary2022$TUCPEnd), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "gray95", alpha = 0.5) +
+    geom_rect(data = 
+                data.frame(xmin = ymd(wq_summary2022$BarrierStartDate), 
+                           xmax = ymd(wq_summary2022$BarrierEndDate), 
+                           ymin = -Inf, ymax = Inf),
+               aes(xmin = xmin, 
+                   xmax = xmax, 
+                   ymin = ymin, 
+                   ymax = ymax),
+                fill = "bisque3", alpha = 0.05) +
+   geom_line(aes(x = Date, y = dailyval, color = Site, linetype = Location)) + 
+  # geom_point(aes(x = Date2, y = Daily, color = fYear), size = 0.3) +
+  scale_color_viridis(option = "turbo", discrete = TRUE) +
+   scale_x_date(breaks = "1 month", date_labels = "%b", expand = c(0,0)) + 
+  labs(y = "Velocity (ft/s)", color = "Year") + 
+  theme_bw() +
+   theme(strip.text = element_text(size = 12),
+         axis.text = element_text(size = 12),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 12),
+         legend.position = "top",
+         legend.box = "vertical"))
+```
+
+
+
+
+
+# Export Figures
 ```{r}
 # Flow
 png(filename = here("analysis_2022", "figures", "plot_flow.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
 plot_flow
 dev.off()
+
+png(filename = here("analysis_2022", "figures", "plot_flow_2022.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_flow_2022
+dev.off()
+
+# Velocity
+
+png(filename = here("analysis_2022", "figures", "plot_velocity.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_vel
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "plot_velocity_2022.png"), width = 5, height = 4, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_velocity_2022
+dev.off()
+
+
+
 
 # 2022 WQ
 png(filename = here("analysis_2022", "figures", "plot_cont_2022.png"), width = 9, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
@@ -290,17 +1182,17 @@ dev.off()
 # dev.off()
 
 # WQ compared years
-png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_SDelta.png"), width = 10, height = 9, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_Franks.png"), width = 10, height = 9, units = "in", pointsize = 12, family = "sans", res = 300)
 plot_cont_jday_frk
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_BigBreak.png"), width = 10, height = 9, units = "in", pointsize = 12, family = "sans", res = 300)
-plot_cont_jday_bb
+png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022_averaged_Mildred.png"), width = 10, height = 9, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_cont_jday_mil
 dev.off()
 
 # Comparison Franks and BB
 png(filename = here("analysis_2022", "figures", "plot_cont_bb_vs_frk.png"), width = 10, height = 7, units = "in", pointsize = 9, family = "sans", res = 300)
-plot_bb_vs_frk
+plot_mil_vs_frk
 dev.off()
 ```
 

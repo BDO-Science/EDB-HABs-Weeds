@@ -12,39 +12,46 @@ library(deltamapr)
 ## SWB_Incident_All2022 includes historical data through May 2022
 ## SWB_Incident_2022only includes all 2022 data (so, more recent than May)
 
-fhabportal <- read_csv("analysis_2022/data_raw/SWB_Incident_All2022.csv")
-fhabportal22 <- read_csv("analysis_2022/data_raw/SWB_Incident_2022only.csv")
+#fhabportal <- read_csv("analysis_2022/data_raw/SWB_Incident_All2022.csv")
+#fhabportal22 <- read_csv("analysis_2022/data_raw/SWB_Incident_2022only.csv")
+fhabportalclean <- read_csv("analysis_2022/data_raw/SWB_Incident_Clean_20221118.csv") %>%
+  filter(fhabportal, Latitude >30, Latitude <45, Longitude >-130, Longitude < -110)
 
 #some of the lats and longs are mistakes - filter for lat/lon ----------------------------------
 
-fhabportal = filter(fhabportal, Latitude >30, Latitude <45, Longitude >-130, Longitude < -110)
-fhabportal22 = filter(fhabportal, Latitude >30, Latitude <45, Longitude >-130, Longitude < -110)
+# fhabportal = filter(fhabportal, Latitude >30, Latitude <45, Longitude >-130, Longitude < -110)
+# fhabportal22 = filter(fhabportal22, Latitude >30, Latitude <45, Longitude >-130, Longitude < -110)
 
 # combine two files, clean up data and make sf (spatial) -----------------------------------------------------
-fhab22 = filter(fhabportal22, !is.na(Longitude)) %>%
-  select(AlgaeBloomReportID, ObservationDate, WaterBodyName, Advisory = TypeofSign, OfficialWaterBodyName, Latitude, Longitude) %>%
+fhab = filter(fhabportalclean, !is.na(Longitude), Longitude != 0) %>%
+  janitor::clean_names(case = "upper_camel")  %>%
+  dplyr::select(CaseId,
+         ObservationDate=ReportObservationDate,
+         WaterBodyName,
+         Advisory = AdvisoryRecommendedType,
+         WaterBodyName,
+         Latitude,
+         Longitude) %>%
   dplyr::mutate(Date = mdy(ObservationDate),
                 Month = month(Date),
                 Analyte = "Unknown",
                 Study = "Incident Report",
-                Station = OfficialWaterBodyName,
+                Station = WaterBodyName,
                 Year = as.numeric(year(Date))) %>%
-  select(Station, Date, Year, Month, Analyte, Advisory, Study, Latitude, Longitude)
+  select(CaseId, Station, Date, Year, Month, Analyte, Advisory, Study, Latitude, Longitude)
 
 
-fhab1 = filter(fhabportal, !is.na(Longitude)) %>%
-  select(AlgaeBloomReportID, ObservationDate, WaterBodyName, Advisory = TypeofSign, OfficialWaterBodyName, Latitude, Longitude) %>%
-  dplyr::mutate(Date = mdy(ObservationDate),
-                Month = month(Date),
-                Analyte = "Unknown",
-                Study = "Incident Report",
-                Station = OfficialWaterBodyName,
-                Year = as.numeric(year(Date))) %>%
-  select(Station, Date, Year, Month, Analyte, Advisory, Study, Latitude, Longitude)
+# fhab1 = filter(fhabportal, !is.na(Longitude)) %>%
+#   select(AlgaeBloomReportID, ObservationDate, WaterBodyName, Advisory = TypeofSign, OfficialWaterBodyName, Latitude, Longitude) %>%
+#   dplyr::mutate(Date = mdy(ObservationDate),
+#                 Month = month(Date),
+#                 Analyte = "Unknown",
+#                 Study = "Incident Report",
+#                 Station = OfficialWaterBodyName,
+#                 Year = as.numeric(year(Date))) %>%
+#   select(Station, Date, Year, Month, Analyte, Advisory, Study, Latitude, Longitude)
 
-fhabsf <- rbind(fhab1, fhab22) %>% st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
-
-ggplot()+ geom_sf(data = WW_Delta)+ geom_sf(data = fhabsf)
+fhabsf <- st_as_sf(fhab, coords = c("Longitude", "Latitude"), crs = 4326)
 
 # Crop data to Delta ------------------------------------------------------
 
@@ -63,21 +70,21 @@ ggplot()+ geom_sf(data = WW_Delta)+ geom_sf(data = fhabsf)
   geom_sf(data = fhabsf2, color = "blue")+
   geom_sf(data = delta4326, fill = NA)
 
-  ggplot()+ geom_sf(data = WW_Delta)+ geom_sf(data = fhabsf2, aes(color = TypeofSign))
+  ggplot()+ geom_sf(data = WW_Delta)+ geom_sf(data = fhabsf2, aes(color = Advisory))
 
 # Clean up warnings ---------------------------------------------------------
 
   ## Standardize warnings
-    fhabsf2 = mutate(fhabsf2, Advisory = case_when(
-      str_detect(Advisory, "caution") ~ "Caution",
-      str_detect(Advisory, "none") ~ "No Advisory",
-      str_detect(Advisory, "warning") ~ "Warning",
-      str_detect(Advisory, "danger") ~ "Danger"
+    fhabsf3 = mutate(fhabsf2, Advisory = case_when(
+      str_detect(Advisory, "Caution") ~ "Caution",
+      str_detect(Advisory, "None") ~ "No Advisory",
+      str_detect(Advisory, "Warning") ~ "Warning",
+      str_detect(Advisory, "Danger") ~ "Danger"
     )) %>%
    filter(!is.na(Advisory))
 
 # Write data -----------------------------------------------------------
-saveRDS(fhabsf2, here("analysis_2022", "data_clean", "incident_data.rds"))
+saveRDS(fhabsf3, here("analysis_2022", "data_clean", "incident_data.rds"))
 
 # Plot multi-year (didn't use these for report, just taking a look) -------------------------------------------------------------------
 ggplot()+ geom_sf(data = WW_Delta)+ geom_sf(data = fhabsf2, aes(color = Advisory))+

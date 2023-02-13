@@ -1,0 +1,164 @@
+---
+title: "plot_ptox_data"
+author: "Catarina Pien"
+date: '2022-12-08'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(sf)
+library(lubridate)
+library(deltamapr)
+library(tidyr)
+library(readxl)
+library(here)
+library(viridis)
+```
+
+#EDB Data
+```{r}
+ptox_edb <- read_excel(here("analysis_2022", "data_raw", "ToxinResults_Barriersampling_EH.xlsx"), sheet = "PTOX results") %>%
+  filter(!SpeciesPresent %in% c("Geitlerinema Splendidum"),
+         !grepl("DUP", SampleID)) %>%
+  rename(StationCode = Station) %>%
+  mutate(UnitsperML = ifelse(is.na(UnitsperML), 0, UnitsperML)) %>%
+  mutate(Month = month(Date,label = TRUE)) %>%
+  pivot_wider(names_from = SpeciesPresent, values_from = UnitsperML,values_fill = 0) %>%
+  select(-"NA") %>%
+  pivot_longer(cols = Dolichospermum: Phormidium, names_to = "SpeciesPresent", values_to = "UnitsperML") %>%
+  mutate(Abundance = case_when(UnitsperML == 0 ~ "ND",
+                              UnitsperML < 10 ~ "<10",
+                               UnitsperML >= 10 & UnitsperML < 100 ~ "10-100",
+                               UnitsperML >= 100 & UnitsperML < 1000 ~ "100-1000",
+                               UnitsperML >= 1000 ~ ">1000"))
+
+latlons <- read_excel(here("analysis_2022", "data_clean", "continuous_stations.xlsx"))
+
+ptox_ll <- ptox_edb %>% left_join(latlons) %>%
+  mutate(Latitude = ifelse(StationCode == "BET", 38.041092, Latitude),
+         Longitude = ifelse(StationCode == "BET", -121.632187, Longitude))
+
+ptox_sf <- st_as_sf(ptox_ll, coords = c("Longitude", "Latitude"), crs = 4326)
+ptox_sf$Abundance <- factor(ptox_sf$Abundance, levels = c("ND", "<10", "10-100", "100-1000", ">1000"))
+levels(ptox_sf$Abundance)
+
+ptox_coords <- ptox_sf %>%
+  select(StationCode) %>%
+  unique() %>%
+  mutate(Study = "EDB")
+saveRDS(ptox_coords, "analysis_2022/data_clean/ptox_edb_coords.rds")
+
+```
+Plots
+```{r}
+
+ggplot(ptox_edb) + geom_tile(aes(Month,SpeciesPresent, fill = UnitsperML)) + 
+  facet_wrap(~StationCode) + 
+  scale_fill_viridis(option = "turbo") + theme_bw()
+
+ggplot(ptox_edb) + geom_point(aes(Date, UnitsperML, color = SpeciesPresent)) + facet_wrap(~StationCode)
+
+(ptox_map <- ggplot() + 
+  geom_sf(data = WW_Delta, color = "gray90", fill = "lightcyan1", alpha = 0.9) + 
+  geom_sf(data = ptox_sf, aes(color = Abundance), inherit.aes = FALSE, size = 2) + 
+  scale_colour_manual(values = c("gray65", viridis::viridis(5, option = "plasma")[1:4])) +
+  facet_grid(SpeciesPresent~Month)+
+    scale_x_continuous(limits = c(-121.75, -121.45)) +
+  scale_y_continuous( limits = c(37.95, 38.125)) +
+  labs(color = "Approximate\nAbundance\n(units/mL)")+
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 11, angle = 45, hjust = 1),
+        strip.text.y = element_text(size = 9)))
+
+```
+
+# Clifton Court Data
+```{r}
+# Cat altered this datasheet from Sheet1. 
+
+ptox_swp <- read_excel(here("analysis_2022", "data_raw", "DFD_SWP_cyano_data_2022.xlsx"), sheet = "PTOX") %>%
+  #filter(!SpeciesPresent %in% c("Geitlerinema Splendidum"),
+  #       !grepl("DUP", SampleID)) %>%
+  mutate(UnitsperML = ifelse(UnitsperML == "ND", 0, UnitsperML),
+         UnitsperML = as.numeric(UnitsperML)) %>%
+  mutate(Month = month(Date,label = TRUE)) %>%
+  pivot_wider(names_from = SpeciesPresent, values_from = UnitsperML,values_fill = 0) %>%
+  select(-"none observed") %>%
+  pivot_longer(cols = Dolichospermum: Phormidium, names_to = "SpeciesPresent", values_to = "UnitsperML") %>%
+  mutate(Abundance = case_when(UnitsperML == 0 ~ "ND",
+                              UnitsperML < 10 ~ "<10",
+                               UnitsperML >= 10 & UnitsperML < 100 ~ "10-100",
+                               UnitsperML >= 100 & UnitsperML < 1000 ~ "100-1000",
+                               UnitsperML >= 1000 ~ ">1000"))
+
+
+site_swp <- read_excel(here("analysis_2022", "data_raw", "DWR_SWP_Cyanotoxin_results_2022.xlsx"), sheet = "Sample Location Info") %>%
+  janitor::clean_names(case = "big_camel") %>%
+  rename(StationCode = Name)
+
+ptox_ll_swp <- ptox_swp %>% 
+  mutate(StationCode = case_when(Station == "NBA Barker Sl PP" ~ "Barker Slough Pumping Plant",
+                                  Station == "Banks PP" ~ "Banks Pumping Plant",
+                                  Station == "Clifton Court Forebay"~"Clifton Court Forebay Inlet",
+                                  Station == "Dyer Res Outlet" ~ "Dyer Reservoir Outlet",
+                                  grepl("Lake Del Valle", Station) ~ "Lake Del Valle",
+                                  TRUE ~ Station)) %>%
+  left_join(site_swp) %>%
+  separate(ApproximateGpsCoordinates, c("Latitude", "Longitude"), sep = ",") %>%
+  mutate(Latitude = case_when(Station == "NBA Barker Sl PP" ~ 38.275900,
+                              Station == "Banks PP" ~ 37.801944,
+                              StationCode == "Lake Del Valle" ~ 37.586130,
+                              TRUE ~ as.numeric(Latitude)),
+         Longitude = case_when(Station == "NBA Barker Sl PP" ~ -121.7965,
+                              Station == "Banks PP" ~ -121.620278,
+                              StationCode == "Lake Del Valle" ~ -121.703795,
+                              TRUE ~ as.numeric(Longitude))) %>%
+  filter(SpeciesPresent %in% c("Dolichospermum", "Aphanizomenon", "Microcystis", "Planktothrix", "Phormidium"),
+         StationCode != "Lake Del Valle")
+
+ptox_swp_sf <- st_as_sf(ptox_ll_swp, coords = c("Longitude", "Latitude"), crs = 4326)
+ptox_swp_sf$Abundance <- factor(ptox_swp_sf$Abundance, levels = c("ND", "<10", "10-100", "100-1000", ">1000"))
+levels(ptox_swp_sf$Abundance)
+```
+
+
+Plots
+```{r}
+unique(ptox_swp_sf$SpeciesPresent)
+
+ptox_swp_map <- ggplot() + 
+  geom_sf(data = WW_Delta, color = "gray90", fill = "lightcyan1", alpha = 0.9) + 
+  geom_sf(data = ptox_swp_sf, aes(color = Abundance), inherit.aes = FALSE, size = 2) + 
+  scale_colour_manual(values = c("gray65", viridis::viridis(5, option = "plasma")[1:4])) +
+  facet_grid(SpeciesPresent~Month)+
+  scale_x_continuous(limits = c(-121.75, -121.45)) +
+  scale_y_continuous(limits = c(37.7, 37.95)) +
+  labs(color = "Approximate\nAbundance\n(units/mL)")+
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 9, angle = 45, hjust = 1),
+        strip.text.y = element_text(size = 9))
+
+```
+
+
+
+```{r}
+png(filename = here("analysis_2022", "figures", "ptox_map.png"), width = 8, height = 8, units = "in", pointsize = 11, family = "sans", res = 300)
+ptox_map
+dev.off()
+
+
+png(filename = here("analysis_2022", "figures", "ptox_swp_map.png"), width = 8, height = 8, units = "in", pointsize = 11, family = "sans", res = 300)
+ptox_swp_map
+dev.off()
+```
+
+

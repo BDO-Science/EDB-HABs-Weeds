@@ -7,6 +7,12 @@ editor_options:
   chunk_output_type: console
 ---
 
+# In this code we make the following maps:
+
+1) Continuous WQ
+2) Continuous WQ + Discrete WQ (Nutrients and Physical)
+3) Phytoplankton (EMP) + Microcystis Visual Index
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -22,100 +28,255 @@ library(deltamapr)
 library(sf)
 library(ggspatial)
 library(readxl)
+library(tigris)
+library(cowplot)
 
 data_root = "analysis_2022/"
 ```
 
+# Regions and States Data
 ```{r}
+
+load("./data/Regions.RData")
+reg3crop = st_crop(reg3, xmin = -121.9, xmax = -121.2, ymin = 37.65, ymax = 38.4)
+ca <- states(cb = TRUE, resolution = "500k") %>%
+  dplyr::filter(NAME == "California")
+ca_sf <- st_transform(ca, crs = 4269)
+```
+
+# Water Quality
+```{r}
+# continuous stations -----------------------
 sta_cont <- read_excel(here(data_root, "data_clean", "continuous_stations.xlsx")) %>%
-  filter(Type == "WQ") %>%
+  filter(Type != "Air Temp") %>%
   dplyr::select(-Type) %>%
   rename(Station = StationCode) %>%
-  mutate(WQ = "Continuous") %>%
   mutate(Source = case_when(
     Station == "FRK" ~ "DWR_EMP",
-    Station %in% c("MDM", "ORQ", "DSJ") ~ "USGS_CAWSC",
-    TRUE ~ "DWR_NCRO"
-  ))
+    Station %in% c("MDM", "ORQ", "DSJ", "SJG", "VNS") ~ "USGS_CAWSC",
+    Station %in% c("DTO", "HRO", "TRP") ~ "DWR_O&M",
+    TRUE ~ "DWR_NCRO")) %>%
+    mutate(Data = case_when(Source == "DWR_O&M" | Station == "VNS" ~ "Flow", 
+                          TRUE ~ "Continuous WQ"))
 
-sta_discrete <- read_csv(here(data_root, "data_clean", "discrete_wq_stations_all_2022.csv")) %>%
-  mutate(WQ = "Discrete")
+# discrete stations -------------------------
+#sta_discrete <- read_csv(here(data_root, "data_clean", "discrete_wq_stations_all_2022.csv")) %>%
+#  mutate(WQ = "Discrete")
 
-sta_combined <- bind_rows(sta_cont, sta_discrete) %>%
+habsnuts <-  read_csv("analysis_2022/data_clean/HABs_FinalNuts.csv") %>%
+  select(Source, Station, Latitude, Longitude) %>%
+  distinct() %>%
+  mutate(Data = "Discrete WQ")
+
+sta_combined <- bind_rows(sta_cont, habsnuts) %>%
   filter(!is.na(Latitude))
 
+sta_sf <- st_as_sf(sta_combined, coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
+  filter(ifelse(Data == "Flow", Longitude > -122.1, Longitude > -121.85))
 
-
- # wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2015_2022.rds")) %>%
- #   mutate(fYear = factor(Year))
-
-# For map:
-# wq_sf <- st_as_sf(wq_data, coords = c("Longitude", "Latitude"), remove = FALSE)
-# st_crs(wq_sf) <- 4326
-# 
-# stations <- wq_sf %>% 
-#   dplyr::select(Site, Analyte, Latitude, Longitude) %>%
-#   unique()
-# CRS
-sta_sf <- st_as_sf(sta_combined, coords = c("Longitude", "Latitude"), remove = FALSE) %>%
-  filter(Longitude > -121.85)
-st_crs(sta_sf) <- 4326
 delta_4326 <- st_transform(WW_Delta, crs = st_crs(sta_sf))
-#Regions
-load("./data/Regions.RData")
+
+```
+
+## Make map of regions
+```{r}
+(regions_map <- ggplot() + 
+  geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
+  geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
+  geom_sf_label(data = reg3crop, aes(label = Stratum2), size = 3.8,
+               nudge_y = c(0.1, 0.05, 0, 0, 0, 0, -0.01, 0),
+               nudge_x = c(-0.05, 0.05, -0.08, 0.07, 0.09, 0.1, 0, -0.01))+
+  scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  scale_color_manual(values = c("mediumblue", "sienna3")) +
+  scale_x_continuous(limits = c(-121.9, -121.2)) +
+  scale_y_continuous(limits = c(37.7, 38.6))+
+  labs(fill = "Region") + 
+  annotation_north_arrow(location = "tl", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
+  theme_bw() +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text = element_text(size = 12),
+        axis.text.x = element_text(angle = 45, vjust = 0.5)))
+```
+
+California shapefile
+```{r}
+(map_ca <- ggplot() + geom_sf(data = ca_sf, fill = "gray95") + 
+  geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
+   theme_classic() + theme(axis.text = element_blank(),
+                           panel.grid.major = element_blank(), 
+                           panel.grid.minor = element_blank(),
+                           panel.background = element_rect(fill = "transparent",colour = NA),
+                           plot.background = element_rect(fill = "transparent",colour = NA),
+                           axis.ticks = element_blank(),
+                           axis.line = element_blank(),
+                           panel.border = element_rect(colour = "black", fill=NA, size=1)))
+
+```
+
+```{r}
+(inset_map = ggdraw() +
+  draw_plot(regions_map) +
+  draw_plot(map_ca, x = 0.63, y = 0.72, width = 0.28, height = 0.25))
 ```
 
 
+```{r}
+png(filename = here("analysis_2022", "figures", "map_regions.png"), width = 5, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+inset_map
+dev.off()
+```
+
+
+
 ## Map of stations
+### Continuous
 ```{r}
 cont <- sta_sf %>%filter(WQ == "Continuous") %>%
-  mutate(Location = ifelse(Station %in% c("DSJ", "BLP"), "Big Break", "Frank's Tract"))
+  mutate(Location = ifelse(Station %in% c("DSJ", "BLP"), "Big Break", 
+                           ifelse(Station %in% c("MDM", "HLT"), "Mildred Island",
+                                  ifelse(Station %in% c("SJG", "SJC", "VNS"), "San Joaquin",
+                           "Frank's Tract")))) %>%
+  filter(Location != "San Joaquin")
 
 
 (cont_map <- ggplot() + 
   geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
-
-  geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.1)+
+  geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
   geom_sf(data = cont, aes(color = Location), inherit.aes = FALSE)+
   geom_text(data = cont, aes(x = Longitude, y = Latitude, label = Station), size = 3, vjust = 1, hjust = 1)+
-  scale_color_manual(values = c("mediumblue", "sienna3")) +
+  scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  scale_color_manual(values = c("mediumblue", "sienna3", "gold2")) +
   scale_x_continuous(limits = c(-121.8, -121.4)) +
   scale_y_continuous( limits = c(37.9, 38.15))+
-    labs(fill = "Region") + 
+  labs(fill = "Region") + 
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
-      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
+  annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
+  theme_bw())
+```
+
+```{r}
+(cont_map2 <- ggplot() + 
+  geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
+  geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
+  geom_sf(data = cont, aes(color = Location), inherit.aes = FALSE)+
+  geom_text(data = cont, aes(x = Longitude, y = Latitude, label = Station), size = 3, vjust = 1, hjust = 1)+
+  scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  scale_color_manual(values = c("mediumblue", "sienna3", "gold2", "darkgray")) +
+ scale_x_continuous(limits = c(-121.8, -121.25)) +
+  scale_y_continuous( limits = c(37.64, 38.15))+
+  labs(fill = "Region") + 
+  annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+  annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
   theme_bw())
 ```
 
 
+
+### Discrete and Continuous
 ```{r}
+sta_noSJ <- sta_sf %>%
+  filter(!Station %in% c("SJC", "SJG", "BLP", "LIS", "FCT"))
+
 (wq_map <- ggplot() + 
   geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
   geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
-  geom_sf(data = sta_sf, aes(color = WQ, shape = Source), inherit.aes = FALSE)+
-   # geom_text(data = stations, aes(x = Longitude, y = Latitude, label = Site), size = 3, vjust = 1, hjust = 1)+
-  scale_x_continuous(limits = c(-122, -121.2)) +
-  scale_y_continuous( limits = c(37.7, 38.6))+
-   labs(fill = "Region") + 
+  geom_sf(data = sta_noSJ, aes(color = Data, shape = Source, size = Data), inherit.aes = FALSE)+
+  geom_text(data = sta_noSJ %>% filter(Data %in% c("Continuous WQ", "Flow")), aes(x = Longitude, y = Latitude, label =  Station), nudge_x = c(-0.02, -0.005, 0.05, 0.05, 0.02, -0.005, -0.005,-0.01, 0, 0.05, 0, 0.04), nudge_y = c(0.02,-0.01, -0.005, 0.01, 0.03, 0, 0, 0, 0,-0.02, -0.02, -0.02), size = 3, vjust = 1, hjust = 1)+
+    
+  scale_x_continuous(limits = c(-122.05, -121.26)) +
+  scale_y_continuous( limits = c(37.67, 38.57))+
+  scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  scale_shape_manual(values = c(21, 8,25, 3)) + 
+  scale_size_manual(values = c(2, 1, 3)) +
+  labs(fill = "Region") + 
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
       annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
-   scale_color_manual(values = c("sienna3","blue4")) + 
-  theme_bw())
+   scale_color_manual(values = c("red","blue4", "orange")) + 
+  theme_bw()) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5),
+        axis.title = element_blank())
 ```
 
 ## Write
 
 ```{r}
-png(filename = here("analysis_2022", "figures", "wq_map.png"), width = 6, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "map_wq.png"), width = 6, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
 wq_map
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "cont_map.png"), width = 6, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "map_cont_wq.png"), width = 6, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
 cont_map
+dev.off()
+```
+
+# Phytoplankton and Microcystis Visual Index
+
+## Process
+```{r}
+phytodata <- readRDS("analysis_2022/data_clean/emp_phyto_data_through2022.rds") %>% 
+  extract(geometry, into = c("Longitude", "Latitude"), '\\((.*),(.*)\\)', conv = T) %>%
+  dplyr::select(Station, Longitude, Latitude) %>%
+  st_drop_geometry() %>%
+  distinct() %>%
+  mutate(Source = "EMP",
+         Data = "Phytoplankton")
+
+load(here("analysis_2022", "data_clean", "HABSw2022.RData"))
+
+micdata <- HABs2022 %>%
+  select(Source, Station, Latitude, Longitude) %>%
+  distinct() %>%
+  mutate(Data = "Microcystis Index") %>%
+  filter(Source !="DOP")
+
+phyto_combined <- rbind(micdata, phytodata)  %>%
+  filter(!is.na(Latitude)) %>%
+  distinct() %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326) %>%
+  st_intersection(reg3) # This part ensures we only capture those that are in strata
+
+```
+
+## Map
+
+```{r}
+(map_phyto_micro <- ggplot()+
+  geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
+  geom_sf(data =reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
+  geom_sf(data =phyto_combined, aes(shape = Source, color = Data, size = Data), inherit.aes = FALSE,alpha = 0.8)+
+  scale_color_manual(values= c("black", "red"))+
+  scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
+  theme_bw()+
+  scale_x_continuous(limits = c(-121.9, -121.2)) +
+  scale_y_continuous( limits = c(37.65, 38.6))+
+  scale_size_manual(values= c(1,3)) +
+  annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
+  annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
+  annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
+  labs(fill = "Region") + 
+  theme(legend.position = "right",
+        #legend.direction = "horizontal",
+        #legend.box = "vertical",
+        axis.title = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust = 0.5)))
+```
+
+```{r}
+png(filename = here("analysis_2022", "figures", "map_phytoplankton_microcystis.png"), width = 6, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+map_phyto_micro
 dev.off()
 ```
 

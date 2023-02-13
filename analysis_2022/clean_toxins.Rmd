@@ -60,6 +60,11 @@ ct_naut0 = read_excel(here(root, "data_raw", "Nautilus_HAB_Chlorophyll_2022.xlsx
 ct_usgs0 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_WW.tsv"))
 site_usgs0 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_SiteLatLon.tsv"))
 ct_prop1 <- read_excel(here(root, "data_raw", "Prop1_cyanotoxin_watersamples_July2022.xlsx"), skip=4)
+ct_restore <- read_excel(here(root, "data_raw", "RestoreDelta_StocktonHABS_2022_AllData.xlsx"))
+ct_edb <- read_excel(here(root, "data_raw", "ToxinResults_Barriersampling_EH.xlsx"), sheet = "Toxindata")
+
+
+plot(R_EDSM_Subregions_Mahardja)
 ```
 
 ppb are discrete whole water samples, ng/g are SPATT data so may want to split up the below
@@ -97,22 +102,24 @@ Had to estimate Latitude and Longitude for Lake Del Valle, Barker Slough PP, Ban
 #Get the species into a consistent format
 unique(ct_swp0$`PTOX Species 1`)
 ct_swp = ct_swp0 %>%
-  mutate(Species = case_when(
-  `PTOX Species 1` %in% c("Aphanizomenon cf. flos-aquae/klebahnii",
-                        "Aphanizomenon flos-aquae/klebahnii", "cf. Aphanizomenon") ~ "Aphanizomenon",
-  `PTOX Species 1` %in% c("Oscillatoria cf. perornata", "Oscillatorialean filament(s)") ~ "Oscillatoria",
-  `PTOX Species 1` %in% c("cf. Phormidium", "Phormidium/Microcoleus") ~ "Phormidium",
-  `PTOX Species 1` == "cf. Planktothrix" ~ "Planktothrix",
-  TRUE ~ `PTOX Species 1`
-), Concentration = parse_number(`Result (ng/mL)`))
+  select(Date, Station, Analyte, Result=`Result (ng/mL)`, Notes) 
+  
+  #mutate(Concentration = parse_number(`Result (ng/mL)`))
+  #mutate(Species = case_when(
+#   `PTOX Species 1` %in% c("Aphanizomenon cf. flos-aquae/klebahnii",
+#                         "Aphanizomenon flos-aquae/klebahnii", "cf. Aphanizomenon") ~ "Aphanizomenon",
+#   `PTOX Species 1` %in% c("Oscillatoria cf. perornata", "Oscillatorialean filament(s)") ~ "Oscillatoria",
+#   `PTOX Species 1` %in% c("cf. Phormidium", "Phormidium/Microcoleus") ~ "Phormidium",
+#   `PTOX Species 1` == "cf. Planktothrix" ~ "Planktothrix",
+#   TRUE ~ `PTOX Species 1`
+# ))
 
 #Now pivot wider then longer so I can add in zeros
-swp = pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Species,
-                       values_from = Concentration, values_fill = 0, values_fn = sum) %>%
-  dplyr::select(!`none observed`) %>%
-  pivot_longer(cols = Dolichospermum:`Microcystis wesenbergii`, names_to = "Species") %>%
-  filter(!is.na(value)) %>%
-  
+swp = ct_swp %>%
+  filter(!is.na(Result)) %>%
+  mutate(Result = case_when(Result == "ND" ~ "0",
+                            TRUE ~ as.character(Result)),
+         Result = as.numeric(Result)) %>%
   mutate(SampleID = paste0(Date, Station),
          Site_Name = case_when(Station == "NBA Barker Sl PP" ~ "Barker Slough Pumping Plant",
                                   Station == "Banks PP" ~ "Banks Pumping Plant",
@@ -134,9 +141,15 @@ swp = pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Specie
                               TRUE ~ as.numeric(Longitude)),
          Date = date(Date),
          Study = "SWP")%>%
-  dplyr::select(SampleID, Station_Code = Station, Site_Name , Latitude, Longitude, Method, Analyte=Species, Result = value, Comments, SampleDate = Date, Study)
-
-
+  dplyr::select(SampleID, Station_Code = Station, Site_Name , Latitude, Longitude, Method, Analyte, Result, Comments, SampleDate = Date, Study)
+  
+  
+  
+#  pivot_wider(ct_swp, id_cols = c(Station, Date, Notes), names_from = Species,
+#                       values_from = Concentration, values_fill = 0, values_fn = sum) %>%
+#  dplyr::select(!`none observed`) %>%
+#pivot_longer(cols = Dolichospermum:`Microcystis wesenbergii`, names_to = "Species") %>%
+#  filter(!is.na(value)) %>%
 glimpse(swp)
 
 #quick plot
@@ -219,7 +232,15 @@ usgs <- ct_usgs0 %>%
          Study = "USGS") %>%
   #filter(detect_tox == "Yes") %>%
 left_join(site_usgs0 %>% select(NWIS_site_no, Site, dec_lat_va, dec_long_va)) %>%
-  dplyr::select(SampleID = UniqueID, Station_Code = NWIS_site_no, Site_Name = Site, Latitude = dec_lat_va, Longitude = dec_long_va, Method, Analyte, Result, Comments, SampleDate = Date, Study)
+  dplyr::select(SampleID = UniqueID, Station_Code = NWIS_site_no, Site_Name = Site, Latitude = dec_lat_va, Longitude = dec_long_va, Method, Analyte = Tox_class, Result, Comments, SampleDate = Date, Study)
+
+samples <- usgs %>%
+  select(SampleDate, Site_Name) %>%
+  unique() %>%
+  mutate(month = month(SampleDate)) %>%
+  group_by(Site_Name, month) %>%
+  summarize(n = n())
+    
 ```
 
 ## Prop 1
@@ -237,21 +258,70 @@ prop1 <- ct_prop1 %>%
   select(SampleID, Station_Code = Site, Site_Name = Site, Latitude = TargetLatitude, Longitude = TargetLongitude, Method, Analyte, Result, Comments, SampleDate = CollectionDate, Study)
 ```
 
+## EDB
+```{r}
+contsta <- read_excel("analysis_2022/data_clean/continuous_stations.xlsx") %>%
+  rename(Station = StationCode)
+
+edb <- ct_edb %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  filter(!is.na(Date)) %>%
+  mutate(Comments = NA,
+         Resultf = case_when(Concentration == "ND" ~ "0",
+                            TRUE ~ as.character(Concentration)),
+         Result = as.numeric(Resultf),
+         Study = "EDB", 
+         Method = NA) %>%
+  left_join(contsta, by = "Station") %>%  
+  mutate(Latitude = ifelse(Station == "BET", 38.041092, Latitude),
+         Longitude = ifelse(Station == "BET", -121.632187, Longitude)) %>%
+  select(SampleID=SampleId, Station_Code = Station, Site_Name = Name, Latitude, Longitude, Method, Analyte, Result=Resultf, Comments, SampleDate = Date, Study)
+```
+
+## Restore the Delta
+```{r}
+restore <- ct_restore %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  filter(!is.na(CollectionDate),
+         !is.na(SampleId)) %>%
+  pivot_longer(cols = MicrocystinRrPpb:CylindrospermopsinPpb, names_to = "Analyte", values_to = "Result") %>%
+  mutate(Comments = NA,
+         Resultf = case_when(Result == "bdl" ~ "0",
+                            TRUE ~ as.character(Result)),
+         Result = as.numeric(Resultf),
+         Study = "Restore the Delta", 
+         Method = NA) %>%
+  select(SampleID= SampleId, Station_Code = StationId, Site_Name = StationName, Latitude, Longitude, Method, Analyte, Result, Comments, SampleDate = CollectionDate, Study)
+```
+
+
+
 # Combine data
 
 * SWP, Spatt, Stockton, Prop1, Nautilus, EastBay
 
 ```{r}
-ct_all <- rbind(swp, wb, ebparks, naut, usgs, prop1) %>%
-  mutate(Analyte2 = case_when(grepl("MC",Analyte) |grepl("Microcys", Analyte) | grepl("D-Asp3-", Analyte)|grepl("Leu1", Analyte)|grepl("Dha-LR", Analyte) ~ "Microcystins",
-                              grepl("Anatoxin", Analyte) ~ "Anatoxins",
+ct_all0 <- rbind(swp, wb, ebparks, naut, usgs, prop1, restore, edb) %>%
+  mutate(Analyte2 = case_when(grepl("MC",Analyte) |grepl("Microcys", Analyte) | grepl("D-Asp3-", Analyte)|grepl("Leu1", Analyte)|grepl("Dha-LR", Analyte)|grepl("Nodularin", Analyte) ~ "Microcystins/Nodularins",
+                              grepl("Anatoxin", Analyte)|grepl("ANTX", Analyte)|grepl("anatoxin", Analyte) ~ "Anatoxins",
                               grepl("Dolicho", Analyte) ~ "Dolichopspermum",
                               grepl("Anabaen", Analyte)|grepl("Oscillamide", Analyte) ~ "Anabaenopeptins",
-                              grepl("Cylindrospermopsin", Analyte) ~ "Cylindrospermopsins",
+                              grepl("STX", Analyte) ~ "Saxitoxin",
+                              grepl("Cylindrospermopsin", Analyte)|grepl("CYN", Analyte)|grepl("Cylidrospermopsin", Analyte) ~ "Cylindrospermopsins",
                              TRUE ~ Analyte),
          Longitude = ifelse(Longitude>0, Longitude * -1, Longitude)) %>%
-         filter(!is.na(Result))
+         filter(!is.na(Result)) %>%
+  mutate(Result = as.numeric(Result))
 
+ct_all <- ct_all0 %>%
+  select(-Analyte, -Comments) %>%
+  group_by(SampleID, Station_Code, Site_Name, Latitude, Longitude, Method, SampleDate, Study, Analyte2) %>%
+  summarize(Result = sum(Result))
+
+unique(ct_all0$SampleID)
+unique(ct_all$SampleID)
+  
+  
 glimpse(ct_all)
 unique(ct_all$Analyte2)
 ```
@@ -260,13 +330,16 @@ unique(ct_all$Analyte2)
 ```{r}
 ct_all2 = ct_all %>%
   #filter(Analyte2 %in% c("Microcystins", "Anatoxins")) %>%
-  mutate(Advisory = case_when(Analyte2 == "Microcystins" & Result > 0.8 & Result < 6 ~ "Caution",
-                                                 Analyte2 == "Microcystins"  & Result >= 6 & Result < 20 ~ "Warning",
-                                                 Analyte2 == "Microcystins"  & Result >= 20 ~ "Danger",
-                                                 Analyte2 == "Microcystins"  & Result < 0.8 ~ "No Advisory",
+  mutate(Advisory = case_when(Analyte2 == "Microcystins/Nodularins" & Result > 0.8 & Result < 6 ~ "Caution",
+                                                 Analyte2 == "Microcystins/Nodularins"  & Result >= 6 & Result < 20 ~ "Warning",
+                                                 Analyte2 == "Microcystins/Nodularins"  & Result >= 20 ~ "Danger",
+                                                 Analyte2 == "Microcystins/Nodularins"  & Result < 0.8 ~ "No Advisory",
                                                Analyte2 == "Anatoxins" & Result > 20 & Result <90 ~ "Warning",
                                                Analyte2 == "Anatoxins"  & Result > 0 & Result < 20 ~ "Caution",
                                                Analyte2 == "Anatoxins"  & Result == 0 ~ "No Advisory",
+                              Analyte2 == "Cylindrospermopsin" & Result >=4 & Result < 17 ~ "Warning",
+                              Analyte2 == "Cylindrospermopsin" & Result >=1 & Result <4 ~ "Caution",
+                              Analyte2 == "Cylindrospermopsin" & Result < 1 ~ "No Advisory",
                               TRUE~"NA"))
 ```
 
@@ -279,9 +352,6 @@ st_crs(ct_all_sf) <- 4269
 ct_all_sf <- st_transform(ct_all_sf, crs = 4326)
 ```
 
-```{r}
-mapview::mapview(ct_all_sf)
-```
 
 
 
@@ -299,6 +369,8 @@ mapview::mapview(ct_all_sf)
 # Combine with last year's dataset - why are columns all messed up? 
 
 ```{r}
+
+
 load("./data/Regions.RData")
 ct_2021 <- read_csv(here(root, "data_clean", "ct_all_2021.csv")) %>%
   rename(Result = result) %>%
@@ -307,7 +379,7 @@ ct_2021 <- read_csv(here(root, "data_clean", "ct_all_2021.csv")) %>%
 glimpse(ct_2021)
 glimpse(ct_all_sf)
 
-ct_2022 <- st_intersection(ct_all_sf, reg3)%>%
+ct_2022 <- st_join(ct_all_sf, reg3)%>%
   mutate(Year = lubridate::year(SampleDate),
          Month = lubridate::month(SampleDate)) %>%
   dplyr::select(Station = Station_Code, 
@@ -315,20 +387,51 @@ ct_2022 <- st_intersection(ct_all_sf, reg3)%>%
          Date = SampleDate,
          Year, Month,
          Analyte = Analyte2,
-         AnalyteOrig = Analyte,
          Method,
          Result,
          Advisory,
          Study,
          Stratum2, 
          geometry)%>%
-  mutate(Advisory = replace(Advisory, Advisory == "NA", NA))
+  mutate(Advisory = replace(Advisory, Advisory == "NA", NA)) %>%
+  mutate(Stratum2 = ifelse(Station %in% c("Dyer Res Outlet", "Clifton Court Forebay", "Banks PP"), "CCF", Stratum2))
 
-ct_2021_2022 <- rbind(ct_2021, ct_2022 %>% select(-Advisory, -AnalyteOrig, -StationName, -Method))
+ct_2021_2022 <- rbind(ct_2021, ct_2022 %>% select(-Advisory, -StationName, -Method)) 
 
 str(ct_2022)
 ```
 
+```{r}
+mapview::mapview(ct_all_sf)
+ggplot() + geom_sf(data = R_EDSM_Subregions_Mahardja) +
+  geom_sf(data = ct_2022)
+```
+
+```{r}
+ct_2022_forICF <- st_join(ct_all_sf, reg3)%>%
+  mutate(Year = lubridate::year(SampleDate),
+         Month = lubridate::month(SampleDate)) %>%
+  dplyr::select(Station = Station_Code, 
+                StationName = Site_Name,
+         Date = SampleDate,
+         Year, Month,
+         Analyte = Analyte2,
+         Method,
+         Result,
+         Advisory,
+         Study,
+         Stratum2,
+         Latitude,
+         Longitude,
+         geometry)%>%
+  mutate(Advisory = replace(Advisory, Advisory == "NA", NA)) %>%
+  mutate(Stratum2 = ifelse(Station %in% c("Dyer Res Outlet", "Clifton Court Forebay", "Banks PP"), "CCF", Stratum2)) %>%
+  filter(Analyte!= "Pheophytin a",
+         Analyte!= "Chlorophyll a")
+
+write_csv(ct_2022_forICF, "analysis_2022/data_clean/cyano_data_for_ICF.csv")
+st_write(ct_2022_forICF, "analysis_2022/data_clean/cyano_data_for_ICF.shp")
+```
 
 
 # Write data

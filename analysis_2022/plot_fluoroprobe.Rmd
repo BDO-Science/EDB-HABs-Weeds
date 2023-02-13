@@ -1,0 +1,292 @@
+---
+title: "make_FP_map"
+author: "Catarina Pien"
+date: '2022-10-13'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(lubridate) #today()
+library(readxl)
+library(here)
+library(sf)
+library(deltamapr)
+library(readr)
+
+# Visualization
+library(ggmap)
+library(ggspatial)
+library(deltamapr)
+library(viridis)
+
+data_root = "analysis_2022/data_raw/"
+```
+
+Read in data
+```{r}
+# USGS
+fpjuly <- read_excel(here(data_root, "FP_data_USGS_T3_DeltaMapping_July2022_2022-08-29_KO.xlsx"))
+fpmay <- read_excel(here(data_root, "FP_data_USGS_T3_DeltaMapping_May2022_2022-09-08_KO.xlsx"))
+fixed <- read_csv(here(data_root, "FP_data_USGS_fixed_OBI.csv"))
+# EMP
+load(here(data_root, "FP_data_for_USBR_EMP.RData"))
+```
+
+**Notes from Ted**
+I’ve attached the FluoroProbe data from 2022 that you requested, as both a CSV and an .RData file. You can find the scripts and the raw data that we used in EMP’s GitHub (https://github.com/emp-des/emp-projects/tree/main/03_Phyto/fluoroprobe-data-cleaning). The script we used is called “FP_data_join.R” and was jointly written by myself and Sarah Perry (cc’d). Sarah wrote the code that bins each data point into a region (they used Brian Mahardja’s EDSM subregions). The data is averaged in 1 minute increments and includes our EXO2 sonde data and the FluoroProbe. The units for the sonde data are as follows:
+•	Water Temp = degrees Celsius
+•	pH = pH units
+•	Specific Conductance = microsiemens per centimenter (uS/cm)
+•	Chlorophyll a = both ug/L (FLUOR) and relative fluorescence units (FLUORRFU)
+•	Turbidity = FNU
+•	DO = both mg/L (DO) and % saturation (DOSAT)
+
+Another thing you’ll notice is that some of the months have NA values for the FluoroProbe. This is because the probe was either malfunctioning that day or was inadvertently left off during the day’s run. 
+
+Just an additional piece of info: for last year’s report we sent our data to USGS so they could use Tableau to generate maps that interpolated values across the whole of individual water bodies like Franks Tract, rather than just making plots showing each data point on a map. Keith B-G would be the one who would know how to get that done. 
+
+
+
+# USGS data
+
+## Continuous 
+### Clean data
+```{r}
+fpm <- fpmay %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  dplyr::select(Datetime = TimestampPst,
+                Latitude = LatitudeDecimalDegrees,
+                Longitude = LongitudeDecimalDegrees,
+                BlueGreenAlgae = BluegreenAlgaeUgLFpHr) %>%
+  mutate(date = date(Datetime),
+         month = month(date),
+         period = "May 16-19")
+
+fpj <- fpjuly %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  dplyr::select(Datetime = TimestampPst,
+                Latitude = LatitudeDecimalDegrees,
+                Longitude = LongitudeDecimalDegrees,
+                BlueGreenAlgae = BluegreenAlgaeUgLFpHr) %>%
+  mutate(date = date(Datetime),
+         month = month(date),
+         period = "July 18-21")
+
+
+fp_all <- rbind(fpm, fpj) %>%
+  filter(!is.na(BlueGreenAlgae))
+
+
+fp_sf <- fp_all %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE)
+WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_sf))
+```
+
+```{r}
+fp_all %>%
+  group_by(month) %>%
+  summarize(mean = mean(BlueGreenAlgae),
+            max = max(BlueGreenAlgae))
+```
+
+### Make map
+```{r}
+fp_sf$period <- factor(fp_sf$period, levels = c("May 16-19", "July 18-21"))
+
+(map_usgs <- ggplot() +
+      geom_sf(data = WW_Delta_4326,  color = "lightsteelblue2", fill = "lightsteelblue2", inherit.aes = FALSE) +
+      geom_sf(data = fp_sf, aes(color = BlueGreenAlgae), size = 0.2,inherit.aes = FALSE)+
+      facet_wrap(~period) + 
+      annotation_north_arrow(location = "tr", which_north = "true",
+                             pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                             style = north_arrow_fancy_orienteering) +
+      annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white")) +
+  scale_x_continuous(limits = c(-122.2, -121.2)) +
+  scale_y_continuous( limits = c(37.8, 38.6))+
+     scale_colour_gradientn(colours = c("#0d0887", "#9511a1", "#a72197",
+                                   "#dd5e66", "#f79044","#f0f921"),
+                       values = scales::rescale(c(min(fp_sf$BlueGreenAlgae),
+                                                  3, 6, 9, 12, 20, max(fp_sf$BlueGreenAlgae))))+
+    #scale_color_viridis(option = "plasma") +
+  labs(color = "Cyanobacterial Chlorophyll (µg/L)")+
+  theme_classic() +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "top", 
+        strip.text = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12)))
+```
+
+```{r}
+hist(fp_sf$BlueGreenAlgae)
+ggplot(fp_sf) + geom_boxplot(aes(x = factor(month), y = BlueGreenAlgae)) + theme_bw() +
+  labs(y = "Blue Green Algae (µg/L)") 
+```
+
+### Write figure
+```{r}
+png(filename = here("analysis_2022", "figures", "FP_map_raw_usgs_2022.png"), width = 6.5, height = 5, units = "in", pointsize = 12, family = "sans", res = 300)
+map_usgs
+dev.off()
+```
+
+## Discrete at OBI
+
+```{r}
+fp_discrete <- fixed %>%
+  mutate(Datetime = mdy_hms(Datetime),
+         Date = date(Datetime)) %>%
+  rename(Cyanobacteria = `Blue Green Algae`) %>%
+  filter(Date > ymd("2022-08-04"))
+```
+
+### Plot data
+```{r}
+fp_obi <- ggplot() + 
+  geom_line(data = fp_discrete, aes(x = Datetime, y = Cyanobacteria)) + 
+  geom_point(data = fp_discrete, aes(x = Datetime, y = Cyanobacteria))+ 
+  labs(y = "Cyanobacterial Chlorophyll a (µg/L)") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+
+png(filename = here("analysis_2022", "figures", "FP_OBI.png"), width = 6.5, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+fp_obi
+dev.off()
+
+```
+
+
+
+
+
+
+# EMP data
+## Clean data
+```{r}
+fp_emp <- df_final %>%
+  dplyr::select(Datetime = DateTime,
+                Month,
+                Latitude,
+                Longitude,
+                Cyanobacteria = Cyanobacteria.ug.L) %>%
+  mutate(Date = date(Datetime)) %>%
+  filter(!is.na(Cyanobacteria))
+
+
+fp_emp_sf <- fp_emp %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
+  filter(Month %in% c("Mar", "Apr", "May",  "Jun", "Jul", "Aug")) %>%
+  mutate(Dates = case_when(Month == "Mar" ~ "Mar 10-17",
+                           Month == "Apr" ~ "Apr 21-28",
+                           Month == "May" ~ "May 20-27",
+                           Month == "Jun" ~ "Jun 21-27",
+                           Month == "Jul" ~ "Jul 19-22",
+                           Month == "Aug" ~ "Aug 17-23"))
+WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_sf))
+```
+
+```{r}
+fp_emp %>%
+  group_by(Month) %>%
+  summarize(mean = mean(Cyanobacteria),
+            max = max(Cyanobacteria))
+```
+
+
+```{r}
+hist(fp_emp_sf$Cyanobacteria)
+ggplot(fp_emp_sf) + geom_boxplot(aes(x = Month, y = Cyanobacteria)) + theme_bw() +
+  labs(y = "Cyanobacterial Chlorophyll a (µg/L)") 
+```
+
+```{r}
+map_fp_emp <- ggplot() +
+  geom_sf(data = WW_Delta_4326, color = "lightsteelblue2", fill = "lightsteelblue2") +
+  geom_sf(data = fp_emp_sf, aes(color = Cyanobacteria), size = 0.7, inherit.aes = FALSE) +
+  facet_wrap(~Month, nrow = 3,
+              labeller = as_labeller(c(Mar = "Mar 10-17", Apr = "Apr 21-28", May = "May 20-27", 
+                                       Jun = "Jun 21-27", Jul = "Jul 19-22", Aug = "Aug 17-23"))) +
+  annotation_north_arrow(location = "tr",which_north = "true",pad_x = unit(.1, "in"),
+                         pad_y = unit(0.2, "in"),style = north_arrow_fancy_orienteering) +
+  annotation_scale(location = "bl",
+                   bar_cols = c("black", "white", "black", "white")) +
+  scale_x_continuous(limits = c(-122.2,-121.2)) +
+  scale_y_continuous(limits = c(37.9, 38.2)) +
+  scale_color_viridis(option = "plasma") +
+  labs(color = "Cyanobacterial Chlorophyll a (µg/L)") +
+  theme_classic() +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "top", 
+        strip.text = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12))
+```
+
+Write map file
+```{r}
+png(filename = here("analysis_2022", "figures", "FP_map_raw_emp_2022.png"), width = 6.5, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+map_fp_emp
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Plot
+```{r}
+ggplot() + 
+  geom_sf(data = WW_Delta, fill = "lightblue", color = "lightblue") +
+  geom_sf(data = fp_sf, aes(color = BlueGreenAlgae), size = 0.2,inherit.aes = FALSE)+
+  scale_x_continuous(limits = c(-122.2, -121.2)) +
+  scale_y_continuous( limits = c(37.8, 38.6))+
+  #viridis::scale_color_viridis(option = "plasma") +
+  scale_colour_gradientn(colours = c("#0d0887", "#9511a1", "#a72197",
+                                   "#dd5e66", "#f79044","#f0f921"),
+                       values = scales::rescale(c(min(fp_sf$BlueGreenAlgae), 1, 
+                                                2, 3, 10, 20, max(fp_sf$BlueGreenAlgae))))+
+  facet_wrap(~period)+
+  theme_bw()
+```
+
+```{r}
+hist(fp_sf$BlueGreenAlgae)
+
+ggplot() + 
+  geom_sf(data = WW_Delta, fill = "lightblue", color = "lightblue") +
+  geom_sf(data = fpm_sf, aes(color = BlueGreenAlgae), size = 0.2,inherit.aes = FALSE)+
+  scale_x_continuous(limits = c(-122, -121.2)) +
+  scale_y_continuous( limits = c(37.8, 38.6))+
+  scale_color_viridis(option = "plasma") +
+  theme_bw()
+```
+
+```{r}
+
+```
+

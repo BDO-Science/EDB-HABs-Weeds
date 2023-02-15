@@ -1,0 +1,1229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="ExpertGPS 6.03 using Garmin GPSMAP 78s" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.topografix.com/GPX/gpx_overlay/0/3 http://www.topografix.com/GPX/gpx_overlay/0/3/gpx_overlay.xsd http://www.topografix.com/GPX/gpx_modified/0/1 http://www.topografix.com/GPX/gpx_modified/0/1/gpx_modified.xsd">
+<metadata>
+<bounds minlat="38.02218646" minlon="-121.63187260" maxlat="38.06130920" maxlon="-121.58288950"/>
+<extensions>
+<time xmlns="http://www.topografix.com/GPX/gpx_modified/0/1">2020-11-17T18:56:42.314Z</time>
+</extensions>
+</metadata>
+<wpt lat="38.06126040" lon="-121.59149744">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>99</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>99</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.06130920" lon="-121.59557499">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>98</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>98</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05789277" lon="-121.58677803">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>97</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>97</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05794173" lon="-121.59085540">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>96</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>96</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05799055" lon="-121.59493278">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>95</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>95</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05803923" lon="-121.59901014">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>94</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>94</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05808776" lon="-121.60308755">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>93</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>93</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05813615" lon="-121.60716493">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>92</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>92</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05828049" lon="-121.61939721">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>91</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>91</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05462905" lon="-121.58684080">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>90</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>90</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02866550" lon="-121.59956983">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>9</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>9</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05467800" lon="-121.59091799">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>89</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>89</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05472681" lon="-121.59499517">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>88</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>88</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05477548" lon="-121.59907238">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>87</name>
+<cmt>3</cmt>
+<desc>3</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>87</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05482402" lon="-121.60314958">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>86</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>86</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05487241" lon="-121.60722681">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>85</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>85</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05492066" lon="-121.61130403">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>84</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>84</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05496876" lon="-121.61538128">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>83</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>83</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05501673" lon="-121.61945852">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>82</name>
+<cmt>3</cmt>
+<desc>3</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>82</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05136533" lon="-121.58690356">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>81</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>81</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05141428" lon="-121.59098057">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>80</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>80</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02871398" lon="-121.60364561">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>8</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>8</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05146308" lon="-121.59505757">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>79</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>79</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05151175" lon="-121.59913460">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>78</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>78</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05156027" lon="-121.60321162">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>77</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>77</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05160865" lon="-121.60728865">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>76</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>76</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05165690" lon="-121.61136572">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>75</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>75</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05170499" lon="-121.61544276">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>74</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>74</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05175295" lon="-121.61951983">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>73</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>73</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.05180077" lon="-121.62359692">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>72</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>72</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04805252" lon="-121.58288950">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>71</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>71</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04810160" lon="-121.58696633">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>70</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>70</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02876232" lon="-121.60772138">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>7</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>7</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04815054" lon="-121.59104314">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>69</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>69</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04819934" lon="-121.59511996">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>68</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>68</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04824800" lon="-121.59919679">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>67</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>67</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04829652" lon="-121.60327366">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>66</name>
+<cmt>3</cmt>
+<desc>3</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>66</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04834490" lon="-121.60735051">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>65</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>65</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04839313" lon="-121.61142737">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>64</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>64</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04844123" lon="-121.61550424">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>63</name>
+<cmt>3</cmt>
+<desc>3</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>63</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04848918" lon="-121.61958115">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>62</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>62</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04478879" lon="-121.58295242">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>61</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>61</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04483787" lon="-121.58702907">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>60</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>60</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02881053" lon="-121.61179715">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>6</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>6</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04488681" lon="-121.59110570">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>59</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>59</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04493560" lon="-121.59518234">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>58</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>58</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04498426" lon="-121.59925899">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>57</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>57</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04503277" lon="-121.60333566">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>56</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>56</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04508114" lon="-121.60741235">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>55</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>55</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04512937" lon="-121.61148904">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>54</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>54</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04517746" lon="-121.61556573">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>53</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>53</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04522540" lon="-121.61964243">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>52</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>52</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04527321" lon="-121.62371914">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>51</name>
+<cmt>3</cmt>
+<desc>3</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>51</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04532087" lon="-121.62779587">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>50</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>50</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02540174" lon="-121.59963198">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>5</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>5</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04536840" lon="-121.63187260">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>49</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>49</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04152507" lon="-121.58301533">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>48</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>48</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04157414" lon="-121.58709180">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>47</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>47</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04162307" lon="-121.59116825">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>46</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>46</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04167186" lon="-121.59524472">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>45</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>45</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04172051" lon="-121.59932119">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>44</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>44</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04176901" lon="-121.60339767">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>43</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>43</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04181738" lon="-121.60747416">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>42</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>42</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04186560" lon="-121.61155067">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>41</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>41</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04191368" lon="-121.61562718">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>40</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>40</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02545022" lon="-121.60370757">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>4</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>4</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04196163" lon="-121.61970371">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>39</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>39</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.04200943" lon="-121.62378024">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>38</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>38</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03831040" lon="-121.58715452">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>37</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>37</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03835934" lon="-121.59123079">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>36</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>36</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03840812" lon="-121.59530708">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>35</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>35</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03845676" lon="-121.59938337">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>34</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>34</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03850526" lon="-121.60345968">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>33</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>33</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03855362" lon="-121.60753599">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>32</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>32</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03860184" lon="-121.61161232">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>31</name>
+<cmt>3</cmt>
+<desc>3</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>31</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03864992" lon="-121.61568865">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>30</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>30</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02549855" lon="-121.60778314">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>3</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>3</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03869785" lon="-121.61976500">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>29</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>29</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03504668" lon="-121.58721723">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>28</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>28</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03509560" lon="-121.59129332">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>27</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>27</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03514437" lon="-121.59536943">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>26</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>26</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03519301" lon="-121.59944554">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>25</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>25</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03524151" lon="-121.60352167">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>24</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>24</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03528986" lon="-121.60759778">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>23</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>23</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03533807" lon="-121.61167393">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>22</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>22</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03538614" lon="-121.61575008">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>21</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>21</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03543407" lon="-121.61982625">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>20</name>
+<cmt>4</cmt>
+<desc>4</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>20</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02218646" lon="-121.60376950">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>2</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>2</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03178294" lon="-121.58727993">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>19</name>
+<cmt>2</cmt>
+<desc>2</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>19</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03183185" lon="-121.59135582">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>18</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>18</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03188062" lon="-121.59543175">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>17</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>17</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03192925" lon="-121.59950768">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>16</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>16</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03197774" lon="-121.60358363">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>15</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>15</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03202609" lon="-121.60765958">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>14</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>14</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03207430" lon="-121.61173556">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>13</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>13</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.03212237" lon="-121.61581153">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>12</name>
+<cmt>3</cmt>
+<desc>3</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>12</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02856811" lon="-121.59141833">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>11</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>11</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.06106865" lon="-121.58814380">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>100</name>
+<cmt>1</cmt>
+<desc>1</desc>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>100</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02861687" lon="-121.59549408">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>10</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>10</label_text>
+</label>
+</extensions>
+</wpt>
+<wpt lat="38.02223479" lon="-121.60784492">
+<time>2020-11-17T18:56:47.100Z</time>
+<name>1</name>
+<sym>Navaid, Red</sym>
+<type>Flag</type>
+<extensions>
+<label xmlns="http://www.topografix.com/GPX/gpx_overlay/0/3">
+<label_text>1</label_text>
+</label>
+</extensions>
+</wpt>
+<extensions>
+</extensions>
+</gpx>

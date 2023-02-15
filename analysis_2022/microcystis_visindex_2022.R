@@ -8,7 +8,7 @@
 # Contact: David.Bosworth@water.ca.gov
 
 ######
-# Modified for 2022: Kristi Arend; karend@usbr.gov
+# Modified to include 2022 data by Kristi Arend; karend@usbr.gov
 
 
 # 1. Global Code ----------------------------------------------------------
@@ -22,7 +22,7 @@ library(deltamapr)
 library(here)
 
 # Check if we are in the correct working directory
-#i_am("EDB/microcystis_visindex_sci_hour_figs.R")
+i_am("analysis_2022/microcystis_visindex_2022.R")
 
 
 # Create vectors of factor levels and labels of Strata in the
@@ -55,10 +55,14 @@ vec_strata_labels <- c(
 # 2. Import and Prepare Data ----------------------------------------------
 
 # Import Microcystis visual index data
-load(here("HABs.RData"))
+load("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_raw/HABsw2022.RData")
+
+# Remove DOP data because different water collection method results in very different ratings
+HABsVis <- subset(HABs2022, Source != "DOP")
 
 # Prepare Microcystis visual index data for figures
-df_mvi_c <- HABs %>%
+
+df_mvi_c <- HABsVis %>%
   select(Source, Station, Latitude, Longitude, Date, Microcystis) %>%
   mutate(
     Date = date(Date),
@@ -70,9 +74,11 @@ df_mvi_c <- HABs %>%
     # Remove records without visual index data and without location coordinates
     !is.na(Microcystis),
     !if_any(c(Latitude, Longitude), is.na),
-    # Only keep data from 2014-2021 in June-October
-    Year %in% 2014:2021,
+    # Only keep data from 2014-2022 in June-October
+    Year %in% 2014:2022,
     Month_num %in% 6:10
+    # if want to look at spring for any spring TUCO effect
+#    Month_num %in% 3:6
   ) %>%
   # Assign Strata from R_EDSM_Strata_1718P1 shapefile
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
@@ -136,7 +142,7 @@ scale_fill_mvi <- list(
   )
 )
 
-# Create stacked bar plot of 5 index categories by Year for all data from 2014-2021
+# Create stacked bar plot of 5 index categories by Year for all data from 2014-2022
 barplt_year <- df_mvi_c %>%
   ggplot(aes(x = Year, fill = Microcystis)) +
   geom_bar(position = "fill") +
@@ -147,15 +153,15 @@ barplt_year <- df_mvi_c %>%
     expand = expansion(mult = c(0, 0.025))
   ) +
   scale_x_continuous(
-    breaks = c(2014:2021),
+    breaks = c(2014:2022),
     expand = expansion(mult = c(0.02, 0.02))
   )
 
 # Create stacked bar plot of 5 index categories by by Month (June-Sept) and Region
-  # for just 2021
-barplt_2021 <- df_mvi_c %>%
+  # for just 2022
+barplt_2022 <- df_mvi_c %>%
   filter(
-    Year == 2021,
+    Year == 2022,
     Month_f != "Oct"
   ) %>%
   ggplot(aes(x = Region, fill = Microcystis)) +
@@ -204,7 +210,7 @@ ggsave(
 
 # Stacked bar plot by Month and Region for just 2021
 ggsave(
-  here("EDB/Microcystis_visindex_month_reg_2021.jpg"),
+  here("EDB/Microcystis_visindex_month_reg_2022.jpg"),
   plot = barplt_2021,
   height = 5.3,
   width = 8,

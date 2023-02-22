@@ -47,19 +47,22 @@ HABcol = data.frame(Color = brewer.pal(7, "Dark2"),
 
 # Read in files 
 ```{r}
-ct_swp0 <- read_excel(here(root, "data_raw", "DFD_SWP_cyano_data_2022.xlsx"))
+ct_swp0 <- read_excel(here(root, "data_raw", "DFD_SWP_cyano_data_2-2-23.xlsx"))
 site_swp <- read_excel(here(root, "data_raw", "DWR_SWP_Cyanotoxin_results_2022.xlsx"), sheet = "Sample Location Info") %>%
   janitor::clean_names(case = "big_camel") %>%
   rename(Site_Name = Name)
 ct_wb0 <- read_csv(here(root, "data_raw", "SWB_fHAB_cyano_2022.csv")) %>%
   filter(!is.na(Result)) # data originally in pdf and imported into csv
-ct_eb0 <- read_excel(here(root, "data_raw", "EBParks_BigBreak_Cyanotoxin_2022.xlsx"), skip = 1) %>%
+ct_eb0 <- read_excel(here(root, "data_raw", "EBParks_BigBreak_Cyanotoxin_2022_upd.xlsx"), skip = 1) %>%
   filter(!is.na(Park))
 # Note: Danger Advisory posted 7/14/22
-ct_naut0 = read_excel(here(root, "data_raw", "Nautilus_HAB_Chlorophyll_2022.xlsx"))
-ct_usgs0 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_WW.tsv"))
+ct_naut0b = read_excel(here(root, "data_raw", "Nautilus_HAB_Chlorophyll_Feb2023.xlsx"))
+ct_usgs1 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_WW.tsv"))
+# Note: original usgs file is the tsv. I only used this file for its Tox_class column. 
+ct_usgs0 <- read_csv(here(root, "data_raw", "USGS_cyanotoxins_all2022.csv"))
+# Note: this is the updated file. 
 site_usgs0 <- read_tsv(here(root, "data_raw", "USGS_cyanotoxins_SiteLatLon.tsv"))
-ct_prop1 <- read_excel(here(root, "data_raw", "Prop1_cyanotoxin_watersamples_July2022.xlsx"), skip=4)
+ct_prop1 <- read_excel(here(root, "data_raw", "Prop1_cyanotoxin_watersamples_October2022_notext.xlsx"))
 ct_restore <- read_excel(here(root, "data_raw", "RestoreDelta_StocktonHABS_2022_AllData.xlsx"))
 ct_edb <- read_excel(here(root, "data_raw", "ToxinResults_Barriersampling_EH.xlsx"), sheet = "Toxindata")
 
@@ -224,15 +227,36 @@ Lat/Lon is NAD83
 need info on SJMS
 ```{r}
 usgs <- ct_usgs0 %>%
+ # janitor::clean_names(case = "snake") %>%
+  pivot_longer(cols = `D-Asp3-Dhb7-RR (ppb)`:`GTX 2/3 TOTAL (ppb)`,names_to = "Analyte", values_to = "Result") %>%
+  mutate(Analyte = str_replace(Analyte,"ppb", "" )) %>%
+  mutate(Analyte = str_replace(Analyte,"ug/L", "" )) %>%
+  mutate(Analyte = str_replace(Analyte," \\(\\)", "" )) %>%
+  rename(Datetime = `Timestamp_(PST)`) %>%
+  mutate(Datetime = parse_date_time(Datetime, "%y/%m/%d %H:%M:%S"),
+         SampleDate = date(Datetime)) %>%
   mutate(Comments = NA,
          Resultf = case_when(Result == "ND" ~ "0",
-                             Result == "N/A" ~ "NA",
+                             Result == "N/A" ~ NA,
                             TRUE ~ as.character(Result)),
          Result = as.numeric(Resultf),
-         Study = "USGS") %>%
-  #filter(detect_tox == "Yes") %>%
+         Study = "USGS",
+         Method = NA, 
+         UniqueID = paste0(field_ID, "_", Datetime)) %>%
+  left_join(ct_usgs1%>% select(Analyte, Tox_class) %>%unique()) %>%
+  mutate(Tox_class = case_when(grepl("MC",Analyte) |grepl("Microcys", Analyte) | grepl("D-Asp3-", Analyte)|grepl("Leu1", Analyte)|grepl("Dha-LR", Analyte) ~ "Microcystins",
+                               grepl("Nodularin", Analyte) ~ "Nodularins",
+                              grepl("Anatoxin", Analyte)|grepl("ANTX", Analyte)|grepl("anatoxin", Analyte) ~ "Anatoxins",
+                              grepl("Dolicho", Analyte) ~ "Dolichopspermum",
+                              grepl("Anabaen", Analyte)|grepl("Oscillamide", Analyte) ~ "Anabaenopeptins",
+                              grepl("STX", Analyte)| grepl("axitoxin", Analyte) ~ "Saxitoxin",
+                              grepl("Cylindrospermopsin", Analyte)|grepl("CYN", Analyte)|grepl("Cylidrospermopsin", Analyte) ~ "Cylindrospermopsins",
+                             TRUE ~ Analyte)) %>%
+  rename(Site = field_ID) %>%
+  filter(!(grepl("GTX", Analyte))) %>%
+  filter(!(grepl("BMAA", Analyte))) %>%
 left_join(site_usgs0 %>% select(NWIS_site_no, Site, dec_lat_va, dec_long_va)) %>%
-  dplyr::select(SampleID = UniqueID, Station_Code = NWIS_site_no, Site_Name = Site, Latitude = dec_lat_va, Longitude = dec_long_va, Method, Analyte = Tox_class, Result, Comments, SampleDate = Date, Study)
+  dplyr::select(SampleID = UniqueID, Station_Code = NWIS_site_no, Site_Name = Site, Latitude = dec_lat_va, Longitude = dec_long_va, Method, Analyte = Tox_class, Result, Comments, SampleDate, Study)
 
 samples <- usgs %>%
   select(SampleDate, Site_Name) %>%
@@ -250,12 +274,15 @@ prop1 <- ct_prop1 %>%
   janitor::clean_names(case = "upper_camel") %>%
   filter(!is.na(CollectionDate)) %>%
   mutate(Comments = NA,
-         Resultf = case_when(ResultUgL == "ND" ~ "0",
-                            TRUE ~ as.character(ResultUgL)),
+         Resultf = case_when(McNodUgLTest1 == "ND" ~ "0",
+                            TRUE ~ as.character(McNodUgLTest1)),
          Result = as.numeric(Resultf),
+         Latitude = as.numeric(TargetLatitude),
+         Longitude = as.numeric(TargetLongitude),
          Study = "Prop 1",
+          SampleDate = date(CollectionDate),
          SampleID = paste0(CollectionDate, "_", Site)) %>%
-  select(SampleID, Station_Code = Site, Site_Name = Site, Latitude = TargetLatitude, Longitude = TargetLongitude, Method, Analyte, Result, Comments, SampleDate = CollectionDate, Study)
+  select(SampleID, Station_Code = Site, Site_Name = Site, Latitude , Longitude, Method, Analyte, Result, Comments, SampleDate , Study)
 ```
 
 ## EDB
@@ -376,7 +403,14 @@ ct_2021 <- read_csv(here(root, "data_clean", "ct_all_2021.csv")) %>%
   rename(Result = result) %>%
   select(-Region)
 
-glimpse(ct_2021)
+ct_2021_sf <- ct_2021 %>%
+  mutate(ll = gsub("c", "", geometry)) %>%
+  mutate(ll = gsub("\\(", "", ll),
+         ll = gsub("\\)", "", ll)) %>%
+  separate(ll, into = c("Longitude", "Latitude"), sep = ",")%>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+
+glimpse(ct_2021_sf)
 glimpse(ct_all_sf)
 
 ct_2022 <- st_join(ct_all_sf, reg3)%>%
@@ -393,10 +427,13 @@ ct_2022 <- st_join(ct_all_sf, reg3)%>%
          Study,
          Stratum2, 
          geometry)%>%
+  filter(Year>2021) %>%
   mutate(Advisory = replace(Advisory, Advisory == "NA", NA)) %>%
   mutate(Stratum2 = ifelse(Station %in% c("Dyer Res Outlet", "Clifton Court Forebay", "Banks PP"), "CCF", Stratum2))
 
-ct_2021_2022 <- rbind(ct_2021, ct_2022 %>% select(-Advisory, -StationName, -Method)) 
+ct_2021_2022 <- rbind(ct_2021, ct_2022 %>% select(-Advisory, -StationName, -Method)) %>%
+  mutate(Analyte = case_when(grepl("MC",Analyte) |grepl("Microcys", Analyte) | grepl("D-Asp3-", Analyte)|grepl("Leu1", Analyte)|grepl("Dha-LR", Analyte)|grepl("Nodularin", Analyte) ~ "Microcystins/Nodularins",
+                              TRUE ~ Analyte))
 
 str(ct_2022)
 ```

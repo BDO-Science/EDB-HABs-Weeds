@@ -77,7 +77,7 @@ average_drought_tucp <- dayflow2 %>%
   mutate(period = "TUCO Drought Years")
 
 flow_comb <- rbind(flow_2022, average_flow, average_drought_tucp, average_drought_notucp) %>%
-  filter(month>2 & month < 10) %>%
+  filter(month>2 & month < 12) %>%
   mutate(parameter = case_when(parameter == "flow" ~ "San Joaquin River Outflow",
                             parameter == "pumping" ~ "Exports",
                             parameter == "outflow"~ "Delta Outflow"))%>%

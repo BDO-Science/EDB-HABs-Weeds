@@ -30,7 +30,7 @@ Based on df_WQ_daily.RData:
 ```{r}
 # Define start and end dates - these will remain the same throughout
 start <- "2011-01-01"
-end <- "2022-10-01"
+end <- "2022-12-01"
 ```
 
 ## get outflow data 

@@ -25,7 +25,7 @@ library(viridis)
 
 Read data
 ```{r}
-phyto <- read_excel(here::here("analysis_2022", "data_raw", "EMP_Phytoplankton_Jan-Sept-2022.xlsx")) %>%
+phyto1 <- read_excel(here::here("analysis_2022", "data_raw", "EMP_Phytoplankton_Jan-Sept-2022.xlsx")) %>%
   janitor::clean_names(case = "upper_camel") %>%
   filter(FullCode != "D19 Microcystis Tow",
          StationCode!= "D19 MC Tow") %>%
@@ -35,6 +35,17 @@ phyto <- read_excel(here::here("analysis_2022", "data_raw", "EMP_Phytoplankton_J
          Genus,
          UnitAbundance = UnitAbundanceNumberOfNaturalUnits,
          OrganismsPerML)
+phyto2 <- read_excel(here::here("analysis_2022", "data_raw", "EMP_Phytoplankton_Oct-Nov-2022.xlsx")) %>%
+  janitor::clean_names(case = "upper_camel") %>%
+  filter(FullCode != "D19 Microcystis Tow",
+         StationCode!= "D19 MC Tow") %>%
+  select(Date = SampleDate,
+         Station = StationCode,
+         AlgalType,
+         Genus,
+         UnitAbundance = UnitAbundanceNumberOfNaturalUnits,
+         OrganismsPerML)
+phyto <- rbind(phyto1, phyto2)
 
 # 2021 combined data
 load(here::here("analysis_2022", "data_raw", "EMPPHyto.RData"))
@@ -108,7 +119,7 @@ phyto_full = pivot_wider(phyto_sta, id_cols = c("Station", "Date", "Latitude", "
                          values_from = "OrganismsPerML", values_fill = 0, values_fn = sum) %>%
   pivot_longer(cols = "Achnanthidium":last_col(), names_to = "Genus", values_to = "CountperML") %>%
   mutate(Month = month(Date),
-         fMonth = month(Date, label = TRUE),
+         fMonth = lubridate::month(Date, label = TRUE),
          Year = year(Date),
          fYear = factor(Year)) %>%
   left_join(phyto_tax)
@@ -201,7 +212,12 @@ ggplot(HAB_mean, aes(x = fMonth, y = CountperML, fill = Genus))+
   theme(legend.position = "bottom")
   #scale_x_discrete(breaks = c(2,6,10), labels = c("Feb", "Jun", "Oct"))
 
-# Good for monthly trends
+
+```
+
+# Used these two in 2022 report !!!
+```{r}
+# Good for monthly trends - USED THIS ONE
 (monthly_trends_2022 <- ggplot(HAB_mean %>% filter(fYear == "2022"), 
                                aes(x = fMonth, y = CountperML, fill = Genus))+
   geom_col()+

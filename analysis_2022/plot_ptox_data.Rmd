@@ -30,7 +30,7 @@ ptox_edb <- read_excel(here("analysis_2022", "data_raw", "ToxinResults_Barriersa
          !grepl("DUP", SampleID)) %>%
   rename(StationCode = Station) %>%
   mutate(UnitsperML = ifelse(is.na(UnitsperML), 0, UnitsperML)) %>%
-  mutate(Month = month(Date,label = TRUE)) %>%
+  mutate(Month = lubridate::month(Date,label = TRUE)) %>%
   pivot_wider(names_from = SpeciesPresent, values_from = UnitsperML,values_fill = 0) %>%
   select(-"NA") %>%
   pivot_longer(cols = Dolichospermum: Phormidium, names_to = "SpeciesPresent", values_to = "UnitsperML") %>%
@@ -82,15 +82,20 @@ ggplot(ptox_edb) + geom_point(aes(Date, UnitsperML, color = SpeciesPresent)) + f
 
 # Clifton Court Data
 ```{r}
-# Cat altered this datasheet from Sheet1. 
-
-ptox_swp <- read_excel(here("analysis_2022", "data_raw", "DFD_SWP_cyano_data_2022.xlsx"), sheet = "PTOX") %>%
+# Cat altered this datasheet.
+ptox_swp <- read_excel(here("analysis_2022", "data_raw", "DFD_SWP_cyano_data_2-2-23_upd.xlsx"), sheet = "PTOX") %>%
   #filter(!SpeciesPresent %in% c("Geitlerinema Splendidum"),
   #       !grepl("DUP", SampleID)) %>%
-  mutate(UnitsperML = ifelse(UnitsperML == "ND", 0, UnitsperML),
+  mutate(#UnitsperML = ifelse(UnitsperML == "ND", 0, UnitsperML),
          UnitsperML = as.numeric(UnitsperML)) %>%
-  mutate(Month = month(Date,label = TRUE)) %>%
-  pivot_wider(names_from = SpeciesPresent, values_from = UnitsperML,values_fill = 0) %>%
+  mutate(Month = lubridate::month(Date,label = TRUE),
+         Species = case_when(grepl("Aphanizomenon",Species ) ~ "Aphanizomenon",
+                             grepl("Microcystis", Species) ~ "Microcystis",
+                             grepl("Phormidium", Species ) ~ "Phormidium",
+                             grepl("Dolichospermum", Species) ~ "Dolichospermum",
+                             TRUE~ Species)) %>%
+  filter(Species %in% c("Aphanizomenon", "Microcystis", "Phormidium", "Dolichospermum", "Planktothrix", "none observed")) %>%
+  pivot_wider(names_from = Species, values_from = UnitsperML,values_fill = 0) %>%
   select(-"none observed") %>%
   pivot_longer(cols = Dolichospermum: Phormidium, names_to = "SpeciesPresent", values_to = "UnitsperML") %>%
   mutate(Abundance = case_when(UnitsperML == 0 ~ "ND",
@@ -122,13 +127,14 @@ ptox_ll_swp <- ptox_swp %>%
                               StationCode == "Lake Del Valle" ~ -121.703795,
                               TRUE ~ as.numeric(Longitude))) %>%
   filter(SpeciesPresent %in% c("Dolichospermum", "Aphanizomenon", "Microcystis", "Planktothrix", "Phormidium"),
-         StationCode != "Lake Del Valle")
+         StationCode != "Lake Del Valle") %>%
+  filter(!is.na(Latitude))
+  
 
 ptox_swp_sf <- st_as_sf(ptox_ll_swp, coords = c("Longitude", "Latitude"), crs = 4326)
 ptox_swp_sf$Abundance <- factor(ptox_swp_sf$Abundance, levels = c("ND", "<10", "10-100", "100-1000", ">1000"))
 levels(ptox_swp_sf$Abundance)
 ```
-
 
 Plots
 ```{r}
@@ -151,12 +157,12 @@ ptox_swp_map <- ggplot() +
 
 
 ```{r}
-png(filename = here("analysis_2022", "figures", "ptox_map.png"), width = 8, height = 8, units = "in", pointsize = 11, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "ptox_map.png"), width = 10, height = 8.5, units = "in", pointsize = 11, family = "sans", res = 300)
 ptox_map
 dev.off()
 
 
-png(filename = here("analysis_2022", "figures", "ptox_swp_map.png"), width = 8, height = 8, units = "in", pointsize = 11, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "ptox_swp_map.png"), width = 9, height = 8, units = "in", pointsize = 11, family = "sans", res = 300)
 ptox_swp_map
 dev.off()
 ```

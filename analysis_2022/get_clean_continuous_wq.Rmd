@@ -44,7 +44,7 @@ stations_flowplot <- c("DTO", "HBP", "TRP")
 
 # Define start and end dates - these will remain the same throughout
 start <- "2013-01-01"
-end <- "2022-11-01"
+end <- "2022-12-01"
 ```
 
 ## get flow data
@@ -76,8 +76,8 @@ flow_sum <- flow_clean %>%
 ```
 
 ```{r}
-saveRDS(flow_clean, here(data_root,"CDEC_flow_SJC_LIB__FCT_2013_2022.rds"), compress = "xz")
-flow_clean <- readRDS(here(data_root,"CDEC_flow_SJC_LIB_FCT_2013_2022.rds"))
+saveRDS(flow_clean, here(data_root,"CDEC_flow_SJC_LIB_FCT_2013_2022.rds"), compress = "xz")
+flow_clean <- readRDS(here("analysis_2022", "data_raw", "CDEC_flow_SJC_LIB_FCT_2013_2022.rds"))
 ```
 
 ## get velocity data
@@ -371,21 +371,48 @@ f_cleanparam4 <- function(sta, param,  startdate = "20220101", enddate) {
 
 ```{r}
 plist <- c("wtemp","depth","turbidity","spc","dopct","do","chl", "pH")  
-data_FAL <- map(plist[1:7], ~ f_cleanparam(sta = "FAL", param = .x, enddate = "20220926")) %>% bind_rows()
-data_OSJ <- map(plist[1:7], ~ f_cleanparam(sta = "OSJ", param = .x, enddate = "20220926")) %>% bind_rows()
-data_HLT <- map(plist[-c(5:6, 8)], ~ f_cleanparam3(sta = "HLT", param = .x, enddate = "20220908")) %>% bind_rows()
-data_HOL <- map(plist[1:6], ~ f_cleanparam2(sta = "HOL", param = .x, enddate = "20220823")) %>% bind_rows()
-data_BLP <- map(plist[c(1, 3:8)], ~ f_cleanparam4(sta = "BLP", param = .x, startdate = "2015", enddate = "2022")) %>%
+data_FAL1 <- map(plist[1:7], ~ f_cleanparam(sta = "FAL", param = .x, enddate = "20220926")) %>% bind_rows()
+data_FAL2 <- map(plist[1:7], ~ f_cleanparam(sta = "FAL", param = .x, startdate = "20220926", enddate = "20221130")) %>% bind_rows()
+data_FAL <- rbind(data_FAL1, data_FAL2) %>%
+  unique()
+
+data_OSJ1 <- map(plist[1:7], ~ f_cleanparam(sta = "OSJ", param = .x, enddate = "20220926")) %>% bind_rows()
+data_OSJ2 <- map(plist[1:7], ~ f_cleanparam(sta = "OSJ", param = .x, startdate = "20221001", enddate = "20221130")) %>% bind_rows()
+data_OSJ3 <- map(plist[1:7], ~ f_cleanparam(sta = "OSJ", param = .x, startdate = "20140101", enddate = "20141231")) %>% bind_rows()
+data_OSJ <- rbind(data_OSJ1, data_OSJ2, data_OSJ3) %>% unique()
+
+data_HLT1 <- map(plist[-c(5:6, 8)], ~ f_cleanparam3(sta = "HLT", param = .x, enddate = "20220908")) %>% bind_rows()
+data_HLT2 <- map(plist[-c(5:6, 8)], ~ f_cleanparam3(sta = "HLT", param = .x, startdate = "20221001", enddate = "20221130")) %>% bind_rows()
+data_HLT3 <- map(plist[-c(5:6, 8)], ~ f_cleanparam3(sta = "HLT", param = .x,startdate = "20140101", enddate = "20141231")) %>% bind_rows()
+data_HLT <- rbind(data_HLT1, data_HLT2, data_HLT3) %>% unique()
+
+
+data_HOL1 <- map(plist[1:6], ~ f_cleanparam2(sta = "HOL", param = .x, enddate = "20220823")) %>% bind_rows()
+data_HOL2 <- map(plist[1:6], ~ f_cleanparam2(sta = "HOL", param = .x, startdate = "20221001", enddate = "20221130")) %>% bind_rows()
+data_HOL3 <- map(plist[1:6], ~ f_cleanparam2(sta = "HOL", param = .x, startdate = "20140101", enddate = "20141231")) %>% bind_rows()
+data_HOL <- rbind(data_HOL1, data_HOL2, data_HOL3) %>% unique()
+
+
+data_BLP1 <- map(plist[c(1, 3:8)], ~ f_cleanparam4(sta = "BLP", param = .x, startdate = "2015", enddate = "2022")) %>%
   bind_rows()
+data_BLP2 <- map(plist[c(1, 3:8)], ~ f_cleanparam4(sta = "BLP", param = .x, startdate = "20221006", enddate = "20221130")) %>%
+  bind_rows()
+data_BLP3 <- map(plist[c(1, 3:8)], ~ f_cleanparam4(sta = "BLP", param = .x, startdate = "20140101", enddate = "20141231")) %>%
+  bind_rows()
+data_BLP <- rbind(data_BLP1, data_BLP2, data_BLP3)%>% unique()
+
 data_NCRO <- rbind(data_FAL, data_HOL, data_HLT, data_OSJ, data_BLP)
 saveRDS(data_NCRO, "analysis_2022/data_raw/NCRO_combined_2022.rds")
+data_NCRO <- readRDS("analysis_2022/data_raw/NCRO_combined_2022.rds")
 ```
 
 ## EMP
 ```{r}
 FRK0 <- read_csv(here(data_root, "EMP_Continuous_FRK_2022.csv"))
+FRK0b.files <- list.files(path = here("analysis_2022", "data_raw"), pattern="EMP_FRK_", full.names=TRUE)
+FRK0b <- lapply(FRK0b.files, read_csv) %>% bind_rows() 
 
-FRK <- FRK0 %>%
+FRK1 <- FRK0 %>%
   mutate(date = date(datetime)) %>%
   rename(wtemp = watertemp_C,
          do = `dissolvedoxygen_mg/l`,
@@ -395,6 +422,21 @@ FRK <- FRK0 %>%
          spc = `specificconductivity_uS/cm`) %>%
   pivot_longer(cols = do:wtemp, names_to = "parameter", values_to = "value") %>%
   select(datetime, date, station, parameter, value)
+
+FRK2 <- FRK0b %>%
+  rename(datetime = time) %>%
+  mutate(parameter = case_when(grepl("WaterTemperature", parameter) ~	"wtemp",
+                               grepl("DissolvedOxygen", parameter) ~ "do",
+                               grepl("Fluorescence", parameter) ~ "chl",
+                               grepl("Fluorescence", parameter) ~ "chl",
+                               grepl("Turb", parameter) ~ "turbidity",
+                               grepl("SpC", parameter) ~ "spc",
+                               TRUE~as.character(parameter))) %>%
+  mutate(date = date(datetime))%>%
+  select(datetime, date, station, parameter, value)
+
+FRK = rbind(FRK1, FRK2) %>%
+  unique()
 ```
 
 
@@ -417,7 +459,7 @@ https://help.waterdata.usgs.gov/codes-and-parameters/parameters
 https://help.waterdata.usgs.gov/code/parameter_cd_query?fmt=rdb&group_cd=PHY&inline=true
 
 ```{r}
-f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '00095', '00400', '00300', '32316'), startDate = "2013-01-01", endDate = "2022-11-01", tz = "Etc/GMT+8"){
+f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '00095', '00400', '00300', '32316'), startDate = "2013-01-01", endDate = "2022-12-01", tz = "Etc/GMT+8"){
 
   # get data
   print("Downloading data...")
@@ -439,7 +481,7 @@ f_get_NWIS <- function(siteNumbers=11312676, parameterCd = c('00010','63680', '0
   print("Data saved in data_raw")
 }
 
-f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), startDate = "2013-01-01", endDate = "2022-11-01", tz = "Etc/GMT+8"){
+f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), startDate = "2013-01-01", endDate = "2022-12-01", tz = "Etc/GMT+8"){
 
   # get data
   print("Downloading data...")
@@ -461,7 +503,7 @@ f_get_NWIS_flow <- function(siteNumbers=11312676, parameterCd = c('00060'), star
   print("Data saved in data_raw")
 }
 
-f_get_NWIS_vel <- function(siteNumbers=11312676, parameterCd = c('72255'), startDate = "2013-01-01", endDate = "2022-11-01", tz = "Etc/GMT+8"){
+f_get_NWIS_vel <- function(siteNumbers=11312676, parameterCd = c('72255'), startDate = "2013-01-01", endDate = "2022-12-01", tz = "Etc/GMT+8"){
 
   # get data
   print("Downloading data...")
@@ -490,6 +532,8 @@ ORQ: Latitude 38°01'38",   Longitude 121°33'52"   NAD83
 DSJ: Latitude 38°00'49",   Longitude 121°40'00"   NAD27 38.01361 -121.6667
 DUTCH SLOUGH BL JERSEY ISLAND RD A JERSEY ISLAND
 
+LIB: 11455315
+
 
 ```{r}
 f_get_NWIS(siteNumbers = 11312676) # MDM
@@ -510,6 +554,8 @@ f_get_NWIS(siteNumbers = 11304810) # SJG
 f_get_NWIS_flow(siteNumbers = 11304810) # SJG
 f_get_NWIS_flow(siteNumbers = 11313440) # FAL
 f_get_NWIS_vel(siteNumbers = 11313440) # FAL
+f_get_NWIS(siteNumbers = 11455315) # LIB
+
 ```
 ### Clean up data and combine
 ```{r}
@@ -681,7 +727,22 @@ SJG <- left_join(SJG_WQ, SJG_flow) %>%
                names_to = "parameter",
                values_to = "value")
 
-data_USGS <- rbind(MDM_comb, MDM_vel, ORQ, DSJ, SJG, FAL, FAL_vel, HLT, HOL, OSJ) 
+LIB_WQ <- readRDS(here(data_root, "USGS_NWIS_11455315_WQ.rds"))%>%
+  rename(Datetime = date_time, 
+         wtemp = bgc_project_wtemp_inst,
+         wtemp2 = chlor_intercal_project_chlor_intercal_project_wtemp_inst,
+         spc = bgc_project_spec_cond_inst,
+         pH = bgc_project_p_h_inst,
+         do = bgc_project_do_inst ,
+         turbidity = turb_inst)%>% 
+  mutate(station = "LIB",
+         date = date(Datetime),
+         datetime = Datetime) %>%
+  select(datetime, date, station, wtemp, spc, turbidity) %>%
+  pivot_longer(cols = wtemp:turbidity,
+               names_to = "parameter",
+               values_to = "value")
+data_USGS <- rbind(MDM_comb, MDM_vel, ORQ, DSJ, SJG, FAL, FAL_vel, HLT, HOL, OSJ, LIB_WQ) 
 ```
 
 # Combine data from different programs

@@ -41,14 +41,15 @@ wq_data <- readRDS(here(data_root,"data_clean", "continuous_wq_2013_2022.rds")) 
   mutate(WY = ifelse(as.numeric(Month) >9, as.numeric(Year) + 1, as.numeric(Year)),
          fWY = factor(WY),
          fYear = factor(Year)) %>%
-  filter(Year > 2014,
+  filter(Year > 2013,
          Analyte !="DO.Pct",
-         Date < ymd("2022-10-01"),
+         Date < ymd("2022-12-01"),
          !Site %in% c("BLP")) 
 
 flow_stations <- wq_data %>% filter(Analyte == "Flow") 
 unique(flow_stations$Site)
 
+# Add TUCP start and end dates into dataset, organize by location
 wq_data2 <- wq_data %>%
   left_join(tucp_dates) %>%
   mutate(TUCP_in_effect = case_when(TUCP == "Yes" & Date >= TUCPStart & Date <= TUCPEnd ~ "Yes",
@@ -108,22 +109,22 @@ wq_lib <- wq_data2 %>% filter(Region == "Liberty Island")
 
 # Filter down to dry years and get mean as determined above across stations
 daily_frk0 <- wq_frk %>%
-  filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
+  filter(fYear %in% c("2014", "2015", "2020", "2021", "2022")) %>%
   group_by(Date, Date2, Year, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
   summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
   filter(!is.na(Date)) %>%
   mutate(Location = "Frank's Tract")
 
 daily_mil0 <- wq_mil %>%
-  filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
-  group_by(Date, Date2, Year, WaterYear, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
+  filter(fYear %in% c("2014", "2015", "2020", "2021", "2022")) %>%
+  group_by(Date, Date2, Year,  Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
   summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
   filter(!is.na(Date))%>%
   mutate(Location = "Mildred Island")
 
 daily_lib0 <- wq_lib %>%
-filter(fYear %in% c("2015", "2020", "2021", "2022")) %>%
-  group_by(Date, Date2, Year, WaterYear, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
+filter(fYear %in% c("2014", "2015", "2020", "2021", "2022")) %>%
+  group_by(Date, Date2, Year, Julian, Month, fYear, Analyte, TUCP_in_effect, TUCP, Barrier_in_effect, Barrier) %>%
   summarize(Daily = mean(dailyval, na.rm = TRUE)) %>%
   filter(!is.na(Date))%>%
   mutate(Location = "Liberty Island")
@@ -179,7 +180,7 @@ unique(wq_data2$Region)
 wq_a <- wq_data2 %>% 
   filter(Analyte != "Flow",
          Analyte != "Velocity",
-         !Region %in% c("Liberty Island", "San Joaquin")) 
+         !Region %in% c("San Joaquin")) 
 
 wq_summary2022 <- wq_a %>%
   dplyr::select(-Date2) %>%
@@ -190,23 +191,23 @@ wq_summary2022 <- wq_a %>%
   ungroup()
 
 wq_2022 <- wq_a %>%
-  filter(!Month %in% c("Jan", "Feb", "Nov", "Dec"),
+  filter(!Month %in% c("Jan", "Feb", "Dec"),
          Year == 2022)
 
 # All years 
 wq_yearcomp <- wq_a %>%
-  filter(Year %in% c(2015, 2016,2020, 2021, 2022))  %>%
+  filter(Year %in% c(2014, 2015, 2016,2020, 2021, 2022))  %>%
   ungroup() %>%
   droplevels()
 
-wq_yearcomp <- subset(wq_yearcomp, Year%in% c(2015, 2016, 2020, 2021, 2022))
+wq_yearcomp <- subset(wq_yearcomp, Year%in% c(2014, 2015, 2016, 2020, 2021, 2022))
 
 
 
 
 
 wq_EDB <- wq_data_summary_EDB %>%
-  filter(!Region %in% c("San Joaquin", "Liberty Island"),
+  filter(!Region %in% c("Liberty Island"),
          !Analyte %in% c("Flow", "Velocity"),
          !EDBComp %in% c("Other", "Wet"),
          !Month %in% c("Nov", "Dec"))
@@ -244,7 +245,7 @@ templine <- data.frame(Analyte = c("Temp"), int = c(19))
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
     scale_color_viridis(option = "turbo", discrete = TRUE) +
     scale_x_date(breaks = "month", date_labels = "%b", expand = c(0,0)) + 
-    scale_linetype_manual(values = c("dashed", "solid", "dotted")) +
+    scale_linetype_manual(values = c("longdash", "dotdash", "solid")) +
     labs(y = "Daily Mean Value") +
     theme_bw() +
     theme(strip.text = element_text(size = 12),
@@ -258,13 +259,12 @@ templine <- data.frame(Analyte = c("Temp"), int = c(19))
 
 ### Across years
 ```{r}
-
-analytes <- data.frame(Analyte = rep(unique(wq_yearcomp$Analyte),5),
-                       fYear = c(rep("2015", 6), rep("2016", 6), rep("2020", 6), rep("2021", 6), rep("2022", 6)))
+analytes <- data.frame(Analyte = rep(unique(wq_yearcomp$Analyte),6),
+                       fYear = c(rep("2014", 6), rep("2015", 6), rep("2016", 6), rep("2020", 6), rep("2021", 6), rep("2022", 6)))
 
 tucp.df <- tucp_dates %>%
   mutate(fYear = factor(WY)) %>%
-  filter(fYear %in% c("2015", "2016", "2020", "2021", "2022")) %>%
+  filter(fYear %in% c("2014", "2015", "2016", "2020", "2021", "2022")) %>%
   select(fYear, TUCPStart, TUCPEnd, BarrierStartDate, BarrierEndDate) %>%
   left_join(analytes) %>%
   mutate(xmin = ymd(paste0("1980-", lubridate::month(TUCPStart),"-", day(TUCPStart))), 
@@ -291,11 +291,12 @@ str(wq_yearcomp)
     geom_hline(data = templine, aes(yintercept = int)) + 
    geom_vline(data = tucp.df, aes(xintercept = EDBStart), linetype = "dotted") +
    geom_vline(data = tucp.df, aes(xintercept = EDBEnd), linetype = "dotted") + 
-  facet_grid(Analyte~fYear, scales = "free_y",  labeller = as_labeller(c(
+  facet_grid(Analyte~fYear, scales = "free_y",  labeller = as_labeller(c(`2014` = "2014 (T)",
     `2016` = "2016", `2015` = "2015 (E/T)", `2020` = "2020", `2021` = "2021 (E/T)", `2022` = "2022 (E/T)",
     Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)",                                                          pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
+     scale_linetype_manual(values = c("longdash", "dotdash", "solid")) +
   scale_color_viridis(option = "turbo", discrete = TRUE) +
    scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + 
   labs(y = "Daily Mean Value", color = "Station") + 
@@ -311,13 +312,27 @@ str(wq_yearcomp)
 
 #### Write
 ```{r}
+
+# 2022 WQ
+png(filename = here("analysis_2022", "figures", "plot_cont_2022.png"), width = 9, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_cont_2022
+dev.off()
+
 png(filename = here("analysis_2022", "figures", "plot_wq_years.png"), width = 8, height = 8.5, units = "in", pointsize = 12, family = "sans", res = 300)
 plot_cont_jday
 dev.off()
 ```
 
 
-### Frk vs MI - EDB
+
+
+
+
+
+
+
+
+### Frk vs MI - EDB - Did not use this one
 ```{r}
 (plot_mil_vs_frk <- ggplot(wq_EDB) +
  # geom_point(aes(x = Date2, y = TUCP_value), fill = "gray87", color = "gray87") + 
@@ -939,7 +954,7 @@ spc <- readRDS(here(data_root, "data_raw", "CDEC_spc_EMM_TMS_2013_2022.rds")) %>
   mutate(Date2 = paste0(1980, "-", Month, "-", day(Date)),
          Date2 = ymd(Date2))
 spc_dry <- filter(spc, Year %in% c(2013, 2016, 2020, 2022),
-                  !Month %in% c("Jan", "Feb", "Nov", "Dec"))
+                  !Month %in% c("Jan", "Feb", "Dec"))
 
 table <- spc_dry %>%
   mutate(Group = ifelse(Year == 2022, "2022", "Other")) %>%
@@ -957,7 +972,7 @@ table <- spc_dry %>%
                    xmax = xmax, 
                    ymin = ymin, 
                    ymax = ymax),
-                fill = "gray95", alpha = 0.5) +
+                fill = "gray90", alpha = 0.5) +
   geom_line(data = spc_dry, aes(x = Date2, y= Daily.Mean, color = factor(Year))) + 
   scale_color_viridis(discrete = TRUE, option = "turbo") + 
    
@@ -1172,10 +1187,7 @@ dev.off()
 
 
 
-# 2022 WQ
-png(filename = here("analysis_2022", "figures", "plot_cont_2022.png"), width = 9, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
-plot_cont_2022
-dev.off()
+
 
 # png(filename = here("analysis_2022", "figures", "plot_cont_2015_2022.png"), width = 10, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
 # plot_cont_allyears

@@ -76,9 +76,7 @@ df_mvi_c <- HABsVis %>%
     !if_any(c(Latitude, Longitude), is.na),
     # Only keep data from 2014-2022 in June-October
     Year %in% 2014:2022,
-    Month_num %in% 6:10
-    # if want to look at spring for any spring TUCO effect
-#    Month_num %in% 3:6
+    Month_num %in% 4:10
   ) %>%
   # Assign Strata from R_EDSM_Strata_1718P1 shapefile
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
@@ -142,6 +140,11 @@ scale_fill_mvi <- list(
   )
 )
 
+
+# set strata levels for plotting
+df_mvi_c$Region = factor(df_mvi_c$Region, levels=c("SDWSC", "Upper Sac", "Cache/Liberty", "Lower Sac", "East Delta",
+                                                   "Lower SJ", "Suisun Marsh", "Suisun Bay", "South Delta"))
+
 # Create stacked bar plot of 5 index categories by Year for all data from 2014-2022
 barplt_year <- df_mvi_c %>%
   ggplot(aes(x = Year, fill = Microcystis)) +
@@ -157,8 +160,24 @@ barplt_year <- df_mvi_c %>%
     expand = expansion(mult = c(0.02, 0.02))
   )
 
-# Create stacked bar plot of 5 index categories by by Month (June-Sept) and Region
-  # for just 2022
+# Create stacked bar plots of 5 index categories by by Month (June-Sept) and Region
+  # for 2021 and 2022, separately
+barplt_2021 <- df_mvi_c %>%
+  filter(
+    Year == 2021,
+    Month_f != "Oct"
+  ) %>%
+  ggplot(aes(x = Region, fill = Microcystis)) +
+  geom_bar(position = "fill") +
+  facet_grid(cols = vars(Month_f)) +
+  scale_fill_mvi +
+  scale_y_continuous(
+    name = "Relative Frequency",
+    labels = percent_format(),
+    expand = expansion(mult = c(0, 0.025))
+  ) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
 barplt_2022 <- df_mvi_c %>%
   filter(
     Year == 2022,
@@ -174,6 +193,9 @@ barplt_2022 <- df_mvi_c %>%
     expand = expansion(mult = c(0, 0.025))
   ) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+# Use patchwork to put them together
+VisMicro_Month_2021_2022 = barplt_2021 / barplt_2022 +  plot_annotation(tag_levels = 'A')
 
 # Create map of Regions and sampling locations
 mp_reg_samp_loc <-
@@ -201,19 +223,19 @@ mp_reg_only <-
 
 # Stacked bar plot by Year for all data from 2014-2021
 ggsave(
-  here("EDB/Microcystis_visindex_by_Year.jpg"),
+  here("analysis_2022/figures/Microcystis_visindex_by_Year.jpg"),
   plot = barplt_year,
   height = 4.5,
   width = 6.5,
   units = "in"
 )
 
-# Stacked bar plot by Month and Region for just 2021
+# Stacked bar plot by Month and Region for 2021 and 2022
 ggsave(
-  here("EDB/Microcystis_visindex_month_reg_2022.jpg"),
-  plot = barplt_2021,
-  height = 5.3,
-  width = 8,
+  here("analysis_2022/figures/Microcystis_visindex_month_reg_20212022.jpg"),
+  plot = VisMicro_Month_2021_2022,
+  height = 12,
+  width = 9,
   units = "in"
 )
 

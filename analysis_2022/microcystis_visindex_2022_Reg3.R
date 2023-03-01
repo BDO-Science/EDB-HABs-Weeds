@@ -8,7 +8,8 @@
 # Contact: David.Bosworth@water.ca.gov
 
 ######
-# Modified to include 2022 data by Kristi Arend; karend@usbr.gov
+# Modified to include 2022 data by Kristi Arend for use in TUCO 2022 Condition 8 HABs report
+## karend@usbr.gov
 
 
 # 1. Global Code ----------------------------------------------------------
@@ -20,6 +21,8 @@ library(scales)
 library(sf)
 library(deltamapr)
 library(patchwork)
+library(fs)
+library(readxl)
 
 # Set working directory and THEN load here package
 setwd("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022")
@@ -48,7 +51,9 @@ HABsVis_Summy <- HABsVis %>%
   group_by(Source) %>%
   summarize(first=min(as.Date(Date)),last=max(as.Date(Date)))
 
-# Add complete 2022 FMWT data
+####### ADD DATA #######
+
+#### Add complete 2022 FMWT data ####
 FMWT_AllData<-read.csv("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_raw/FMWT 1967-2022 Catch Matrix_updated_tidy.csv")
 
 # Add a month column
@@ -67,13 +72,251 @@ FMWT_2022 <- FMWT_AllData %>%
 ## Trim to just one row per site*date
 FMWT_2022trim <- unique(FMWT_2022)
 
-# Add a column, Source, that labels teh data as FMWT
+# Add a column, Source, that labels the data as FMWT
 FMWT_2022trim$Source <- replicate(nrow(FMWT_2022trim), 'FMWT')
 
 # Merge FMWT_2022 with HABsVis
 HABsVis2022 <- full_join(HABsVis, FMWT_2022trim)
 
-# Prepare Microcystis visual index data for figures
+# make sure Station is character format, not double
+HABsVis2022$Station <- as.character(HABsVis2022$Station)
+
+#### Add fall USGS data ####
+# Extract data from the third tab in the file updated on Feb 10, 2023
+USGS_FallNew <- read_excel("data_raw/USGS_data_WW_Spatt_Microcystis_updated20230210.xlsx", 3)
+
+
+# Add lat and long columns
+## extract Station name and lat and long from existing 2022 data
+USGS_Site_LatLong <- HABsVis2022 %>%
+  filter(Source == "USGS") %>%
+  select(Station, Latitude, Longitude) %>%
+  rename(field_ID = Station) %>%
+  unique()
+
+## Add lat and long to updated data frame
+USGS_FallNew <- left_join(USGS_FallNew, USGS_Site_LatLong, by = "field_ID")
+## create df that can be merged with HABsVis2022
+USGS_FallNew_Select <- USGS_FallNew %>%
+  select(field_ID, Latitude, Longitude, 'Start_timestamp_(PST)', MC_rating) %>%
+  rename(Station = field_ID, Microcystis = MC_rating, Date = 'Start_timestamp_(PST)') %>%
+  mutate(Date = as.Date(Date)) %>%
+  mutate(Microcystis = as.double(Microcystis))
+
+# Add month and year columns
+USGS_FallNew_Select$Month <- month(ymd(USGS_FallNew_Select$Date))
+USGS_FallNew_Select$Year <- year(ymd(USGS_FallNew_Select$Date))
+
+# Add a column, Source, that labels the data as USGS
+USGS_FallNew_Select$Source <- replicate(nrow(USGS_FallNew_Select), 'USGS')
+
+# Reorder columns to match HABsVis2022
+USGS_FallNew_Select <- USGS_FallNew_Select %>%
+  select(Source, Station, Latitude, Longitude, Date, Microcystis, Month, Year)
+
+
+# Merge USGS_FallNew_Select with HABsVis2022
+HABsVis2022 <- full_join(HABsVis2022, USGS_FallNew_Select)
+
+
+#### Add fall EMP data ####
+# Import additional DWR_EMP field data for 2022 - this includes EZ station
+# coordinates - provided from personal data request
+
+
+# File path
+fp_nutr_chla <- dir(here("analysis_2022/data_raw"), full.names = TRUE)
+
+df_emp_FallField_2022 <-
+  read_excel(
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data_Sep_Nov_2022"),
+    range = "A86:AE168",
+    col_types = "text",
+    skip=1
+  )
+
+df_emp_Fallnutschl <-
+  read_excel(
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data_Sep_Nov_2022"),
+    range = "A2:Y84",
+    col_types = "text",
+    skip=1
+  )
+
+df_emp_coord <- read_csv(here("analysis_2022", "data_raw", "stations_emp.csv"))
+
+# Prepare DWR_EMP station coordinates
+df_emp_coord_c <- df_emp_coord %>%
+  select(Station, Latitude, Longitude) %>%
+  drop_na()
+
+# Prepare DWR_EMP EZ station coordinates
+df_emp_coord_ez21 <- df_emp_FallField_2022 %>%
+  select(
+    SampleCode = `Sample Code`,
+    Latitude_field = contains("Latitude"),
+    Longitude_field = contains("Longitude")
+  ) %>%
+  filter(!if_any(c(Latitude_field, Longitude_field), ~ .x == "N/A")) %>%
+  mutate(across(ends_with("_field"), as.numeric))
+
+
+# Prepare 2022 EMP discrete nutrient and chlorophyll-a data to be combined with
+# all other data
+df_emp_FallField_2022_c <- df_emp_FallField_2022 %>%
+  # Select and standardize variable names
+  select(
+    Station = `Station Name`,
+    StationNumber = `Station Number`,
+    SampleCode = `Sample Code`,
+    Datetime = `Sample Date`,
+    Microcystis = contains("Microcystis"),
+    Secchi = contains("Secchi"),
+    Temperature = 'Water Temperature °C EPA 170.1 (Field) - [1]*',
+    Chlorophyll = 'Chlorophyll Fluorescence ug/L of Chl Fluorescence, Sonde - [1]*'
+  ) %>%
+  # Parse Datetime (as PST) and create Source and Date variables
+  mutate(
+    Datetime = mdy_hm(Datetime, tz = "Etc/GMT+8"),
+    Date = date(Datetime),
+    Month = month(Datetime),
+    Year = year(Datetime),
+    Source = "EMP",
+    Microcystis = as.double(Microcystis),
+    Secchi = as.double(Secchi),
+    Temperature = as.double(Temperature),
+    Chlorophyll = as.double(Chlorophyll)
+  ) %>%
+  mutate(
+    # Standardize Stations
+    Station = case_when(
+      str_detect(Station, "^SF Estuarine") ~ StationNumber,
+      str_detect(Station, "- C3A") ~ "C3A",
+      str_detect(Station, "^NZ068") ~ "NZ068",
+      str_detect(Station, " - ") ~ str_extract(Station, ".+(?= - )")
+    )) %>%
+  # Add station coordinates
+  left_join(df_emp_coord_c, by = "Station") %>%
+  left_join(df_emp_coord_ez21, by = "SampleCode") %>%
+  mutate(
+    Latitude = if_else(is.na(Latitude), Latitude_field, Latitude),
+    Longitude = if_else(is.na(Longitude), Longitude_field, Longitude)
+  ) %>%
+  # remove station EZ6 data because it is redundant with station D22 (EZ6 nutrient samples were
+    # collected at D22, so water samples differed but field data did not)
+  filter(!Station == 'EZ6') %>%
+  # Select variable order
+  select(
+    Source,
+    Station,
+    Latitude,
+    Longitude,
+    Date,
+    Microcystis,
+    Secchi,
+    Temperature,
+    Month,
+    Year,
+    Chlorophyll
+  )
+
+# get lab chlorophyll data from lab data and append to field data
+df_emp_ChlLab <- df_emp_Fallnutschl %>%
+  select(
+    Station = `Station Name`,
+    StationNumber = 'Station Number',
+    Datetime = `Sample Date`,
+    Chlorophyll_lab = contains("Chlorophyll"),
+  ) %>%
+  # Parse Datetime (as PST) and create Source and Date variables
+  mutate(
+    Datetime = mdy_hm(Datetime, tz = "Etc/GMT+8"),
+    Date = date(Datetime),
+    Chlorophyll_lab = as.double(Chlorophyll_lab)
+  ) %>%
+  mutate(
+    # Standardize Stations
+    Station = case_when(
+      str_detect(Station, "^SF Estuarine") ~ StationNumber,
+      str_detect(Station, "- C3A") ~ "C3A",
+      str_detect(Station, "^NZ068") ~ "NZ068",
+      str_detect(Station, " - ") ~ str_extract(Station, ".+(?= - )")
+    )) %>%
+  # remove station EZ6 data because it is redundant with station D22 and only want the lab
+  # chl data from one water sample to match with the visual microcystis score
+  filter(!Station == 'EZ6') %>%
+  select(!c(StationNumber, Datetime))
+
+# Append lab chlorophyll a data to the rest of the EMP data
+df_emp_FallVisMicro_2022_c <- right_join(df_emp_FallField_2022_c,df_emp_ChlLab, by=c("Station", "Date"))
+
+# Merge df_emp_FallVisMicro_2022_c with HABsVis2022
+HABsVis2022 <- full_join(HABsVis2022, df_emp_FallVisMicro_2022_c)
+
+### everything below needs to be modified for this purpose (3/1/23)
+
+##### Check start and end dates for each source #####
+HABsVis_Summy_All <- HABsVis2022 %>%
+  group_by(Source) %>%
+  summarize(first=min(as.Date(Date)),last=max(as.Date(Date)))
+
+#### Add fall NCRO data ####
+# Data file contains all of the 2022 data (July-December)
+df_ncro_FallVisMicro_2022 <-
+  read_excel("data_raw/NCRO_HabObs_20220705-20221231.xlsx")
+
+## Remove all NCRO 2022 data from HABsVis2022
+HABsVis2022 <- HABsVis2022 %>%
+  filter(!(Source == "FMWT" & Year == '2022'))
+
+# Load NCRO coordinate data
+df_ncro_coord <- read_excel(here("analysis_2022/data_raw/NCRO_Station_Metadata.xlsx"))
+
+df_ncro_coord_c <- df_ncro_coord %>%
+  janitor::clean_names(case = "upper_camel")%>%
+  select(Station = Cdec,
+         Latitude = LatitudeWgs84,
+         Longitude = LongitudeWgs84)
+
+df_ncro_VisMic2022_c <- df_ncro_FallVisMicro_2022 %>%
+  # Select and standardize station names
+  mutate(
+    Station = case_when(
+      str_detect(StationName, "^Bethel") ~ "BET",
+      str_detect(StationName, "^False") ~ "FAL",
+      str_detect(StationName, "^Fisherman") ~ "FCT",
+      str_detect(StationName, "^Holland") ~ "HOL",
+      str_detect(StationName, "^Middle River at Howard") ~ "MHR",
+      str_detect(StationName, "^Middle River at Undine") ~ "MRU",
+      str_detect(StationName, "^Middle River near Holt") ~ "HLT",
+      str_detect(StationName, "^Middle River near Tracy") ~ "MRX",
+      str_detect(StationName, "^Old River at Tracy") ~ "OSJ",
+      str_detect(StationName, "^Old River near Bacon") ~ "OBI",
+      str_detect(StationName, "^Old River near Frank") ~ "OSJ",
+      str_detect(StationName, "^Old River below Headwater") ~ "OH1",
+      str_detect(StationName, "^Old River Below Clifton") ~ "ORI",
+      str_detect(StationName, "^Old River Downstream DMC") ~ "OBD",
+      str_detect(StationName, "^Old River near Doughty") ~ "ORX",
+      str_detect(StationName, "^Old River Upstream of Mountain") ~ "ORM",
+      str_detect(StationName, "^Miner Slough") ~ "MIR",
+      str_detect(StationName, "^Paradise") ~ "PDC",
+      str_detect(StationName, "^Rock Slough") ~ "RSL",
+      str_detect(StationName, "^Sacramento River Downstream") ~ "SOI",
+      str_detect(StationName, "^San Joaquin River at Blind") ~ "BLP",
+      str_detect(StationName, "Steamboat Slough") ~ "SXS",
+      str_detect(StationName, "^Sugar Cut") ~ "SGA",
+      str_detect(StationName, "^Three") ~ "TSL",
+      str_detect(StationName, "^Turner") ~ "TRN",
+      str_detect(StationName, "^Victoria") ~ "VCU",
+      str_detect(StationName, "^West Canal") ~ "WCI",
+      str_detect(StationName, "^Yolo") ~ "LIS",
+      str_detect(StationName, "^Grant Line Canal East") ~ "GLE",
+      str_detect(StationName, "^Grant Line Canal near Old River") ~ "GLE",
+
+    ))
+
+######## PREP DATA FOR FIGS #######
+#### Remove data with missing information; add region 3 strata (Shows Franks, OMR, etc.)
 
 df_mvi_c <- HABsVis2022 %>%
   select(Source, Station, Latitude, Longitude, Date, Microcystis) %>%

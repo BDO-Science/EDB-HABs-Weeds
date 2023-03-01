@@ -97,7 +97,7 @@ df_cawsc_tmp <-
       siteNumbers = site_numb,
       parameterCd = params,
       startDate = "2022-01-01",
-      endDate = "2022-11-01"
+      endDate = "2022-12-01"
     )
 dat_clean <- dataRetrieval::renameNWISColumns(df_cawsc_tmp)
 

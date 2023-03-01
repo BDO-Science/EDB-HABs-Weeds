@@ -359,7 +359,7 @@ df_ncro_2022_c <- df_ncro %>%
       str_detect(StationName, "^Middle River at Undine") ~ "MRU",
       str_detect(StationName, "^Middle River near Holt") ~ "HLT",
       str_detect(StationName, "^Middle River near Tracy") ~ "MRX",
-      str_detect(StationName, "^Old River at Tracy") ~ "OSJ",
+      str_detect(StationName, "^Old River at Tracy") ~ "OLD",
       str_detect(StationName, "^Old River near Bacon") ~ "OBI",
       str_detect(StationName, "^Old River near Frank") ~ "OSJ",
       str_detect(StationName, "^Old River below Headwater") ~ "OH1",
@@ -380,7 +380,7 @@ df_ncro_2022_c <- df_ncro %>%
       str_detect(StationName, "^West Canal") ~ "WCI",
       str_detect(StationName, "^Yolo") ~ "LIS",
       str_detect(StationName, "^Grant Line Canal East") ~ "GLE",
-      str_detect(StationName, "^Grant Line Canal near Old River") ~ "GLE",
+      str_detect(StationName, "^Grant Line Canal near Old River") ~ "DGL",
       
     )) %>%
  

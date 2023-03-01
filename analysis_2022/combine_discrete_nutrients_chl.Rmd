@@ -169,8 +169,16 @@ df_emp_nutschl_2022 <-
 
 df_emp_nutschl_2022_Aug <-
   read_excel(
-    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data"),
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data_Aug"),
     range = "A2:AB30",
+    col_types = "text",
+    skip=1
+  )
+
+df_emp_nutschl_2022_Sep_Nov <-
+  read_excel(
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data_Sep"),
+    range = "A2:Y84",
     col_types = "text",
     skip=1
   )
@@ -185,15 +193,21 @@ df_emp_field_2022 <-
 
 df_emp_field_2022_Aug <-
   read_excel(
-    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data"),
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data_Aug"),
     range = "A32:AH60",
     col_types = "text",
     skip=1
   )
 
-df_emp_nutschl_2022 <- bind_rows(df_emp_nutschl_2022, df_emp_nutschl_2022_Aug)
-df_emp_field_2022 <- bind_rows(df_emp_field_2022, df_emp_field_2022_Aug)
+df_emp_field_2022_Sep_Nov <-
+  read_excel(
+    path = str_subset(fp_nutr_chla, "EMP_Discrete_WQ_Data_Sep"),
+    range = "A86:AE168",
+    col_types = "text", 
+    skip = 1)
 
+df_emp_nutschl_2022 <- bind_rows(df_emp_nutschl_2022, df_emp_nutschl_2022_Aug, df_emp_nutschl_2022_Sep_Nov)
+df_emp_field_2022 <- bind_rows(df_emp_field_2022, df_emp_field_2022_Aug, df_emp_field_2022_Sep_Nov)
 df_emp_coord <- read_csv(here("analysis_2022", "data_raw", "stations_emp.csv"))
 ```
 
@@ -290,17 +304,28 @@ df_emp_2022_c <- df_emp_nutschl_2022 %>%
 
 # NCRO
 ```{r}
-df_ncro <-
+df_ncro_thruAug <-
   read_excel(
-    path = str_subset(fp_nutr_chla, "NCRO_WQES"),
+    path = str_subset(fp_nutr_chla, "NCRO_WQES_Discrete_Samples"),
     sheet = 1,
     col_types = "text"
   )
 
+df_ncro_thruNov <- 
+    read_excel(
+    path = str_subset(fp_nutr_chla, "NCRO_WQES_Discrete_AllStations"),
+    sheet = 1,
+    col_types = "text"
+  )
+
+df_ncro <- rbind(df_ncro_thruAug, df_ncro_thruNov) %>%
+  unique()
+  
 df_ncro_coord <- read_excel(here("analysis_2022/data_raw/NCRO_Station_Metadata.xlsx"))
 
 df_ncro_coord_c <- df_ncro_coord %>%
   janitor::clean_names(case = "upper_camel")%>% 
+  filter(!is.na(LatitudeWgs84)) %>%
   select(Station = Cdec, 
          Latitude = LatitudeWgs84, 
          Longitude = LongitudeWgs84)
@@ -321,7 +346,8 @@ df_ncro_2022_c <- df_ncro %>%
   # Remove some unwanted rows at the end
   #filter(!str_detect(Station, "\\*|Samples")) %>%
   # Only keep "Normal Samples"
-  filter(SampleType == "Normal Sample") %>%
+  filter(SampleType == "Normal Sample",
+         !grepl("Blank", StationName)) %>%
   mutate(
     # Standardize Stations
     Station = case_when(
@@ -357,6 +383,7 @@ df_ncro_2022_c <- df_ncro %>%
       str_detect(StationName, "^Grant Line Canal near Old River") ~ "GLE",
       
     )) %>%
+ 
 mutate(
   Parameter2 = case_when(
     grepl("Ammonia", Parameter) ~ "DissAmmonia",
@@ -393,6 +420,15 @@ mutate(
   mutate(across(ends_with("_Sign"), ~ if_else(is.na(.x), "=", .x)),
          Source = "DWR_NCRO") %>%
   left_join(df_ncro_coord_c, by = "Station") %>%
+   mutate(Longitude = case_when(Station == "MHR" ~ -121.384000,
+                              Station == "OBD" ~ -121.543938,
+                              Station == "RSL" ~ -121.637596,
+                              TRUE~ Longitude),
+         Latitude = case_when(Station == "MHR" ~ 37.877000,
+                               Station == "OBD" ~ 37.810963,
+                               Station == "RSL" ~ 37.976311,
+                              TRUE~ Latitude)) %>%
+  filter(!is.na(Latitude)) %>%
   # Select variable order
   select(
     Source,

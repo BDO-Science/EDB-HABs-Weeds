@@ -283,12 +283,7 @@ norare <- pcsn %>%
     facet_wrap(~group,nrow=3)+
     theme_bw()
 )
-#ggsave(plot=plot_spp_avg_score_line, "./weeds/plots/Sepro_SAV_TimeSeries.png",type ="cairo-png",width=8, height=7,units="in",dpi=300)
-
-#28 May; the Barrier was breached on 1 October 2015
-#2021 installed in May, completed in late June, probably Notched in Nov
-#no overlap between fluridone treatment periods and drought barrier presence periods
-#so could show both as shaded regions behind time series
+#ggsave(file = "C:/Users/nbertrand/Desktop/Bertrand/GitHub/EDB-HABs-Weeds/analysis_2022/figures/SeProRakeMeanAbundance_2022.png")
 
 
 
@@ -372,7 +367,9 @@ sav_map_ft <- ggplot()+
       ylim = c(38.07, 38.02))+
     theme_bw()+
     ggtitle("Franks Tract SePro 2022 Sampling Sites")
+#ggsave(file = "C:/Users/nbertrand/Desktop/Bertrand/GitHub/EDB-HABs-Weeds/analysis_2022/figures/SeProRakeSampleSites_2022.png")
 
 sav_map_ft
+
 #######################################
 ##########

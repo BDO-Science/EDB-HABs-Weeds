@@ -253,14 +253,8 @@ df_emp_FallVisMicro_2022_c <- right_join(df_emp_FallField_2022_c,df_emp_ChlLab, 
 # Merge df_emp_FallVisMicro_2022_c with HABsVis2022
 HABsVis2022 <- full_join(HABsVis2022, df_emp_FallVisMicro_2022_c)
 
-### everything below needs to be modified for this purpose (3/1/23)
 
-##### Check start and end dates for each source #####
-HABsVis_Summy_All <- HABsVis2022 %>%
-  group_by(Source) %>%
-  summarize(first=min(as.Date(Date)),last=max(as.Date(Date)))
-
-#### Add fall NCRO data ####
+##### Add fall NCRO data #####
 # Data file contains all of the 2022 data (July-December)
 df_ncro_FallVisMicro_2022 <-
   read_excel("data_raw/NCRO_HabObs_20220705-20221231.xlsx")
@@ -270,13 +264,7 @@ HABsVis2022 <- HABsVis2022 %>%
   filter(!(Source == "FMWT" & Year == '2022'))
 
 # Load NCRO coordinate data
-df_ncro_coord <- read_excel(here("analysis_2022/data_raw/NCRO_Station_Metadata.xlsx"))
-
-df_ncro_coord_c <- df_ncro_coord %>%
-  janitor::clean_names(case = "upper_camel")%>%
-  select(Station = Cdec,
-         Latitude = LatitudeWgs84,
-         Longitude = LongitudeWgs84)
+df_ncro_coord <- read.csv("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/discrete_wq_stations_all_2022.csv")
 
 df_ncro_VisMic2022_c <- df_ncro_FallVisMicro_2022 %>%
   # Select and standardize station names
@@ -285,25 +273,25 @@ df_ncro_VisMic2022_c <- df_ncro_FallVisMicro_2022 %>%
       str_detect(StationName, "^Bethel") ~ "BET",
       str_detect(StationName, "^False") ~ "FAL",
       str_detect(StationName, "^Fisherman") ~ "FCT",
-      str_detect(StationName, "^Holland") ~ "HOL",
-      str_detect(StationName, "^Middle River at Howard") ~ "MHR",
+      str_detect(StationName, "^Holland") ~ "NA_HOL",
+      str_detect(StationName, "^Middle River at Howard") ~ "MHO",
       str_detect(StationName, "^Middle River at Undine") ~ "MRU",
       str_detect(StationName, "^Middle River near Holt") ~ "HLT",
       str_detect(StationName, "^Middle River near Tracy") ~ "MRX",
-      str_detect(StationName, "^Old River at Tracy") ~ "OSJ",
+      str_detect(StationName, "^Old River at Tracy") ~ "OLD",
       str_detect(StationName, "^Old River near Bacon") ~ "OBI",
       str_detect(StationName, "^Old River near Frank") ~ "OSJ",
-      str_detect(StationName, "^Old River below Headwater") ~ "OH1",
-      str_detect(StationName, "^Old River Below Clifton") ~ "ORI",
-      str_detect(StationName, "^Old River Downstream DMC") ~ "OBD",
-      str_detect(StationName, "^Old River near Doughty") ~ "ORX",
+      str_detect(StationName, "^Old River near Head") ~ "OH1",
+      str_detect(StationName, "^Old River at Clifton Court Intake") ~ "ORI",
+      str_detect(StationName, "^Old River below DMC barrier") ~ "OBD",
+      str_detect(StationName, "^Old River above Doughty Cut") ~ "ORX",
       str_detect(StationName, "^Old River Upstream of Mountain") ~ "ORM",
       str_detect(StationName, "^Miner Slough") ~ "MIR",
-      str_detect(StationName, "^Paradise") ~ "PDC",
-      str_detect(StationName, "^Rock Slough") ~ "RSL",
-      str_detect(StationName, "^Sacramento River Downstream") ~ "SOI",
+      str_detect(StationName, "^Paradise") ~ "NA_PDC",
+      str_detect(StationName, "^Rock Slough at CCWD/Trash Rack") ~ "NA_RSL",
+      str_detect(StationName, "^Sacramento R Downstream of Isleton") ~ "SOI",
       str_detect(StationName, "^San Joaquin River at Blind") ~ "BLP",
-      str_detect(StationName, "Steamboat Slough") ~ "SXS",
+      str_detect(StationName, "Steamboat Slough near Sacramento River") ~ "SXS",
       str_detect(StationName, "^Sugar Cut") ~ "SGA",
       str_detect(StationName, "^Three") ~ "TSL",
       str_detect(StationName, "^Turner") ~ "TRN",
@@ -311,28 +299,98 @@ df_ncro_VisMic2022_c <- df_ncro_FallVisMicro_2022 %>%
       str_detect(StationName, "^West Canal") ~ "WCI",
       str_detect(StationName, "^Yolo") ~ "LIS",
       str_detect(StationName, "^Grant Line Canal East") ~ "GLE",
-      str_detect(StationName, "^Grant Line Canal near Old River") ~ "GLE",
+      str_detect(StationName, "^Grant Line Canal near Old River") ~ "DGL"))
+df_ncro_VisMic2022_c <- df_ncro_VisMic2022_c %>%
+  mutate(MicroText = (FldObsWaterHabs),
+    Date = date(DeploymentEnd),
+    Month = month(Date),
+    Year = year(Date))
 
-    ))
+# Add station coordinates
+df_ncro_VisMic2022_c <- df_ncro_VisMic2022_c %>%
+  left_join(df_ncro_coord, by = "Station") %>%
+  # Add Source column
+  mutate(
+    Source = "NCRO"
+  )
+
+# Convert text rankings of microcystis to numeric rankings
+## Absent = 1; Low = 2; Moderate = 3; High = 4; Very High = 5 per methods
+## NCRO text rankings:
+NCRO_VisMicro_RankCategories <- unique(df_ncro_VisMic2022_c$MicroText)
+# Not Visible = 1; Low = 2; Medium = 3; High = 4; Extreme = 5; NA = not recorded
+df_ncro_VisMic2022_c <- df_ncro_VisMic2022_c %>%
+  mutate(
+    Microcystis = as.numeric(c("Not Visible"="1", "Low"="2", "Medium"="3",
+                               "High"="4", "Extreme"="5")[df_ncro_VisMic2022_c$MicroText])
+  ) %>%
+  # Select variable order
+  select(
+    Source,
+    Station,
+    Latitude,
+    Longitude,
+    Date,
+    Microcystis,
+    Month,
+    Year
+  )
+
+# Merge df_ncro_VisMic2022_c with HABsVis2022
+HABsVis2022 <- full_join(HABsVis2022, df_ncro_VisMic2022_c)
+
+##### Check start and end dates for each source #####
+HABsVis_Summy_All <- HABsVis2022 %>%
+  group_by(Source) %>%
+  summarize(first=min(as.Date(Date)),last=max(as.Date(Date)))
+
+##### Add column to HABsVis2022 that just indicates presence (1) and absence (0)
+
+# Remove any NA Microcystis entries
+HABsVis_final_2007_2022 <- HABsVis2022 %>%
+  drop_na(Microcystis)
+
+# Add column with presence / absence...this a very clunky way to do this
+HABsVis_final_2007_2022 <- HABsVis_final_2007_2022 %>%
+  mutate(
+    MicroPA = as.numeric(c("1"="0", "2"="1", "3"="1",
+                 "4"="1", "5"="1")[HABsVis_final_2007_2022$Microcystis])) %>%
+  select(
+    Source,
+    Station,
+    Latitude,
+    Longitude,
+    Date,
+    Month,
+    Year,
+    Microcystis,
+    MicroPA,
+    Secchi,
+    Temperature,
+    Chlorophyll,
+    Chlorophyll_lab
+  )
+
+##### Export dataframe to clean data folder #####
+write_csv(HABsVis_final_2007_2022, here("analysis_2022", "data_clean", "HABsVis_final_2007_2022.csv"))
+
 
 ######## PREP DATA FOR FIGS #######
 #### Remove data with missing information; add region 3 strata (Shows Franks, OMR, etc.)
 
-df_mvi_c <- HABsVis2022 %>%
-  select(Source, Station, Latitude, Longitude, Date, Microcystis) %>%
-  mutate(
-    Date = date(Date),
-    Month_num = month(Date),
-    Month_f = month(Date, label = TRUE),
-    Year = year(Date)
-  ) %>%
+# Load HABsVis_final_2007_2022
+HABsVis_final_2007_2022 <- read.csv("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/HABsVis_final_2007_2022.csv")
+
+# Load region data if needed
+#load("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/data/Regions.RData")
+
+df_mvi_c <- HABsVis_final_2007_2022 %>%
+  select(Source, Station, Latitude, Longitude, Date, Month, Year, Microcystis, MicroPA) %>%
   filter(
-    # Remove records without visual index data and without location coordinates
-    !is.na(Microcystis),
-    !if_any(c(Latitude, Longitude), is.na),
-    # Only keep data from 2014-2022 in June-October
+    # Only keep data from 2014-2022 in April-November
     Year %in% 2014:2022,
-    Month_num %in% 4:12
+    Month %in% 4:11,
+    !is.na(Latitude)
   ) %>%
   # Assign Strata from R_EDSM_Strata_1718P1 shapefile
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
@@ -353,7 +411,8 @@ df_mvi_c <- HABsVis2022 %>%
 #    Region = factor(Stratum, levels = vec_strata_levels, labels = vec_strata_labels),
     Region = factor(Stratum2),
     # Convert Microcystis to factor
-    Microcystis = factor(Microcystis, labels = c("Absent", "Low", "Medium", "High", "Very High"))
+#    Microcystis = factor(Microcystis, labels = c("Absent", "Low", "Medium", "High", "Very High"))
+
   ) %>%
   # Clean up data frame
   select(
@@ -363,29 +422,21 @@ df_mvi_c <- HABsVis2022 %>%
     Latitude,
     Longitude,
     Date,
-    Month_f,
+    Month,
     Year,
-    Microcystis
+    Microcystis,
+    MicroPA
   )
 
-# Pull out station coordinates from Microcystis visual index data and convert
-  # to sf object for map
-sf_mvi_coords <- df_mvi_c %>%
-  distinct(Source, Station, Latitude, Longitude) %>%
-  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326) %>%
-  st_transform(crs = st_crs(R_EDSM_Strata_1718P1))
+# Add columns that have character strings for Microcystis ranking and presence/absence
 
-# Slightly modify R_EDSM_Strata_1718P1 shapefile
-R_EDSM_Strata_1718P1_mod <- R_EDSM_Strata_1718P1 %>%
-  # Remove "Western Delta" Stratum so it doesn't show in the map
-  filter(Stratum != "Western Delta") %>%
-  # Convert Stratum to factor and rename it Region
-  mutate(Region = factor(Stratum)) %>% #, levels = vec_strata_levels, labels = vec_strata_labels)) %>%
-  select(Region)
+df_mvi_c_factor <- df_mvi_c %>%
+  mutate(
+    MicroRank = as.character(c("1"="Absent", "2"="Low", "3"="Medium",
+                             "4"="High", "5"="Very High")[df_mvi_c$Microcystis]),
+    MicroPA_txt = factor(MicroPA, levels = c(0,1), labels = c("Absent", "Present")),
+  )
 
-# Convert crs of WW_Delta shapefile to 26910 so its consistent with the other
-  # spatial data
-WW_Delta_26910 <- st_transform(WW_Delta, crs = st_crs(R_EDSM_Strata_1718P1))
 
 
 # 3. Create Figures -------------------------------------------------------
@@ -393,19 +444,19 @@ WW_Delta_26910 <- st_transform(WW_Delta, crs = st_crs(R_EDSM_Strata_1718P1))
 # Create custom color palette for Microcystis levels
 scale_fill_mvi <- list(
   scale_fill_manual(
-    name = "Microcystis",
+    name = "MicroRank",
     values = c("white", "tan1", "yellow3", "red", "darkred")
   )
 )
 
 
 # set strata levels for plotting
-df_mvi_c$Region = factor(df_mvi_c$Region, levels=c("Upper Sac", "Cache/Liberty", "Lower Sac", "East Delta",
+df_mvi_c_factor$Region = factor(df_mvi_c$Region, levels=c("Upper Sac", "Cache/Liberty", "Lower Sac", "East Delta",
                                                    "Lower SJ", "Franks", "OMR", "South Delta"))
 
 # Create stacked bar plot of 5 index categories by Year for all data from 2014-2022
-barplt_year <- df_mvi_c %>%
-  ggplot(aes(x = Year, fill = Microcystis)) +
+barplt_year <- df_mvi_c_factor %>%
+  ggplot(aes(x = Year, fill = MicroRank)) +
   geom_bar(position = "fill") +
   scale_fill_mvi +
   scale_y_continuous(
@@ -418,15 +469,15 @@ barplt_year <- df_mvi_c %>%
     expand = expansion(mult = c(0.02, 0.02))
   )
 
-# Create stacked bar plots of 5 index categories by by Month (June-Sept) and Region
+# Create stacked bar plots of 5 index categories by by Month (Apr-Nov) and Region
   # for 2021 and 2022, separately
-barplt_2021 <- df_mvi_c %>%
+barplt_2021 <- df_mvi_c_factor %>%
   filter(
     Year == 2021
   ) %>%
-  ggplot(aes(x = Region, fill = Microcystis)) +
+  ggplot(aes(x = Region, fill = MicroRank)) +
   geom_bar(position = "fill") +
-  facet_grid(cols = vars(Month_f)) +
+  facet_grid(cols = vars(Month)) +
   scale_fill_mvi +
   scale_y_continuous(
     name = "Relative Frequency",
@@ -436,12 +487,12 @@ barplt_2021 <- df_mvi_c %>%
   ggtitle('2021') +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
-barplt_2022 <- df_mvi_c %>%
+barplt_2022 <- df_mvi_c_factor %>%
   filter(
     Year == 2022) %>%
-  ggplot(aes(x = Region, fill = Microcystis)) +
+  ggplot(aes(x = Region, fill = MicroRank)) +
   geom_bar(position = "fill") +
-  facet_grid(cols = vars(Month_f)) +
+  facet_grid(cols = vars(Month)) +
   scale_fill_mvi +
   scale_y_continuous(
     name = "Relative Frequency",
@@ -454,23 +505,57 @@ barplt_2022 <- df_mvi_c %>%
 # Use patchwork to put them together
 VisMicro_Month_2021_2022 = barplt_2021 / barplt_2022
 
-# Create map of Regions and sampling locations
-mp_reg_samp_loc <-
-  ggplot() +
-  geom_sf(data = WW_Delta_26910) +
-  geom_sf(data = R_EDSM_Strata_1718P1_mod, aes(fill = Region), alpha = 0.4) +
-  geom_sf(data = sf_mvi_coords, size = 1) +
-  theme_bw() +
-  guides(fill = "none")
 
-# Create map of with just the Regions
-mp_reg_only <-
-  ggplot() +
-  geom_sf(data = WW_Delta_26910) +
-  geom_sf(data = R_EDSM_Strata_1718P1_mod, aes(fill = Region), alpha = 0.5) +
-  theme_bw() +
-  scale_fill_discrete(name = NULL) +
-  theme(legend.position = "bottom")
+# Create stacked bar plot of Presence/Absence by Year for all data from 2014-2022
+barplt_PA_year <- df_mvi_c_factor %>%
+  ggplot(aes(x = Year, fill = MicroPA_txt)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual("legend", values = c("Absent" = "white", "Present" = "orange")) +
+  scale_y_continuous(
+    name = "Relative Frequency",
+    labels = percent_format(),
+    expand = expansion(mult = c(0, 0.025))
+  ) +
+  scale_x_continuous(
+    breaks = c(2014:2022),
+    expand = expansion(mult = c(0.02, 0.02))
+  )
+
+# Create stacked bar plots of Presence/Absence by Month (Apr-Nov) and Region
+# for 2021 and 2022, separately
+barplt_PA_2021 <- df_mvi_c_factor %>%
+  filter(
+    Year == 2021
+  ) %>%
+  ggplot(aes(x = Region, fill = MicroPA_txt)) +
+  geom_bar(position = "fill") +
+  facet_grid(cols = vars(Month)) +
+  scale_fill_manual("legend", values = c("Absent" = "white", "Present" = "orange")) +
+  scale_y_continuous(
+    name = "Relative Frequency",
+    labels = percent_format(),
+    expand = expansion(mult = c(0, 0.025))
+  ) +
+  ggtitle('2021') +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+barplt_PA_2022 <- df_mvi_c_factor %>%
+  filter(
+    Year == 2022) %>%
+  ggplot(aes(x = Region, fill = MicroPA_txt)) +
+  geom_bar(position = "fill") +
+  facet_grid(cols = vars(Month)) +
+  scale_fill_manual("legend", values = c("Absent" = "white", "Present" = "orange")) +
+  scale_y_continuous(
+    name = "Relative Frequency",
+    labels = percent_format(),
+    expand = expansion(mult = c(0, 0.025))
+  ) +
+  ggtitle('2022') +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+# Use patchwork to put them together
+VisMicro_PA_Month_2021_2022 = barplt_PA_2021 / barplt_PA_2022
 
 
 # 4. Export Figures -------------------------------------------------------
@@ -480,7 +565,7 @@ mp_reg_only <-
 
 # Stacked bar plot by Year for all data from 2014-2021
 ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_by_Year_010423.jpg"),
+  here("analysis_2022/figures/Microcystis_visindex_by_Year_030123.jpg"),
   plot = barplt_year,
   height = 4.5,
   width = 6.5,
@@ -489,28 +574,28 @@ ggsave(
 
 # Stacked bar plot by Month and Region for 2021 and 2022
 ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_month_reg_20212022_010423.jpg"),
+  here("analysis_2022/figures/Microcystis_visindex_month_reg_20212022_030123.jpg"),
   plot = VisMicro_Month_2021_2022,
   height = 12,
   width = 9,
   units = "in"
 )
 
-# Map of Regions and sampling locations
+# Stacked P/A bar plot by Year for all data from 2014-2021
 ggsave(
-  here("EDB/Microcystis_visindex_samp_loc_map.jpg"),
-  plot = mp_reg_samp_loc,
-  height = 3.25,
-  width = 3.25,
+  here("analysis_2022/figures/Microcystis_visindex_PA_by_Year_030123.jpg"),
+  plot = barplt_PA_year,
+  height = 4.5,
+  width = 6.5,
   units = "in"
 )
 
-# Map of with just the Regions
+# Stacked bar plot by Month and Region for 2021 and 2022
 ggsave(
-  here("EDB/Microcystis_visindex_region_map.jpg"),
-  plot = mp_reg_only,
-  height = 5,
-  width = 5.75,
+  here("analysis_2022/figures/Microcystis_visindex_PA_month_reg_20212022_030123.jpg"),
+  plot = VisMicro_PA_Month_2021_2022,
+  height = 12,
+  width = 9,
   units = "in"
 )
 

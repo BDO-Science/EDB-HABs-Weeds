@@ -441,24 +441,24 @@ df_mvi_c_factor <- df_mvi_c %>%
 
 # 3. Create Figures -------------------------------------------------------
 
-# Create custom color palette for Microcystis levels
-scale_fill_mvi <- list(
-  scale_fill_manual(
-    name = "MicroRank",
-    values = c("white", "tan1", "yellow3", "red", "darkred")
-  )
-)
-
 
 # set strata levels for plotting
 df_mvi_c_factor$Region = factor(df_mvi_c$Region, levels=c("Upper Sac", "Cache/Liberty", "Lower Sac", "East Delta",
                                                    "Lower SJ", "Franks", "OMR", "South Delta"))
+# Set ranking levels for plotting
+df_mvi_c_factor$MicroRank = factor(df_mvi_c$MicroRank, levels=c("Absent", "Low",
+                                                   "Medium", "High", "Very High"))
 
 # Create stacked bar plot of 5 index categories by Year for all data from 2014-2022
 barplt_year <- df_mvi_c_factor %>%
   ggplot(aes(x = Year, fill = MicroRank)) +
   geom_bar(position = "fill") +
-  scale_fill_mvi +
+#  scale_fill_mvi +
+  scale_fill_manual(
+    name = "Ranking",
+    values = c("white", "tan1", "yellow3", "red", "darkred"),
+    breaks=c("Absent", "Low","Medium", "High", "Very High")
+  ) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
@@ -478,7 +478,11 @@ barplt_2021 <- df_mvi_c_factor %>%
   ggplot(aes(x = Region, fill = MicroRank)) +
   geom_bar(position = "fill") +
   facet_grid(cols = vars(Month)) +
-  scale_fill_mvi +
+  scale_fill_manual(
+    name = "Ranking",
+    values = c("white", "tan1", "yellow3", "red", "darkred"),
+    breaks=c("Absent", "Low","Medium", "High", "Very High")
+  ) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
@@ -493,7 +497,11 @@ barplt_2022 <- df_mvi_c_factor %>%
   ggplot(aes(x = Region, fill = MicroRank)) +
   geom_bar(position = "fill") +
   facet_grid(cols = vars(Month)) +
-  scale_fill_mvi +
+  scale_fill_manual(
+    name = "Ranking",
+    values = c("white", "tan1", "yellow3", "red", "darkred"),
+    breaks=c("Absent", "Low","Medium", "High", "Very High")
+  ) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
@@ -565,7 +573,7 @@ VisMicro_PA_Month_2021_2022 = barplt_PA_2021 / barplt_PA_2022
 
 # Stacked bar plot by Year for all data from 2014-2021
 ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_by_Year_030123.jpg"),
+  here("analysis_2022/figures/Microcystis_visindex_by_Year_030223.jpg"),
   plot = barplt_year,
   height = 4.5,
   width = 6.5,
@@ -574,7 +582,7 @@ ggsave(
 
 # Stacked bar plot by Month and Region for 2021 and 2022
 ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_month_reg_20212022_030123.jpg"),
+  here("analysis_2022/figures/Microcystis_visindex_month_reg_20212022_030223.jpg"),
   plot = VisMicro_Month_2021_2022,
   height = 12,
   width = 9,

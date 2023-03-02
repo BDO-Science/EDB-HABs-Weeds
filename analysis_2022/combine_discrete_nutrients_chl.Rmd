@@ -62,7 +62,7 @@ df_cawsc_c <- df_cawsc %>%
   # Add source variable
   mutate(Source = "USGS_CAWSC") %>%
   # Rename variables so that they are easier to use
-  select(
+  dplyr::select(
     Source,
     Station = MonitoringLocationIdentifier,
     Latitude = LatitudeMeasure,
@@ -364,14 +364,14 @@ df_ncro_2022_c <- df_ncro %>%
       str_detect(StationName, "^Old River near Frank") ~ "OSJ",
       str_detect(StationName, "^Old River below Headwater") ~ "OH1",
       str_detect(StationName, "^Old River Below Clifton") ~ "ORI",
-      str_detect(StationName, "^Old River Downstream DMC") ~ "OBD",
+      str_detect(StationName, "^Old River Downstream DMC") ~ "ODM",
       str_detect(StationName, "^Old River near Doughty") ~ "ORX",
       str_detect(StationName, "^Old River Upstream of Mountain") ~ "ORM",
       str_detect(StationName, "^Old River at Tracy Wildlife Association") ~ "TWA",
       str_detect(StationName, "^Miner Slough") ~ "MIR",
       str_detect(StationName, "^Paradise") ~ "NA_PDC",
-      str_detect(StationName, "^Rock Slough @ Contra Costa WD Fish Screen") ~ "NA_RSL",
-      str_detect(StationName, "^Rock Slough at Delta Road Bridge") ~ "NA_INB",
+      str_detect(StationName, "^Rock Slough @ Contra Costa WD Fish Screen") ~ "RSCC",
+      str_detect(StationName, "^Rock Slough at Delta Road Bridge") ~ "NA_RSL",
       str_detect(StationName, "^Sacramento River Downstream of Isleton") ~ "SOI",
       str_detect(StationName, "^San Joaquin River at Blind") ~ "BLP",
       str_detect(StationName, "Steamboat Slough") ~ "SXS",
@@ -423,92 +423,10 @@ mutate(
   mutate(across(ends_with("_Sign"), ~ if_else(is.na(.x), "=", .x)),
          Source = "DWR_NCRO") %>%
   left_join(df_ncro_coord_c, by = "Station") %>%
-   mutate(Longitude = case_when(Station == "MHR" ~ -121.384000,
-                              Station == "OBD" ~ -121.543938,
-                              Station == "DGL" ~ -121.425000,
+   mutate(Longitude = case_when(Station == "DGL" ~ -121.425000,
                               TRUE~ Longitude),
-         Latitude = case_when(Station == "MHR" ~ 37.877000,
-                               Station == "OBD" ~ 37.810963,
-                              Station == "DGL" ~ 37.815000,	
+         Latitude = case_when(Station == "DGL" ~ 37.815000,	
                               TRUE~ Latitude)) %>%
-  filter(!is.na(Latitude)) %>%
-  # Select variable order
-  select(
-    Source,
-    Station,
-    Latitude, 
-    Longitude, 
-    Date,
-    Datetime,
-    starts_with("DissAmmonia"),
-    starts_with("DissNitrateNitrite"),
-    starts_with("DissOrthophos"),
-    starts_with("Chlorophyll")
-  )
-```
-
-Do not run this one, but think about it for later - join by station number instead of codes (which are for continuous data) - get the correct station number metadata from Tyler.
-```{r}
-df_ncro_coord_c_alt <- df_ncro_coord %>%
-  janitor::clean_names(case = "upper_camel")%>% 
-  filter(!is.na(LatitudeWgs84)) %>%
-  select(StationName = Station, 
-         Station = StationId, 
-         Latitude = LatitudeWgs84, 
-         Longitude = LongitudeWgs84)
-
-df_ncro_2022_c_alt <- df_ncro %>%
-  # Select and standardize variable names
-  select(
-    StationName = `Long Station Name`,
-    Datetime = `Collection Date`,
-    SampleCode = `Sample Code`,
-    SampleType = `Sample Type` ,
-    Parameter = Analyte,
-    Value = Result, 
-    RptLimit = `Rpt Limit`,
-    ) %>%
-  # Remove some unwanted rows at the end
-  #filter(!str_detect(Station, "\\*|Samples")) %>%
-  # Only keep "Normal Samples"
-  filter(SampleType == "Normal Sample",
-         !grepl("Blank", StationName)) %>%
-mutate(
-  Parameter2 = case_when(
-    grepl("Ammonia", Parameter) ~ "DissAmmonia",
-    grepl("Nitrate", Parameter) ~ "DissNitrateNitrite",
-    grepl("Phosphate", Parameter, ) ~ "DissOrthophos",
-    grepl("Chlorophyll", Parameter ) ~ "Chlorophyll"
-  )) %>%
-  filter(!is.na(Parameter2),
-          Value != "N/A") %>%
-  select(-Parameter, -SampleType) %>%
-  rename(Parameter = Parameter2) %>%
-  mutate(
-  # Parse Datetime and create Date variable
-    Datetime = mdy_hm(Datetime, tz = "Etc/GMT+8"),
-    Date = date(Datetime),
-    # Keep the first value of a lab replicate pair
-    Value = if_else(str_detect(Value, ","), str_extract(Value, ".+(?=,)"), Value),
-    # Add a new variable to identify values below the reporting limit
-    Sign = if_else(str_detect(Value, "^<"), "<", "="),
-    # For the values below the reporting limit, make them equal to the reporting limit and convert to numeric
-    Value = as.numeric(if_else(str_detect(Value, "^<"), str_remove(Value, "^<"), Value))
-  )%>%
-  group_by(StationName, Datetime, SampleCode, Date, Parameter, Sign, RptLimit) %>%
-  slice(1) %>%
-  ungroup() %>%
-  pivot_wider(
-    names_from = Parameter,
-    values_from = c(Value, Sign),
-    id_cols = c(StationName, Datetime, SampleCode, Date),
-    names_glue = "{Parameter}_{.value}"
-  ) %>%
-  rename_with(~str_remove(.x, "_Value"), ends_with("_Value")) %>%
-  # Fill in "=" for the NA values in the _Sign variables
-  mutate(across(ends_with("_Sign"), ~ if_else(is.na(.x), "=", .x)),
-         Source = "DWR_NCRO") %>%
-  left_join(df_ncro_coord_c_alt, by = "StationName") %>%
   filter(!is.na(Latitude)) %>%
   # Select variable order
   select(

@@ -122,6 +122,7 @@ st_crs(WW_Delta)
 #CRS = NAD83, which is different than our sample data points; EPSG: 4269
 WW_Delta_4326 <- st_transform(WW_Delta, crs = 4326)
 
+#
 # #create map showing all Delta SAV data points
 # (sav_map_all <- ggplot()+
 #   #plot waterways base layer
@@ -620,4 +621,3 @@ fb_cov_g <- fb_cov %>%
 # #
 # #
 # #
-

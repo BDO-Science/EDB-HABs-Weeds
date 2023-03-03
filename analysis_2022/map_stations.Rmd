@@ -53,7 +53,7 @@ sta_cont <- read_excel(here(data_root, "data_clean", "continuous_stations.xlsx")
   rename(Station = StationCode) %>%
   mutate(Source = case_when(
     Station == "FRK" ~ "DWR_EMP",
-    Station %in% c("MDM", "ORQ", "DSJ", "SJG", "VNS") ~ "USGS_CAWSC",
+    Station %in% c("MDM", "ORQ", "DSJ", "SJG", "VNS", "LIB") ~ "USGS_CAWSC",
     Station %in% c("DTO", "HRO", "TRP") ~ "DWR_O&M",
     TRUE ~ "DWR_NCRO")) %>%
     mutate(Data = case_when(Source == "DWR_O&M" | Station == "VNS" ~ "Flow", 
@@ -63,12 +63,12 @@ sta_cont <- read_excel(here(data_root, "data_clean", "continuous_stations.xlsx")
 #sta_discrete <- read_csv(here(data_root, "data_clean", "discrete_wq_stations_all_2022.csv")) %>%
 #  mutate(WQ = "Discrete")
 
-habsnuts <-  read_csv("analysis_2022/data_clean/HABs_FinalNuts.csv") %>%
-  select(Source, Station, Latitude, Longitude) %>%
+discrete <-  read_csv("analysis_2022/data_clean/discrete_wq_stations_all_2022.csv") %>%
+  dplyr::select(Source, Station, Latitude, Longitude) %>%
   distinct() %>%
   mutate(Data = "Discrete WQ")
 
-sta_combined <- bind_rows(sta_cont, habsnuts) %>%
+sta_combined <- bind_rows(sta_cont, discrete) %>%
   filter(!is.na(Latitude))
 
 sta_sf <- st_as_sf(sta_combined, coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
@@ -135,11 +135,11 @@ dev.off()
 ## Map of stations
 ### Continuous
 ```{r}
-cont <- sta_sf %>%filter(WQ == "Continuous") %>%
+cont <- sta_sf %>%filter(Data == "Continuous WQ") %>%
   mutate(Location = ifelse(Station %in% c("DSJ", "BLP"), "Big Break", 
                            ifelse(Station %in% c("MDM", "HLT"), "Mildred Island",
                                   ifelse(Station %in% c("SJG", "SJC", "VNS"), "San Joaquin",
-                           "Frank's Tract")))) %>%
+                           "Franks Tract")))) %>%
   filter(Location != "San Joaquin")
 
 
@@ -183,13 +183,15 @@ cont <- sta_sf %>%filter(WQ == "Continuous") %>%
 ### Discrete and Continuous
 ```{r}
 sta_noSJ <- sta_sf %>%
-  filter(!Station %in% c("SJC", "SJG", "BLP", "LIS", "FCT"))
+  filter(!Station %in% c("SJC", "SJG", "BLP", "FCT"))
+
+unique(sta_noSJ$Station)
 
 (wq_map <- ggplot() + 
   geom_sf(data = delta_4326, fill = "lightblue", color = "lightblue") +
   geom_sf(data = reg3, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
   geom_sf(data = sta_noSJ, aes(color = Data, shape = Source, size = Data), inherit.aes = FALSE)+
-  geom_text(data = sta_noSJ %>% filter(Data %in% c("Continuous WQ", "Flow")), aes(x = Longitude, y = Latitude, label =  Station), nudge_x = c(-0.02, -0.005, 0.05, 0.05, 0.02, -0.005, -0.005,-0.01, 0, 0.05, 0, 0.04), nudge_y = c(0.02,-0.01, -0.005, 0.01, 0.03, 0, 0, 0, 0,-0.02, -0.02, -0.02), size = 3, vjust = 1, hjust = 1)+
+  geom_text(data = sta_noSJ %>% filter(Data %in% c("Continuous WQ", "Flow")), aes(x = Longitude, y = Latitude, label =  Station), nudge_x = c(-0.02, -0.005, 0.05, 0.05, 0.02, -0.005, -0.005, -0.005,-0.01, 0, 0.05, 0, 0.04), nudge_y = c(0.02,-0.01, -0.005, 0.01, 0.03, 0, 0, 0, 0, 0,-0.02, -0.02, -0.02), size = 3, vjust = 1, hjust = 1)+
     
   scale_x_continuous(limits = c(-122.05, -121.26)) +
   scale_y_continuous( limits = c(37.67, 38.57))+
@@ -231,10 +233,10 @@ phytodata <- readRDS("analysis_2022/data_clean/emp_phyto_data_through2022.rds") 
   mutate(Source = "EMP",
          Data = "Phytoplankton")
 
-load(here("analysis_2022", "data_clean", "HABSw2022.RData"))
+#load(here("analysis_2022", "data_clean", "HABSw2022.RData"))
 
-micdata <- HABs2022 %>%
-  select(Source, Station, Latitude, Longitude) %>%
+micdata <- read_csv(here("analysis_2022", "data_clean","HABsVis_final_2007_2022.csv"))%>%
+  dplyr::select(Source, Station, Latitude, Longitude) %>%
   distinct() %>%
   mutate(Data = "Microcystis Index") %>%
   filter(Source !="DOP")
@@ -262,6 +264,8 @@ phyto_combined <- rbind(micdata, phytodata)  %>%
   scale_size_manual(values= c(1,3)) +
   annotate("text", x = -121.3, y = 37.7, label = "Vernalis")+
   annotate("text", x = -121.6, y = 37.77, label = "Clifton Court")+
+      annotate("text", x = -121.3, y = 37.93, label = "Stockton")+
+   annotate("text", x = -121.6, y = 38.02, label = "Franks Tract", size = 3.5)+
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +

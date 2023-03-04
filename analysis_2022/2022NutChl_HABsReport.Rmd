@@ -3,6 +3,8 @@ title: "NutChl_2022HABs"
 author: "Kristi Arend"
 date: "11/11/2022"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -31,6 +33,7 @@ library(ggspatial)
 library(readxl)
 library(patchwork)
 library(cowplot)
+library(here)
 
 data_root = "analysis_2022/"
 ```
@@ -40,7 +43,7 @@ load regions file
 
 ```{r}
 hab_nutr_chla_mvi <- read_csv("data_clean/discrete_wq_2022.csv")
-load("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/data/Regions.RData")
+load(here::here("data","Regions.RData"))
 ```
 
 Replace values below the reporting limits with zeros
@@ -98,7 +101,7 @@ Load data
 
 Remove microcystis and region columns
 ```{r}
-Nuts_pre22 <- read_csv("data_raw/hab_nutr_chla_mvi.csv")
+Nuts_pre22 <- read_csv(here::here("analysis_2022", "data_raw", "hab_nutr_chla_mvi.csv"))
 
 Nuts_pre22_v2 <- subset(Nuts_pre22, select = -c(Region, Microcystis))
 ```
@@ -261,7 +264,7 @@ dev.off()
 Load TUCP dates
 
 ```{r}
-tucp_dates <- read_excel("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/data/tucp_dates.xlsx")%>%
+tucp_dates <- read_excel(here::here("data/tucp_dates.xlsx"))%>%
   mutate(BarrierStartDate = lubridate::ymd(BarrierStartDate),
          BarrierEndDate = ymd(BarrierEndDate),
          TUCPStart = ymd(TUCPStart),
@@ -347,7 +350,7 @@ pal = c(brewer.pal(8, "Set2"), brewer.pal(12, "Set3"), brewer.pal(9, "Set1"), br
 
 # create df with just station information
 Disc_Nut_Stations = nutssf_TUCP %>%
-  select(Source, Station, Year, Stratum2, colors) %>%
+  dplyr::select(Source, Station, Year, Stratum2, colors) %>%
   filter(Year %in% 2022,
          Stratum2 %in% c("Cache/Liberty","Lower SJ","Franks","OMR","South Delta")) %>%
   #group_by(Stratum2, Source, Station) %>%
@@ -368,9 +371,11 @@ equal_breaks <- function(n = 3, s = 0.5, ...){
     round(seq(min(x)+d, max(x)-d, length=n), 2)
   }
 }
+```  
 
+```{r}
 # CACHE
-plot_Cache_2022nuts = ggplot(Cache_2022,aes(x= Date, y = value, color = Station)) +
+(plot_Cache_2022nuts = ggplot(Cache_2022,aes(x= Date, y = value, color = Station)) +
 # add a shaded rectangle to show duration of TUCP
   geom_rect(aes(xmin = ymd(unique(TUCPStart)),
                 xmax = ymd(unique(TUCPEnd)),
@@ -390,15 +395,15 @@ plot_Cache_2022nuts = ggplot(Cache_2022,aes(x= Date, y = value, color = Station)
   labs(y = "Concentration", color = "Station") + 
   ggtitle("Cache/Liberty")+
   theme_bw() +
-  theme(strip.text = element_text(size = 12),
-         axis.text = element_text(size = 12),
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
          axis.title.x = element_blank(),
-        legend.position = "none")
+        legend.position = "none"))
 
         
 
 # LOWER SJ
-plot_LowerSJ_2022nuts = ggplot(LowSJ_2022,aes(x= Date, y = value, color = Station)) +
+(plot_LowerSJ_2022nuts = ggplot(LowSJ_2022,aes(x= Date, y = value, color = Station)) +
 # add a shaded rectangle to show duration of TUCP
   geom_rect(aes(xmin = ymd(unique(TUCPStart)),
                 xmax = ymd(unique(TUCPEnd)),
@@ -418,10 +423,10 @@ plot_LowerSJ_2022nuts = ggplot(LowSJ_2022,aes(x= Date, y = value, color = Statio
   labs(y = "Concentration", color = "Station") + 
   ggtitle("Lower San Joaquin")+
   theme_bw() +
-  theme(strip.text = element_text(size = 12),
-         axis.text = element_text(size = 12),
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
          axis.title.x = element_blank(),
-        legend.position = "none")
+        legend.position = "none"))
 
 
 # FRANKS
@@ -445,8 +450,8 @@ plot_Franks_2022nuts = ggplot(Franks_2022,aes(x= Date, y = value, color = Statio
   labs(y = "Concentration", color = "Station") + 
   ggtitle("Franks Tract")+
   theme_bw() +
-  theme(strip.text = element_text(size = 12),
-         axis.text = element_text(size = 12),
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
          axis.title.x = element_blank(),
         legend.position = "none")
 
@@ -472,8 +477,8 @@ plot_OMR_2022nuts = ggplot(OMR_2022,aes(x= Date, y = value, color = Station)) +
   labs(y = "Concentration", color = "Station") + 
   ggtitle("OMR")+
   theme_bw() +
-  theme(strip.text = element_text(size = 12),
-         axis.text = element_text(size = 12),
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
          axis.title.x = element_blank(),
         legend.position = "none")
 #+
@@ -500,18 +505,16 @@ plot_SDelta_2022nuts = ggplot(SDelta_2022,aes(x= Date, y = value, color = Statio
   labs(y = "Concentration", color = "Station") + 
   ggtitle("South Delta")+
   theme_bw() +
-  theme(strip.text = element_text(size = 12),
-         axis.text = element_text(size = 12),
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
          axis.title.x = element_blank(),
         legend.position = "none")
-
-```  
+```
 
 Put plots together using patchwork
 
 ```{r}
-
-Nuts_2022_plots = (plot_Cache_2022nuts + plot_LowerSJ_2022nuts + plot_Franks_2022nuts + plot_OMR_2022nuts + plot_SDelta_2022nuts) + plot_layout(ncol = 2, widths = c(30,30)) 
+(Nuts_2022_plots = (plot_Cache_2022nuts + plot_LowerSJ_2022nuts + plot_Franks_2022nuts + plot_OMR_2022nuts + plot_SDelta_2022nuts ) + plot_layout(ncol = 2))
 ```
 
 Export plots
@@ -521,14 +524,18 @@ Export plots
 #  here::here("analysis_2022/figures/2022_DiscNuts.jpg"),
 #  plot = Nuts_2022_plots, width = 15, height = 15, units = "in", pointsize = 12, family = "sans")
 
-jpeg("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/2022_DiscNuts_030323.jpg")
-plot(Nuts_2022_plots,
-     height = 1000,
-     width = 1000,
-     units = "px",
-     pointsize = 12,
-     family = "sans")
+png(filename = here::here("analysis_2022", "figures", "plot_nuts_2022.png"), width = 9, height = 8, units = "in", pointsize = 10, family = "sans", res = 300)
+Nuts_2022_plots
 dev.off()
+
+# jpeg("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/2022_DiscNuts_030323.jpg")
+# plot(Nuts_2022_plots,
+#      height = 1000,
+#      width = 1000,
+#      units = "px",
+#      pointsize = 12,
+#      family = "sans")
+# dev.off()
 
 
 

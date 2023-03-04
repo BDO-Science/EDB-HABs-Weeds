@@ -456,7 +456,7 @@ barplt_year <- df_mvi_c_factor %>%
 #  scale_fill_mvi +
   scale_fill_manual(
     name = "Ranking",
-    values = c("lightcyan1", "tan1", "yellow3", "red", "darkred"),
+    values = c("gray65", viridis::viridis(5, option = "plasma")[1:4]),
     breaks=c("Absent", "Low","Medium", "High", "Very High")
   ) +
   scale_y_continuous(
@@ -480,7 +480,7 @@ barplt_2021 <- df_mvi_c_factor %>%
   facet_grid(cols = vars(Month)) +
   scale_fill_manual(
     name = "Ranking",
-    values = c("lightcyan1", "tan1", "yellow3", "red", "darkred"),
+    values = c("gray65", viridis::viridis(5, option = "plasma")[1:4]),
     breaks=c("Absent", "Low","Medium", "High", "Very High")
   ) +
   scale_y_continuous(
@@ -499,7 +499,7 @@ barplt_2022 <- df_mvi_c_factor %>%
   facet_grid(cols = vars(Month)) +
   scale_fill_manual(
     name = "Ranking",
-    values = c("lightcyan1", "tan1", "yellow3", "red", "darkred"),
+    values = c("gray65", viridis::viridis(5, option = "plasma")[1:4]),
     breaks=c("Absent", "Low","Medium", "High", "Very High")
   ) +
   scale_y_continuous(

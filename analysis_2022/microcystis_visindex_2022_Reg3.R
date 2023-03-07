@@ -518,7 +518,7 @@ VisMicro_Month_2021_2022 = barplt_2021 / barplt_2022
 barplt_PA_year <- df_mvi_c_factor %>%
   ggplot(aes(x = Year, fill = MicroPA_txt)) +
   geom_bar(position = "fill") +
-  scale_fill_manual("legend", values = c("Absent" = "lightcyan1", "Present" = "green4")) +
+  scale_fill_manual("legend", values = c("Absent" = "gray65", "Present" = viridis::viridis(5, option = "plasma")[1])) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
@@ -538,7 +538,7 @@ barplt_PA_2021 <- df_mvi_c_factor %>%
   ggplot(aes(x = Region, fill = MicroPA_txt)) +
   geom_bar(position = "fill") +
   facet_grid(cols = vars(Month)) +
-  scale_fill_manual("legend", values = c("Absent" = "lightcyan1", "Present" = "green4")) +
+  scale_fill_manual("legend", values = c("Absent" = "gray65", "Present" = viridis::viridis(5, option = "plasma")[1])) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
@@ -553,7 +553,7 @@ barplt_PA_2022 <- df_mvi_c_factor %>%
   ggplot(aes(x = Region, fill = MicroPA_txt)) +
   geom_bar(position = "fill") +
   facet_grid(cols = vars(Month)) +
-  scale_fill_manual("legend", values = c("Absent" = "lightcyan1", "Present" = "green4")) +
+  scale_fill_manual("legend", values = c("Absent" = "gray65", "Present" = viridis::viridis(5, option = "plasma")[1])) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),

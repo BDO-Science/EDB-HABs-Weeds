@@ -141,7 +141,17 @@ Convert to long form
 
 ```{r}
 Nuts_all <- rbind(Nuts_pre22_v3, Nuts)
+```
 
+Save Nuts_all to the data-clean folder for statistical analysis
+
+```{r}
+write.csv(Nuts_all,"C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/AllSources_DiscreteNuts_WideForm_2014_2022.csv", row.names = FALSE)
+```
+
+Change from wide to long form
+
+```{r}
 Nuts_Long = dplyr::select(Nuts_all, Source, Station, Latitude, Longitude, Date, Month, Year, Nitrate, Phosphorus, Chl, Ammonium) %>%
   gather(analyte,value, - c(Source, Station, Latitude, Longitude, Date, Month, Year))
 ```

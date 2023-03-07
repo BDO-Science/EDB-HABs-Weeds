@@ -545,7 +545,7 @@ barplt_PA_2021 <- df_mvi_c_factor %>%
     expand = expansion(mult = c(0, 0.025))
   ) +
   ggtitle('2021') +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  theme(axis.text.x = element_text(size = 6, angle = 90, vjust = 0.5, hjust = 1))
 
 barplt_PA_2022 <- df_mvi_c_factor %>%
   filter(
@@ -560,7 +560,7 @@ barplt_PA_2022 <- df_mvi_c_factor %>%
     expand = expansion(mult = c(0, 0.025))
   ) +
   ggtitle('2022') +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  theme(axis.text.x = element_text(size = 6, angle = 90, vjust = 0.5, hjust = 1))
 
 # Use patchwork to put them together
 VisMicro_PA_Month_2021_2022 = barplt_PA_2021 / barplt_PA_2022
@@ -602,20 +602,24 @@ plot(barplt_PA_year,
      units = "in")
 dev.off()
 
-
-# Stacked bar plot by Month and Region for 2021 and 2022
 ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_PA_month_reg_20212022_030323.jpg"),
-  plot = VisMicro_PA_Month_2021_2022,
-  height = 12,
-  width = 9,
+  here("analysis_2022/figures/Microcystis_visindex_PA_by_Year_030323.jpg"),
+  plot = barplt_PA_year,
+  height = 20,
+  width = 12,
   units = "in"
 )
 
-jpeg("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/Microcystis_visindex_PA_month_reg_20212022_030323.jpg")
-plot(VisMicro_PA_Month_2021_2022,
-     height = 4.5,
-     width = 6.5,
-     units = "in")
-dev.off()
 
+# Stacked bar plot by Month and Region for 2021 and 2022
+#ggsave(
+#  here("analysis_2022/figures/Microcystis_visindex_PA_month_reg_20212022_030323.jpg"),
+#  plot = VisMicro_PA_Month_2021_2022,
+#  height = 4.5,
+#  width = 6.5,
+#  units = "in"
+#)
+
+png(filename = here::here("analysis_2022", "figures", "Microcystis_visindex_PA_month_reg_20212022_030323.png"), width = 9, height = 8, units = "in", pointsize = 10, family = "sans", res = 300)
+VisMicro_PA_Month_2021_2022
+dev.off()

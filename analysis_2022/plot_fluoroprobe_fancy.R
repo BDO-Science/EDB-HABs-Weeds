@@ -32,18 +32,27 @@ fp_data <- rbind(fp_oct, fp_jul, fp_may) %>%
 # Plots ---------------------
 
 (map_fp <- ggplot()+
-   geom_sf(data =fp_data, aes(fill = ContourMin), color = NA,inherit.aes = FALSE)+
+   geom_sf(data =fp_data, aes(fill = ContourMin, color = ContourMin), inherit.aes = FALSE)+
    facet_wrap(~Month) +
    annotation_north_arrow(location = "tr", which_north = "true",
                           pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                           style = north_arrow_fancy_orienteering) +
    annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
+   scale_colour_gradientn(colours = c("#0d0887","#47039FFF",  "#7301A8FF",
+                                      "#BD3786FF", "#ED7953FF","#F0F921FF"),
+                          values = scales::rescale(c(0, 1, 3, 6, 10, max(fp_data$ContourMin))))+
+
+   scale_fill_gradientn(colours = c("#0d0887","#47039FFF",  "#7301A8FF",
+                                      "#BD3786FF", "#ED7953FF","#F0F921FF"),
+                          values = scales::rescale(c(0, 1, 3, 6, 10, max(fp_data$ContourMin))))+
+
    #viridis::scale_fill_viridis(option = "plasma") +
-   scale_fill_gradientn(colours = c("#0D0887FF", "#6A00A8FF", "#B12A90FF",
-   "#E16462FF" ,"#FCA636FF" ,"#F0F921FF"),
-                          values = scales::rescale(c(min(fp_data$ContourMin),
-                                                     3, 6, 9, 12, 18, 30, max(fp_data$ContourMin))))+
+   # scale_fill_gradientn(colours = c("#0D0887FF", "#6A00A8FF", "#B12A90FF",
+   # "#E16462FF" ,"#FCA636FF" ,"#F0F921FF"),
+   #                        values = scales::rescale(c(min(fp_data$ContourMin),
+   #                                                   3, 6, 9, 12, 18, 30, max(fp_data$ContourMin))))+
    labs(fill = "Cyanobacterial \nChlorophyll (µg/L)")+
+   guides(colour = "none")+
    theme_classic() +
    theme(axis.text = element_blank(),
          axis.title = element_blank(),
@@ -53,62 +62,6 @@ fp_data <- rbind(fp_oct, fp_jul, fp_may) %>%
          legend.text = element_text(size = 10),
          legend.title = element_text(size = 10)))
 
-
-## May ----------------------
-
-(map_fp_mayMin <- ggplot()+
-   geom_sf(data =fp_may, aes(fill = ContourMin), size = 0.01, color = "gray40",inherit.aes = FALSE)+
-   annotation_north_arrow(location = "tr", which_north = "true",
-                          pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
-                          style = north_arrow_fancy_orienteering) +
-   annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
-   viridis::scale_fill_viridis(option = "plasma") +
-   labs(fill = "Cyanobacterial \nChlorophyll (µg/L)")+
-   theme_classic() +
-   theme(axis.text = element_blank(),
-         axis.title = element_blank(),
-         axis.ticks = element_blank(),
-         legend.position = c(0.3, 0.8),
-         strip.text = element_text(size = 12),
-         legend.text = element_text(size = 10),
-         legend.title = element_text(size = 10)))
-## July -----------------------
-
-(map_fp_julMin <- ggplot()+
-   geom_sf(data =fp_jul, aes(fill = ContourMin), size = 0.01, color = "gray40", inherit.aes = FALSE)+
-   annotation_north_arrow(location = "tr", which_north = "true",
-                          pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
-                          style = north_arrow_fancy_orienteering) +
-   annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
-   viridis::scale_fill_viridis(option = "plasma") +
-   labs(fill = "Cyanobacterial \nChlorophyll (µg/L)")+
-   theme_classic() +
-   theme(axis.text = element_blank(),
-         axis.title = element_blank(),
-         axis.ticks = element_blank(),
-         legend.position = c(0.3, 0.8),
-         strip.text = element_text(size = 12),
-         legend.text = element_text(size = 10),
-         legend.title = element_text(size = 10)))
-
-## October --------------------
-
-(map_fp_octMin <- ggplot()+
-    geom_sf(data =fp_oct, aes(fill = ContourMin), size = 0.01, color = "gray40", inherit.aes = FALSE)+
-    annotation_north_arrow(location = "tr", which_north = "true",
-                           pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
-                           style = north_arrow_fancy_orienteering) +
-    annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
-    viridis::scale_fill_viridis(option = "plasma") +
-  labs(fill = "Cyanobacterial \nChlorophyll (µg/L)")+
-    theme_classic() +
-    theme(axis.text = element_blank(),
-          axis.title = element_blank(),
-          axis.ticks = element_blank(),
-          legend.position = c(0.3, 0.8),
-          strip.text = element_text(size = 12),
-          legend.text = element_text(size = 10),
-          legend.title = element_text(size = 10)))
 
 ### Combine
 library(patchwork)

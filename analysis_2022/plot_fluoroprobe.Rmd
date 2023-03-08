@@ -242,8 +242,13 @@ map_fp_emp <- ggplot() +
                                      Sep = "Sep 14-30",
                                      Oct = "Oct 13-20",
                                      Nov = "Nov 14-21"))) +
-  annotation_north_arrow(location = "tr",which_north = "true",pad_x = unit(.1, "in"),
-                         pad_y = unit(0.2, "in"),style = north_arrow_fancy_orienteering) +
+  annotation_north_arrow(location = "tr",
+                         which_north = "true",
+                         height = unit(0.4, "in"),
+                         width = unit(0.4,"in"),
+                         pad_x = unit(.05, "in"),
+                         pad_y = unit(0.05, "in"),
+                         style = north_arrow_fancy_orienteering) +
   annotation_scale(location = "bl",
                    bar_cols = c("black", "white", "black", "white")) +
   scale_x_continuous(limits = c(-122.2,-121.2)) +
@@ -257,9 +262,9 @@ map_fp_emp <- ggplot() +
         axis.title = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "top", 
-        strip.text = element_text(size = 12),
-        legend.text = element_text(size = 12),
-        legend.title = element_text(size = 12))
+        strip.text = element_text(size = 10),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 10))
 
 map_fp_emp
 ```
@@ -268,9 +273,9 @@ Write map file
 ```{r}
 png(filename = here("analysis_2022", "figures", "FP_map_raw_emp_2022.png"),
     width = 7, 
-    height = 7, 
+    height = 5, 
     units = "in", 
-    pointsize = 10, 
+    pointsize = 9, 
     family = "sans", 
     res = 300)
 map_fp_emp

@@ -7,26 +7,26 @@ Data Dictionary Name,SeProName,Latin Name,Latin_Name,Common Name,species,native
 " ""SAV-Curlyleaf""",CLP,Potamogeton crispus,Potamogeton_crispus,Curlyleaf pondweed,CurlyLeaf,n
 " ""SAV-Richardson""",Richardsons_PW,Potamogeton richardsonii,Potamogeton_richardsonii,Richardsons Pondweed,Richarsdon,y
 " ""SAV-Sago""",Sago,Stuckenia pectinata,Stuckenia_pectinata,sago pondweed,Sago,y
-" ""SAV-Echinodorus""",,Echinodorus berteroi,Echinodorus_berteroi,Burhead, Echinodorus,
+" ""SAV-Echinodorus""",,Echinodorus berteroi,Echinodorus_berteroi,Burhead, Echinodorus,y
 " ""SAV-Snaiad""",S_Naiad,Najas guadalupensis,Najas_guadalupensis,Southern Naiad,Snaiad,y
 " ""SAV-Elodea""",Elodea,Elodea canadensis,Elodea_canadensis,Common waterweed,Elodea,y
-" ""SAV-Ribbonweed"" ",,Vallisneria americana,Vallisneria_americana,Tape-grass,Ribbonweed,
+" ""SAV-Ribbonweed"" ",,Vallisneria americana,Vallisneria_americana,Tape-grass,Ribbonweed,n
 " ""SAV-Algae""",,,,Algae Mats,Algae,
 " ""SAV-Unknown""",,,,,Uknown,
 " ""SAV-Mixed""",,,,,Mixed,
 " ""SAV-Hdubia""",H_dubia,Heteranthera dubia,Heteranthera_dubia,,Hdubia,y
-" ""SAV-Nuttallii""",,Potamogeton epihydrus,Potamogeton_epihydrus,,Nuttallii,
-" ""FLT-WHyacinth""",,Eichhornia crassipes,Eichhornia_crassipes,water hyacinth,WHyacinth,
-"  ""FLT-WPrimrose""",,Ludwigia hexapetala,Ludwigia_hexapetala,water primrose,WPrimrose,
-" ""FLT-Alligatorweed""",,Alternanthera philoxeroides,Alternanthera_philoxeroides,Alligator weed,Alligatorweed,
-"  ""FLT-Pennywort""",,Hydrocotyle ranunculoides,Hydrocotyle_ranunculoides,pennywort,Pennywort,
-" ""FLT-Parrotfeather""",,Myriophyllum aquaticum,Myriophyllum_aquaticum,parrot feather,Parrotfeather,
-" ""FLT-SpongePlant""",,Limnobium laevigatum,Limnobium_laevigatum,West Indian sponge plant,SpongePlant,
-" ""FLT-Azolla""",,Azolla spp,Azolla_spp,fairy moss,Azolla,
-" ""FLT-Duckweed""",,Lemna minor,Lemna_minor,Duckweed,Duckweed,
-,ThreadleafPW,Stuckenia filiformis,Stuckenia_filiformis,Threadleaf pond weed,,
-,P_pusillus,Potamogeton pusillus,Potamogeton_pusillus,,,
-,P_foliosus,Potamogeton_foliosus,Potamogeton_foliosus,,,
-,P_zos_flatstem,Potamogeton_zosteriformis,Potamogeton_zosteriformis,,,
+" ""SAV-Nuttallii""",,Potamogeton epihydrus,Potamogeton_epihydrus,,Nuttallii,y
+" ""FLT-WHyacinth""",,Eichhornia crassipes,Eichhornia_crassipes,water hyacinth,WHyacinth,n
+"  ""FLT-WPrimrose""",,Ludwigia hexapetala,Ludwigia_hexapetala,water primrose,WPrimrose,n
+" ""FLT-Alligatorweed""",,Alternanthera philoxeroides,Alternanthera_philoxeroides,Alligator weed,Alligatorweed,n
+"  ""FLT-Pennywort""",,Hydrocotyle ranunculoides,Hydrocotyle_ranunculoides,pennywort,Pennywort,y
+" ""FLT-Parrotfeather""",,Myriophyllum aquaticum,Myriophyllum_aquaticum,parrot feather,Parrotfeather,n
+" ""FLT-SpongePlant""",,Limnobium laevigatum,Limnobium_laevigatum,West Indian sponge plant,SpongePlant,n
+" ""FLT-Azolla""",,Azolla spp,Azolla_spp,fairy moss,Azolla,y
+" ""FLT-Duckweed""",,Lemna minor,Lemna_minor,Duckweed,Duckweed,y
+,ThreadleafPW,Stuckenia filiformis,Stuckenia_filiformis,Threadleaf pond weed,,y
+,P_pusillus,Potamogeton pusillus,Potamogeton_pusillus,,,y
+,P_foliosus,Potamogeton_foliosus,Potamogeton_foliosus,,,y
+,P_zos_flatstem,Potamogeton_zosteriformis,Potamogeton_zosteriformis,,,y
 ,Hybrid_CLP,Potamogeton_hybrid,Potamogeton_hybrid,Potamogeton hybrid,,
 ,,Vallisneria australis,Vallisneria_australis,Australian eelgrass,AusEelgrass,n

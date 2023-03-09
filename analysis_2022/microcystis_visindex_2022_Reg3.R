@@ -382,7 +382,7 @@ write_csv(HABsVis_final_2007_2022, here("analysis_2022", "data_clean", "HABsVis_
 HABsVis_final_2007_2022 <- read.csv("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/HABsVis_final_2007_2022.csv")
 
 # Load region data if needed
-#load("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/data/Regions.RData")
+load("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/data/Regions.RData")
 
 df_mvi_c <- HABsVis_final_2007_2022 %>%
   select(Source, Station, Latitude, Longitude, Date, Month, Year, Microcystis, MicroPA) %>%
@@ -439,26 +439,26 @@ df_mvi_c_factor <- df_mvi_c %>%
 
 
 
-# 3. Create Figures -------------------------------------------------------
-
-# Create custom color palette for Microcystis levels
-scale_fill_mvi <- list(
-  scale_fill_manual(
-    name = "MicroRank",
-    values = c("white", "tan1", "yellow3", "red", "darkred")
-  )
-)
+######## CREATE FIGS #######
 
 
 # set strata levels for plotting
 df_mvi_c_factor$Region = factor(df_mvi_c$Region, levels=c("Upper Sac", "Cache/Liberty", "Lower Sac", "East Delta",
                                                    "Lower SJ", "Franks", "OMR", "South Delta"))
+# Set ranking levels for plotting
+df_mvi_c_factor$MicroRank = factor(df_mvi_c$MicroRank, levels=c("Absent", "Low",
+                                                   "Medium", "High", "Very High"))
 
 # Create stacked bar plot of 5 index categories by Year for all data from 2014-2022
 barplt_year <- df_mvi_c_factor %>%
   ggplot(aes(x = Year, fill = MicroRank)) +
   geom_bar(position = "fill") +
-  scale_fill_mvi +
+#  scale_fill_mvi +
+  scale_fill_manual(
+    name = "Ranking",
+    values = c("gray65", viridis::viridis(5, option = "plasma")[1:4]),
+    breaks=c("Absent", "Low","Medium", "High", "Very High")
+  ) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
@@ -478,7 +478,11 @@ barplt_2021 <- df_mvi_c_factor %>%
   ggplot(aes(x = Region, fill = MicroRank)) +
   geom_bar(position = "fill") +
   facet_grid(cols = vars(Month)) +
-  scale_fill_mvi +
+  scale_fill_manual(
+    name = "Ranking",
+    values = c("gray65", viridis::viridis(5, option = "plasma")[1:4]),
+    breaks=c("Absent", "Low","Medium", "High", "Very High")
+  ) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
@@ -493,7 +497,11 @@ barplt_2022 <- df_mvi_c_factor %>%
   ggplot(aes(x = Region, fill = MicroRank)) +
   geom_bar(position = "fill") +
   facet_grid(cols = vars(Month)) +
-  scale_fill_mvi +
+  scale_fill_manual(
+    name = "Ranking",
+    values = c("gray65", viridis::viridis(5, option = "plasma")[1:4]),
+    breaks=c("Absent", "Low","Medium", "High", "Very High")
+  ) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
@@ -510,7 +518,7 @@ VisMicro_Month_2021_2022 = barplt_2021 / barplt_2022
 barplt_PA_year <- df_mvi_c_factor %>%
   ggplot(aes(x = Year, fill = MicroPA_txt)) +
   geom_bar(position = "fill") +
-  scale_fill_manual("legend", values = c("Absent" = "white", "Present" = "orange")) +
+  scale_fill_manual("legend", values = c("Absent" = "gray65", "Present" = viridis::viridis(5, option = "plasma")[1])) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
@@ -530,14 +538,14 @@ barplt_PA_2021 <- df_mvi_c_factor %>%
   ggplot(aes(x = Region, fill = MicroPA_txt)) +
   geom_bar(position = "fill") +
   facet_grid(cols = vars(Month)) +
-  scale_fill_manual("legend", values = c("Absent" = "white", "Present" = "orange")) +
+  scale_fill_manual("legend", values = c("Absent" = "gray65", "Present" = viridis::viridis(5, option = "plasma")[1])) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
     expand = expansion(mult = c(0, 0.025))
   ) +
   ggtitle('2021') +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  theme(axis.text.x = element_text(size = 6, angle = 90, vjust = 0.5, hjust = 1))
 
 barplt_PA_2022 <- df_mvi_c_factor %>%
   filter(
@@ -545,14 +553,14 @@ barplt_PA_2022 <- df_mvi_c_factor %>%
   ggplot(aes(x = Region, fill = MicroPA_txt)) +
   geom_bar(position = "fill") +
   facet_grid(cols = vars(Month)) +
-  scale_fill_manual("legend", values = c("Absent" = "white", "Present" = "orange")) +
+  scale_fill_manual("legend", values = c("Absent" = "gray65", "Present" = viridis::viridis(5, option = "plasma")[1])) +
   scale_y_continuous(
     name = "Relative Frequency",
     labels = percent_format(),
     expand = expansion(mult = c(0, 0.025))
   ) +
   ggtitle('2022') +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  theme(axis.text.x = element_text(size = 6, angle = 90, vjust = 0.5, hjust = 1))
 
 # Use patchwork to put them together
 VisMicro_PA_Month_2021_2022 = barplt_PA_2021 / barplt_PA_2022
@@ -560,42 +568,58 @@ VisMicro_PA_Month_2021_2022 = barplt_PA_2021 / barplt_PA_2022
 
 # 4. Export Figures -------------------------------------------------------
 
-# All figures moved to DWR-EXT-2021 Emer Drought BarrierReport SharePoint site:
-# General/Biological/HAB-Science_Hour_Talk_Mar2022
-
 # Stacked bar plot by Year for all data from 2014-2021
-ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_by_Year_030123.jpg"),
-  plot = barplt_year,
-  height = 4.5,
-  width = 6.5,
-  units = "in"
-)
+# this code decided to stop working for some unknown reason
+#ggsave(
+#  "C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/Microcystis_visindex_by_Year_030323.jpg",
+#  plot = barplt_year,
+#  height = 4.5,
+#  width = 6.5,
+#  units = "in"
+#)
 
+jpeg("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/Microcystis_visindex_by_Year_030323.jpg")
+plot(barplt_year,
+     height = 4.5,
+     width = 6.5,
+     units = "in")
+dev.off()
 # Stacked bar plot by Month and Region for 2021 and 2022
-ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_month_reg_20212022_030123.jpg"),
-  plot = VisMicro_Month_2021_2022,
-  height = 12,
-  width = 9,
-  units = "in"
-)
+
+jpeg("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/Microcystis_visindex_month_reg_20212022_030323.jpg")
+plot(VisMicro_Month_2021_2022,
+     height = 4.5,
+     width = 6.5,
+     units = "in")
+dev.off()
+
 
 # Stacked P/A bar plot by Year for all data from 2014-2021
+jpeg("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/Microcystis_visindex_PA_by_Year_030323.jpg")
+plot(barplt_PA_year,
+     height = 4.5,
+     width = 6.5,
+     units = "in")
+dev.off()
+
 ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_PA_by_Year_030123.jpg"),
+  here("analysis_2022/figures/Microcystis_visindex_PA_by_Year_030323.jpg"),
   plot = barplt_PA_year,
-  height = 4.5,
-  width = 6.5,
+  height = 20,
+  width = 12,
   units = "in"
 )
+
 
 # Stacked bar plot by Month and Region for 2021 and 2022
-ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_PA_month_reg_20212022_030123.jpg"),
-  plot = VisMicro_PA_Month_2021_2022,
-  height = 12,
-  width = 9,
-  units = "in"
-)
+#ggsave(
+#  here("analysis_2022/figures/Microcystis_visindex_PA_month_reg_20212022_030323.jpg"),
+#  plot = VisMicro_PA_Month_2021_2022,
+#  height = 4.5,
+#  width = 6.5,
+#  units = "in"
+#)
 
+png(filename = here::here("analysis_2022", "figures", "Microcystis_visindex_PA_month_reg_20212022_030323.png"), width = 9, height = 8, units = "in", pointsize = 10, family = "sans", res = 300)
+VisMicro_PA_Month_2021_2022
+dev.off()

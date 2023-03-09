@@ -1,0 +1,559 @@
+---
+title: "NutChl_2022HABs"
+author: "Kristi Arend"
+date: "11/11/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Origional code by Mine Berg mbearg@esassoc.com
+#Updated by Rosemary Hartman (rosemary.hartman@water.ca.gov)
+#Modified by Kristi Arend (karend@usbr.gov) for 2022 data, using code from plot_continuous_data.Rmd by Cat Pien
+
+```{r}
+library(plyr)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(gridExtra)
+library(sf)
+library(ggmap)
+library(dplyr)
+library(readr)
+library(here)
+library(Polychrome)
+library(viridis)
+library(deltamapr)
+library(ggspatial)
+library(readxl)
+library(patchwork)
+library(cowplot)
+library(here)
+
+data_root = "analysis_2022/"
+```
+
+read in data file; this is for 2022 data only
+load regions file
+
+```{r}
+hab_nutr_chla_mvi <- read_csv("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/discrete_wq_2022.csv")
+load(here::here("data","Regions.RData"))
+```
+
+Replace values below the reporting limits with zeros
+
+```{r}
+Nuts = mutate(hab_nutr_chla_mvi, Month = month(Date),
+              Year = year(Date),Chlorophyll = as.numeric(Chlorophyll),
+              Nitrate = as.numeric(DissNitrateNitrite),
+              Phosphorus = as.numeric(DissOrthophos)) %>%
+  dplyr::mutate(Chl = case_when(Chlorophyll_Sign == "<" ~ 0,
+                         TRUE ~ Chlorophyll),
+         Nitrate = case_when(DissNitrateNitrite_Sign == "<" ~ 0,
+                             TRUE ~ Nitrate),
+        Nitrate = case_when(DissNitrateNitrite_Sign == "< (estimated)" ~ 0,
+                            TRUE ~ Nitrate),
+         Phosphorus = case_when(DissOrthophos_Sign == "<" ~ 0,
+                                TRUE ~ Phosphorus),
+        Ammonium = as.numeric(DissAmmonia),
+        Ammonium = case_when(DissAmmonia_Sign == "< (estimated)" ~ 0,
+                            TRUE ~ Ammonium)) %>%
+  dplyr::filter(Month %in% c(2, 3, 4, 5, 6,7,8,9,10,11))
+```
+UPDATE: should no longer be a problem; coordinates and data files updated on 3/2/23
+
+A couple of the NCRO stations have different cdec codes than what NCRO uses and don't have lat and long coordinates; 
+also, time stamps have 8 hours added to the original collection times because GMT used when creating 2022 data file
+
+Insert correct WGS84 coordinates as follows:
+Station MHR is really MHO: 37.87618, -121.383
+Station OBD is really ODM: 37.81097, -121.544
+Station RSL is really RSCC: 37.97619, -121.64
+
+```{r}
+#Nuts$Station[Nuts$Station == "MHR"] <- "MHO"
+#Nuts$Station[Nuts$Station == "OBD"] <- "ODM"
+#Nuts$Station[Nuts$Station == "RSL"] <- "RSCC"
+
+#Nuts = dplyr::mutate(Nuts, Latitude = case_when(Station == "MHO" ~ 37.87618,
+#                          TRUE ~ Latitude),
+#  Longitude = case_when(Station == "MHO" ~ -121.383,
+#                                           TRUE ~ Longitude),
+#  Latitude = case_when(Station == "ODM" ~ 37.81097,
+#                                           TRUE ~ Latitude),
+#  Longitude = case_when(Station == "ODM" ~ -121.544,
+#                                            TRUE ~ Longitude),
+#  Latitude = case_when(Station == "RSCC" ~ 37.97619,
+#                                           TRUE ~ Latitude),
+#  Longitude = case_when(Station == "RSCC" ~ -121.640,
+#                                           TRUE ~ Longitude))
+```
+
+Add 2014-2021 discrete water quality data from last year's report
+
+Load data
+
+Remove microcystis and region columns
+```{r}
+Nuts_pre22 <- read_csv(here::here("analysis_2022", "data_raw", "hab_nutr_chla_mvi.csv"))
+
+Nuts_pre22_v2 <- subset(Nuts_pre22, select = -c(Region, Microcystis))
+```
+
+Manipulate data like did for 2022 and rearrange columns to match 2022
+
+```{r}
+Nuts_pre22_v3 = mutate(Nuts_pre22_v2, Month = month(Date),
+              Year = year(Date),Chlorophyll = as.numeric(Chlorophyll),
+              Nitrate = as.numeric(DissNitrateNitrite),
+              Phosphorus = as.numeric(DissOrthophos)) %>%
+  dplyr::mutate(Chl = case_when(Chlorophyll_Sign == "<" ~ 0,
+                                TRUE ~ Chlorophyll),
+                Nitrate = case_when(DissNitrateNitrite_Sign == "<" ~ 0,
+                                    TRUE ~ Nitrate),
+                Nitrate = case_when(DissNitrateNitrite_Sign == "< (estimated)" ~ 0,
+                                    TRUE ~ Nitrate),
+                Phosphorus = case_when(DissOrthophos_Sign == "<" ~ 0,
+                                       TRUE ~ Phosphorus),
+        Ammonium = as.numeric(DissAmmonia),
+        Ammonium = case_when(DissAmmonia_Sign == "< (estimated)" ~ 0,
+                            TRUE ~ Ammonium)) %>%
+  dplyr::filter(Month %in% c(2, 3, 4, 5, 6,7,8,9,10,11)) %>%
+  # rearrange columns to match 2022 dataframe
+  dplyr::select(Source, Station, Latitude, Longitude,
+                Date, Datetime, DissAmmonia, DissAmmonia_Sign, DissNitrateNitrite,
+                DissNitrateNitrite_Sign, DissOrthophos, DissOrthophos_Sign,
+                Chlorophyll, Chlorophyll_Sign, Month, Year, Nitrate, Phosphorus, Chl, Ammonium)
+
+```
+
+Combine 2022 data with 2014-2021 data
+
+Select just the columns with the final nutrient/chlorophyll values (e.g., zeros in place of values below detection )
+
+Convert to long form
+
+```{r}
+Nuts_all <- rbind(Nuts_pre22_v3, Nuts)
+```
+
+Save Nuts_all to the data-clean folder for statistical analysis
+
+```{r}
+write.csv(Nuts_all,"C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/AllSources_DiscreteNuts_WideForm_2014_2022.csv", row.names = FALSE)
+```
+
+Change from wide to long form
+
+```{r}
+Nuts_Long = dplyr::select(Nuts_all, Source, Station, Latitude, Longitude, Date, Month, Year, Nitrate, Phosphorus, Chl, Ammonium) %>%
+  gather(analyte,value, - c(Source, Station, Latitude, Longitude, Date, Month, Year))
+```
+
+Check start and end dates for the different data surveys/sources
+
+```{r}
+Nut_Summy <- Nuts_all %>%
+  group_by(Source) %>%
+  summarize(first=min(as.Date(Date)),last=max(as.Date(Date)))
+```
+Add the regional assignments
+
+```{r}
+nutssf = st_as_sf(Nuts_Long, coords = c("Longitude", "Latitude"), crs = 4326) %>%
+  st_join(reg3) %>%
+  st_drop_geometry() %>%
+  # filter(!is.na(Region)) %>%
+  mutate(Station = case_when(Source == "USGS_CAWSC" ~str_sub(Station, start = 6),
+                             TRUE ~ Station))
+```
+
+PLOT ANNUAL MEANS
+
+Calculate April - November means for each analyte and region across sampling programs and stations
+
+```{r}
+nuts_ann_mean = nutssf %>%
+  dplyr::filter(!is.na(Stratum)) %>%
+  dplyr::filter(Month %in% c(4,5,6,7,8,9,10,11)) %>%
+  dplyr::group_by(Stratum2, Year, analyte) %>%
+  dplyr::summarize(AnnMean = mean(value, na.rm = TRUE),
+            SEc = sd(value, na.rm = T)/sqrt(n()),
+            AnnMin = AnnMean - SEc,
+            AnnMax = AnnMean + SEc)
+  
+```
+Save the data to the data_clean folder
+```{r}
+write.csv(nuts_ann_mean,"C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/AllSources_DiscreteNuts_AnnualMeans_2014_2022.csv", row.names = FALSE)
+```
+
+Load the final dataset to make plots
+
+```{r}
+nuts_ann_mean <- read.csv("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/AllSources_DiscreteNuts_AnnualMeans_2014_2022.csv")
+```
+Plot annual means for each analyte (row) by region (column)
+
+First, specify the order you want Stratum2 to appear in the plots
+Second, specify the order you want the analytes to appear
+
+Plot North and East Delta together in one figure; plot South and Central Delta together in another figure
+
+Export plots
+
+```{r}
+nuts_ann_mean$Stratum2 = factor(nuts_ann_mean$Stratum2, levels=c("Upper Sac","Cache/Liberty","Lower Sac","East Delta","Lower SJ","Franks","OMR","South Delta"))
+
+nuts_ann_mean$analyte = factor(nuts_ann_mean$analyte, levels=c("Chl", "Ammonium", "Nitrate", "Phosphorus"))
+
+nuts_ann_NEdelta = nuts_ann_mean %>%
+  filter(Stratum2 %in% c("Upper Sac", "Cache/Liberty", "Lower Sac", "East Delta"))
+
+nuts_ann_SCdelta = nuts_ann_mean %>%
+  filter(Stratum2 %in% c("Lower SJ", "Franks", "OMR", "South Delta"))
+  
+plot_NEdelta_annNut = ggplot(nuts_ann_NEdelta, aes(x=Year, y = AnnMean, fill = Stratum2)) + geom_col()+
+  geom_errorbar(aes(ymin = AnnMin, ymax = AnnMax))+
+  facet_grid(analyte~Stratum2, scales = "free_y",
+             labeller = as_labeller(c(`Upper Sac` = "Upper Sac", `Cache/Liberty` = "Cache/Liberty",
+                                      `Lower Sac` = "Lower Sac",`East Delta` = "East Delta", Chl = "Chl a\n(ug/L)",
+                                      Ammonium = "Ammon \n(mg/L)",Nitrate = "Nitrate \n(mg/L)",
+                                      Phosphorus="Phos \n(mg/L)"))) +
+  scale_fill_brewer(palette = "Set2", guide = NULL)+
+  scale_x_continuous(n.breaks = 6)+ 
+  ylab("Concentration")+
+  ggtitle('North Delta and Lower Sacramento River') +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.2))
+
+plot_SCdelta_annNut = ggplot(nuts_ann_SCdelta, aes(x=Year, y = AnnMean, fill = Stratum2)) + geom_col()+
+  geom_errorbar(aes(ymin = AnnMin, ymax = AnnMax))+
+  facet_grid(analyte~Stratum2, scales = "free_y",
+             labeller = as_labeller(c(`Lower SJ` = "Lower SJ", `Franks` = "Franks",
+                                      `OMR` = "OMR",`South Delta` = "South Delta", Chl = "Chl a\n(ug/L)",
+                                      Ammonium = "Ammon \n(mg/L)",Nitrate = "Nitrate \n(mg/L)",
+                                      Phosphorus="Phos \n(mg/L)"))) +
+  scale_fill_brewer(palette = "Set2", guide = NULL)+
+  scale_x_continuous(n.breaks = 6)+ 
+  ylab("Concentration")+
+  ggtitle('Central and South Delta') +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.2))
+
+```
+
+Put plots together using patchwork
+
+```{r}
+DiscNuts_annual_plots = plot_NEdelta_annNut / plot_SCdelta_annNut
+```
+
+Export plots
+
+```{r}
+#png(filename = here("analysis_2022/figures/Mean_AnnNuts_2014_2022.png"), width = 10, #height = 12, units = "in", pointsize = 12, family = "sans", res = 300)
+#DiscNuts_annual_plots
+#dev.off()
+
+#ggsave(
+#  here("analysis_2022/figures/Mean_AnnNuts_2014_2022.jpg"),
+#  plot = DiscNuts_annual_plots, width = 15, height = 15, units = "in", pointsize = 12, #family = "sans")
+
+png("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/Mean_AnnNuts_2014_2022.png")
+plot(DiscNuts_annual_plots,
+     height = 12,
+     width = 10,
+     units = "in",
+     pointsize = 12,
+     family = "sans",
+     res = 300)
+dev.off()
+
+```
+
+Load TUCP dates
+
+```{r}
+tucp_dates <- read_excel(here::here("data/tucp_dates.xlsx"))%>%
+  mutate(BarrierStartDate = lubridate::ymd(BarrierStartDate),
+         BarrierEndDate = ymd(BarrierEndDate),
+         TUCPStart = ymd(TUCPStart),
+         TUCPEnd = ymd(TUCPEnd)) %>%
+  dplyr::rename(WaterYear = `Water Year`)
+```
+
+Append TUCP dates to nutssf
+
+```{r}
+tucp_dates <- dplyr::rename(tucp_dates, Year = 'WaterYear')
+
+nutssf_TUCP = nutssf %>%
+ filter(Year > 2014) %>%
+  left_join(tucp_dates) %>%
+  mutate(TUCP_in_effect = case_when(TUCP == "Yes" & Date >= TUCPStart & Date <= TUCPEnd ~ "Yes",
+                                    TRUE ~ "No"))
+```
+
+Add 2022 TUCP and barrier dates, because I can't get the code to work to pull from nnutssf_TUCP
+
+```{r}
+TUCP_22Dates <- as.Date(c(tucp_dates$TUCPStart[12],tucp_dates$TUCPEnd[12]))
+Barrier_22Dates <- as.Date(c(tucp_dates$BarrierStartDate[12], tucp_dates$BarrierEndDate[12]))
+```
+Set analyte levels for plotting
+
+```{r}
+nutssf_TUCP$analyte = factor(nutssf_TUCP$analyte, levels=c("Chl", "Ammonium", "Nitrate", "Phosphorus"))
+```
+
+Subset data by stratum
+
+```{r}
+# CACHE
+Cache_2022 = nutssf_TUCP %>%
+  filter(Stratum2 %in% "Cache/Liberty",
+         Year %in% 2022)
+
+# LOWER SJ
+LowSJ_2022 = nutssf_TUCP %>%
+  filter(Stratum2 %in% "Lower SJ",
+         Year %in% 2022)
+
+# FRANKS
+Franks_2022 = nutssf_TUCP %>%
+  filter(Stratum2 %in% "Franks",
+         Year %in% 2022)
+
+# OMR
+OMR_2022 = nutssf_TUCP %>%
+  filter(Stratum2 %in% "OMR",
+         Year %in% 2022)
+
+# SOUTH DELTA
+SDelta_2022 = nutssf_TUCP %>%
+  filter(Stratum2 %in% "South Delta",
+         Year %in% 2022)
+```
+
+WRITE CSV OF DATA USED FOR REPORT 
+
+```{r fig.height=10, fig.width=12}
+# write csv file
+write.csv(nutssf_TUCP,"C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/DiscreteNuts_HABsReport_2014_2022.csv", row.names = FALSE)
+```
+
+LOAD REPORT DATA FILE
+
+```{R}
+
+nutssf_TUCP <- read_csv("data_clean/DiscreteNuts_HABsReport_2014_2022.csv")
+
+```
+
+PLOT 2022 DATA for each stratum
+
+```{r}
+
+# make a color palette
+library(RColorBrewer)
+pal = c(brewer.pal(8, "Set2"), brewer.pal(12, "Set3"), brewer.pal(9, "Set1"), brewer.pal(12, "Paired"), "black", "grey")
+
+# create df with just station information
+Disc_Nut_Stations = nutssf_TUCP %>%
+  dplyr::select(Source, Station, Year, Stratum2, colors) %>%
+  filter(Year %in% 2022,
+         Stratum2 %in% c("Cache/Liberty","Lower SJ","Franks","OMR","South Delta")) %>%
+  #group_by(Stratum2, Source, Station) %>%
+  distinct(Stratum2, Source, Station)
+
+
+# save csv of station IDs by monitoring program (source) and stratum
+write.csv(Disc_Nut_Stations,"C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/DiscreteNut_Stations_2022.csv", row.names = FALSE)
+
+#set width and height options
+options(repr.plot.width =15, repr.plot.height =15)
+
+#set up function to set equal y-axis breaks in the facets
+equal_breaks <- function(n = 3, s = 0.5, ...){
+  function(x){
+    # rescaling
+    d <- s * diff(range(x)) / (1+2*s)
+    round(seq(min(x)+d, max(x)-d, length=n), 2)
+  }
+}
+```  
+
+```{r}
+# CACHE
+(plot_Cache_2022nuts = ggplot(Cache_2022,aes(x= Date, y = value, color = Station)) +
+# add a shaded rectangle to show duration of TUCP
+  geom_rect(aes(xmin = ymd(unique(TUCPStart)),
+                xmax = ymd(unique(TUCPEnd)),
+                   ymin = -Inf,
+                   ymax = Inf),
+               fill= "gray95", color = NA, alpha = 0.5)+
+  geom_point() + geom_line() +
+  facet_grid(analyte~., scales = "free_y", 
+             labeller = as_labeller(c(Chl = "Chl a\n(ug/L)",Ammonium = "Ammon \n(mg/L)", 
+                                      Nitrate = "Nitrate \n(mg/L)",Phosphorus="Phos \n(mg/L)"))) +
+# add dotted lines to show start and end dates for emergency barrier
+  geom_vline(aes(xintercept = BarrierStartDate), linetype = "dotted") +
+   geom_vline(aes(xintercept = BarrierEndDate), linetype = "dotted") + 
+  scale_x_date(breaks = "1 months", date_labels = "%b", expand = c(0,0)) + 
+  scale_y_continuous(breaks=equal_breaks(n=3, s=0.5), 
+                     expand = c(0.05, 0)) +
+  labs(y = "Concentration", color = "Station") + 
+  ggtitle("Cache/Liberty")+
+  theme_bw() +
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
+         axis.title.x = element_blank(),
+        legend.position = "none"))
+
+        
+
+# LOWER SJ
+(plot_LowerSJ_2022nuts = ggplot(LowSJ_2022,aes(x= Date, y = value, color = Station)) +
+# add a shaded rectangle to show duration of TUCP
+  geom_rect(aes(xmin = ymd(unique(TUCPStart)),
+                xmax = ymd(unique(TUCPEnd)),
+                   ymin = -Inf,
+                   ymax = Inf),
+               fill= "gray95", color = NA, alpha = 0.5)+
+  geom_point() + geom_line() +
+  facet_grid(analyte~., scales = "free_y", 
+             labeller = as_labeller(c(Chl = "Chl a\n(ug/L)",Ammonium = "Ammon \n(mg/L)", 
+                                      Nitrate = "Nitrate \n(mg/L)",Phosphorus="Phos \n(mg/L)"))) +
+# add dotted lines to show start and end dates for emergency barrier
+  geom_vline(aes(xintercept = BarrierStartDate), linetype = "dotted") +
+   geom_vline(aes(xintercept = BarrierEndDate), linetype = "dotted") + 
+  scale_x_date(breaks = "1 months", date_labels = "%b", expand = c(0,0)) + 
+  scale_y_continuous(breaks=equal_breaks(n=3, s=0.5), 
+                     expand = c(0.05, 0)) +
+  labs(y = "Concentration", color = "Station") + 
+  ggtitle("Lower San Joaquin")+
+  theme_bw() +
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
+         axis.title.x = element_blank(),
+        legend.position = "none"))
+
+
+# FRANKS
+plot_Franks_2022nuts = ggplot(Franks_2022,aes(x= Date, y = value, color = Station)) +
+# add a shaded rectangle to show duration of TUCP
+  geom_rect(aes(xmin = ymd(unique(TUCPStart)),
+                xmax = ymd(unique(TUCPEnd)),
+                   ymin = -Inf,
+                   ymax = Inf),
+               fill= "gray95", color = NA, alpha = 0.5)+
+  geom_point() + geom_line() +
+  facet_grid(analyte~., scales = "free_y", 
+             labeller = as_labeller(c(Chl = "Chl a\n(ug/L)",Ammonium = "Ammon \n(mg/L)", 
+                                      Nitrate = "Nitrate \n(mg/L)",Phosphorus="Phos \n(mg/L)"))) +
+# add dotted lines to show start and end dates for emergency barrier
+  geom_vline(aes(xintercept = BarrierStartDate), linetype = "dotted") +
+  geom_vline(aes(xintercept = BarrierEndDate), linetype = "dotted") + 
+  scale_x_date(breaks = "1 months", date_labels = "%b", expand = c(0,0)) + 
+  scale_y_continuous(breaks=equal_breaks(n=3, s=0.5), 
+                     expand = c(0.05, 0)) +
+  labs(y = "Concentration", color = "Station") + 
+  ggtitle("Franks Tract")+
+  theme_bw() +
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
+         axis.title.x = element_blank(),
+        legend.position = "none")
+
+
+# OMR
+plot_OMR_2022nuts = ggplot(OMR_2022,aes(x= Date, y = value, color = Station)) +
+# add a shaded rectangle to show duration of TUCP
+  geom_rect(aes(xmin = ymd(unique(TUCPStart)),
+                xmax = ymd(unique(TUCPEnd)),
+                   ymin = -Inf,
+                   ymax = Inf),
+               fill= "gray95", color = NA, alpha = 0.5)+
+  geom_point() + geom_line() +
+  facet_grid(analyte~., scales = "free_y", 
+             labeller = as_labeller(c(Chl = "Chl a\n(ug/L)",Ammonium = "Ammon \n(mg/L)", 
+                                      Nitrate = "Nitrate \n(mg/L)",Phosphorus="Phos \n(mg/L)"))) +
+# add dotted lines to show start and end dates for emergency barrier
+  geom_vline(aes(xintercept = BarrierStartDate), linetype = "dotted") +
+  geom_vline(aes(xintercept = BarrierEndDate), linetype = "dotted") + 
+  scale_x_date(breaks = "1 months", date_labels = "%b", expand = c(0,0)) + 
+  scale_y_continuous(breaks=equal_breaks(n=3, s=0.5), 
+                     expand = c(0.05, 0)) +
+  labs(y = "Concentration", color = "Station") + 
+  ggtitle("OMR")+
+  theme_bw() +
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
+         axis.title.x = element_blank(),
+        legend.position = "none")
+#+
+#  labs(color = "OMR")
+
+# SOUTH DELTA
+plot_SDelta_2022nuts = ggplot(SDelta_2022,aes(x= Date, y = value, color = Station)) +
+# add a shaded rectangle to show duration of TUCP
+  geom_rect(aes(xmin = ymd(unique(TUCPStart)),
+                xmax = ymd(unique(TUCPEnd)),
+                   ymin = -Inf,
+                   ymax = Inf),
+               fill= "gray95", color = NA, alpha = 0.5)+
+  geom_point() + geom_line() +
+  facet_grid(analyte~., scales = "free_y", 
+             labeller = as_labeller(c(Chl = "Chl a\n(ug/L)",Ammonium = "Ammon \n(mg/L)", 
+                                      Nitrate = "Nitrate \n(mg/L)",Phosphorus="Phos \n(mg/L)"))) +
+# add dotted lines to show start and end dates for emergency barrier
+  geom_vline(aes(xintercept = BarrierStartDate), linetype = "dotted") +
+  geom_vline(aes(xintercept = BarrierEndDate), linetype = "dotted") + 
+  scale_x_date(breaks = "1 months", date_labels = "%b", expand = c(0,0)) + 
+  scale_y_continuous(breaks=equal_breaks(n=3, s=0.5), 
+                     expand = c(0.05, 0)) +
+  labs(y = "Concentration", color = "Station") + 
+  ggtitle("South Delta")+
+  theme_bw() +
+  theme(strip.text = element_text(size = 9),
+         axis.text = element_text(size = 9),
+         axis.title.x = element_blank(),
+        legend.position = "none")
+```
+
+Put plots together using patchwork
+
+```{r}
+(Nuts_2022_plots = (plot_Cache_2022nuts + plot_LowerSJ_2022nuts + plot_Franks_2022nuts + plot_OMR_2022nuts + plot_SDelta_2022nuts ) + plot_layout(ncol = 2))
+```
+
+Export plots
+
+```{r}
+#ggsave(
+#  here::here("analysis_2022/figures/2022_DiscNuts.jpg"),
+#  plot = Nuts_2022_plots, width = 15, height = 15, units = "in", pointsize = 12, family = "sans")
+
+png(filename = here::here("analysis_2022", "figures", "plot_nuts_2022.png"), width = 9, height = 8, units = "in", pointsize = 10, family = "sans", res = 300)
+Nuts_2022_plots
+dev.off()
+
+# jpeg("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/2022_DiscNuts_030323.jpg")
+# plot(Nuts_2022_plots,
+#      height = 1000,
+#      width = 1000,
+#      units = "px",
+#      pointsize = 12,
+#      family = "sans")
+# dev.off()
+
+
+
+```

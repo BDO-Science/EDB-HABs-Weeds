@@ -3,7 +3,12 @@ title: "model_microcystis"
 author: "Catarina Pien"
 date: '2022-12-07'
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
+
+Look at effect of year and season on absence/presence data for Microcystis
+Data updated through November 2022.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -15,19 +20,125 @@ library(lme4)
 library(lmerTest)
 library(emmeans)
 library(sf)
-library(deltamapr)
+library(lubridate)
+library(here)
+
+# didn't really need these
 library(DHARMa)
 library(visreg)
 library(MASS)
 library(car)
-library(lubridate)
-library(cmdstanr)
-library(here)
 ```
 
 ```{r}
-load("analysis_2022/data_clean/HABsw2022.RData")
-regions = st_read("data/HABregions.shp")
-HABS2 <- read_csv("analysis_2022/data_clean/HABS_FinalNuts.csv")
+#load(here("analysis_2022", "data_clean", "HABsw2022.RData"))
+load(here("data","Regions.RData"))
+microcystis <- read_csv(here("analysis_2022", "data_clean","HABsVis_final_2007_2022.csv"))
+
+# Probably didn't need all of this given we are not looking at region. But just in case, it is in this dataset.
+mic_region <- microcystis %>%
+  filter(!is.na(Latitude)) %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
+  st_join(reg3) %>%
+  #st_join(R_EDSM_Strata_1718P1, join = st_intersects) %>%
+  st_drop_geometry() %>%
+  # Remove any stations outside of the R_EDSM_Strata_1718P1 strata and from
+    # Western Delta since there are so few observations with Microcystis present
+    # in this region
+  filter(
+    !is.na(Stratum)) %>%
+  mutate(
+    # Convert Stratum to factor and rename it Region
+#    Region = factor(Stratum, levels = vec_strata_levels, labels = vec_strata_labels),
+    Region = factor(Stratum2),
+    # Convert Microcystis to factor
+#    Microcystis = factor(Microcystis, labels = c("Absent", "Low", "Medium", "High", "Very High"))
+
+  ) %>%
+  # Clean up data frame
+  dplyr::select(
+    Source,Station,Region,
+    Latitude,
+    Longitude,
+    Date,
+    Month,
+    Year,
+    Microcystis,
+    MicroPA
+  ) 
+```
+
+Filter to just seasons where there is Microcystis.
+Filter to 2017+, when NCRO starts recording score. 
+Remove USGS, since they only started 2022.
+```{r}
+mic_data <- mic_region %>%
+  mutate(Station = factor(Station),
+         Region = factor(Region),
+         fYear = factor(Year),
+         Season = case_when(Month %in% c(9,10,11)~ "Fall",
+                            Month %in% c(12,1,2)~ "Winter",
+                            Month %in% c(3,4,5)~ "Spring",
+                            Month %in% c(6,7,8)~ "Summer"),
+         Season = factor(Season, levels = c("Spring", "Summer", "Fall")),
+         MicroPA = factor(MicroPA)) %>%
+  filter(Season %in% c("Spring", "Summer", "Fall"),
+         Source!= "USGS",
+         Year>2016)
+```
+
+# Look at data
+A little less data in 2017, esp spring
+```{r}
+sampsize <- mic_data %>%
+  group_by(Season, fYear) %>%
+  summarize(n = n())
+
+ggplot(sampsize) + geom_tile(aes(x = fYear, y = Season, fill = n))
+```
+
+```{r}
+pa <- mic_data %>%
+  group_by(Season, fYear, MicroPA) %>%
+  summarize(n = n())
+
+ggplot(pa) + geom_col(aes(x = fYear, y = n, fill = MicroPA)) + 
+  facet_wrap(~Season) +
+  scale_fill_manual(values = c("navy", "lightblue"))+
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 90)) 
+```
+
+# Run model; check residuals
+```{r}
+m1 <- glm(MicroPA ~ fYear + Season, family=binomial(link='logit'),data=mic_region)
+summary(m1)
+anova(m1)
+
+par(mfrow = c(2,2))
+plot(m1)
+```
+
+# Look at posthoc pairwise comparisons
+```{r}
+confint(m1)
+
+fit.emm <- emmeans(m1, "fYear", data=pa)
+resultsyear <- pairs(fit.emm, adjust="tukey")
+plot(fit.emm, comparisons = TRUE)
+model_microcystis_year_results <- as.data.frame(resultsyear) %>%
+  mutate(across(.cols = c(estimate:SE, z.ratio), ~round(.x, digits = 3))) 
+
+fit.emm2 <- emmeans(m1, "Season", data=pa)
+resultsseason <- pairs(fit.emm2, adjust="tukey")
+plot(fit.emm2, comparisons = TRUE)
+model_microcystis_season_results <- as.data.frame(resultsseason) %>%
+  mutate(across(.cols = c(estimate:SE, z.ratio), ~round(.x, digits = 3)))
+```
+
+# Write results table to data_clean
+```{r}
+model_microcystis_results <- rbind(model_microcystis_year_results, model_microcystis_season_results)
+write_csv(model_microcystis_results, here("analysis_2022", "data_clean", "model_microcystis_results_emmeans.csv"))
 ```
 

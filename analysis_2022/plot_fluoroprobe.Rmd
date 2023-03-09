@@ -37,6 +37,7 @@ fpmay <- read_excel(here(data_root, "FP_data_USGS_T3_DeltaMapping_May2022_2022-0
 fixed <- read_csv(here(data_root, "FP_data_USGS_fixed_OBI.csv"))
 # EMP
 load(here(data_root, "FP_data_for_USBR_EMP.RData"))
+fp_sep_nov <- read_csv(here(data_root, "FP_data_EMP_Sep_Nov_2022.csv"))
 ```
 
 **Notes from Ted**
@@ -172,7 +173,7 @@ dev.off()
 # EMP data
 ## Clean data
 ```{r}
-fp_emp <- df_final %>%
+fp_emp_1 <- df_final %>%
   dplyr::select(Datetime = DateTime,
                 Month,
                 Latitude,
@@ -181,17 +182,35 @@ fp_emp <- df_final %>%
   mutate(Date = date(Datetime)) %>%
   filter(!is.na(Cyanobacteria))
 
+fp_emp_2 <- fp_sep_nov %>%
+  mutate(Datetime = lubridate::mdy_hm(DateTime)) %>%
+  dplyr::select(Datetime,
+                Month,
+                Latitude=Longitude,
+                Longitude=Latitude,
+                Cyanobacteria = Bluegreen.ug.l) %>%
+  mutate(Date = date(Datetime)) %>%
+  filter(!is.na(Cyanobacteria)) %>%
+  arrange(Date)
+
+unique(fp_emp_2$Date)
+
+fp_emp <- rbind(fp_emp_1, fp_emp_2)
 
 fp_emp_sf <- fp_emp %>%
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove = FALSE) %>%
-  filter(Month %in% c("Mar", "Apr", "May",  "Jun", "Jul", "Aug")) %>%
+  filter(Month %in% c("Mar", "Apr", "May",  "Jun", "Jul", "Aug", "Sep", "Oct", "Nov")) %>%
   mutate(Dates = case_when(Month == "Mar" ~ "Mar 10-17",
                            Month == "Apr" ~ "Apr 21-28",
                            Month == "May" ~ "May 20-27",
                            Month == "Jun" ~ "Jun 21-27",
                            Month == "Jul" ~ "Jul 19-22",
-                           Month == "Aug" ~ "Aug 17-23"))
-WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_sf))
+                           Month == "Aug" ~ "Aug 17-23",
+                           Month == "Sep" ~ "Sep 14-30",
+                           Month == "Oct" ~ "Oct 13-20",
+                           Month == "Nov" ~ "Nov 14-21"),
+         zeros = ifelse(Cyanobacteria == 0, "y", "n"))
+WW_Delta_4326 <- st_transform(deltamapr::WW_Delta, crs = st_crs(fp_emp_sf))
 ```
 
 ```{r}
@@ -209,33 +228,56 @@ ggplot(fp_emp_sf) + geom_boxplot(aes(x = Month, y = Cyanobacteria)) + theme_bw()
 ```
 
 ```{r}
+plot(fp_emp_sf)
 map_fp_emp <- ggplot() +
   geom_sf(data = WW_Delta_4326, color = "lightsteelblue2", fill = "lightsteelblue2") +
-  geom_sf(data = fp_emp_sf, aes(color = Cyanobacteria), size = 0.7, inherit.aes = FALSE) +
+  geom_sf(data = fp_emp_sf, aes(color = Cyanobacteria, size = zeros), size = 0.7, inherit.aes = FALSE) +
   facet_wrap(~Month, nrow = 3,
-              labeller = as_labeller(c(Mar = "Mar 10-17", Apr = "Apr 21-28", May = "May 20-27", 
-                                       Jun = "Jun 21-27", Jul = "Jul 19-22", Aug = "Aug 17-23"))) +
-  annotation_north_arrow(location = "tr",which_north = "true",pad_x = unit(.1, "in"),
-                         pad_y = unit(0.2, "in"),style = north_arrow_fancy_orienteering) +
+            labeller = as_labeller(c(Mar = "Mar 10-17", 
+                                     Apr = "Apr 21-28", 
+                                     May = "May 20-27",
+                                     Jun = "Jun 21-27",
+                                     Jul = "Jul 19-22",
+                                     Aug = "Aug 17-23",
+                                     Sep = "Sep 14-30",
+                                     Oct = "Oct 13-20",
+                                     Nov = "Nov 14-21"))) +
+  annotation_north_arrow(location = "tr",
+                         which_north = "true",
+                         height = unit(0.4, "in"),
+                         width = unit(0.4,"in"),
+                         pad_x = unit(.05, "in"),
+                         pad_y = unit(0.05, "in"),
+                         style = north_arrow_fancy_orienteering) +
   annotation_scale(location = "bl",
                    bar_cols = c("black", "white", "black", "white")) +
   scale_x_continuous(limits = c(-122.2,-121.2)) +
   scale_y_continuous(limits = c(37.9, 38.2)) +
-  scale_color_viridis(option = "plasma") +
+   scale_colour_gradientn(colours = c("#0d0887","#47039FFF",  "#7301A8FF",
+                                   "#BD3786FF", "#ED7953FF","#F0F921FF"),
+                       values = scales::rescale(c(0,1, 3, 6, 10, 30)))+
   labs(color = "Cyanobacterial Chlorophyll a (µg/L)") +
   theme_classic() +
   theme(axis.text = element_blank(),
         axis.title = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "top", 
-        strip.text = element_text(size = 12),
-        legend.text = element_text(size = 12),
-        legend.title = element_text(size = 12))
+        strip.text = element_text(size = 10),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 10))
+
+map_fp_emp
 ```
 
 Write map file
 ```{r}
-png(filename = here("analysis_2022", "figures", "FP_map_raw_emp_2022.png"), width = 6.5, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "FP_map_raw_emp_2022.png"),
+    width = 7, 
+    height = 5, 
+    units = "in", 
+    pointsize = 9, 
+    family = "sans", 
+    res = 300)
 map_fp_emp
 dev.off()
 ```

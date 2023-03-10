@@ -197,7 +197,7 @@ write.csv(nuts_ann_mean,"C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analy
 Load the final dataset to make plots
 
 ```{r}
-nuts_ann_mean <- read.csv("C:/Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/AllSources_DiscreteNuts_AnnualMeans_2014_2022.csv")
+nuts_ann_mean <- read.csv(here::here("analysis_2022/data_clean/AllSources_DiscreteNuts_AnnualMeans_2014_2022.csv"))
 ```
 Plot annual means for each analyte (row) by region (column)
 
@@ -252,7 +252,7 @@ plot_SCdelta_annNut = ggplot(nuts_ann_SCdelta, aes(x=Year, y = AnnMean, fill = S
 Put plots together using patchwork
 
 ```{r}
-DiscNuts_annual_plots = plot_NEdelta_annNut / plot_SCdelta_annNut
+(DiscNuts_annual_plots = plot_NEdelta_annNut / plot_SCdelta_annNut)
 ```
 
 Export plots
@@ -266,7 +266,21 @@ Export plots
 #  here("analysis_2022/figures/Mean_AnnNuts_2014_2022.jpg"),
 #  plot = DiscNuts_annual_plots, width = 15, height = 15, units = "in", pointsize = 12, #family = "sans")
 
-png("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/Mean_AnnNuts_2014_2022.png")
+png(here::here("analysis_2022/figures/Mean_AnnNuts_2014_2022.png"),
+    width = 9, 
+    height = 10, 
+    units = "in", 
+    pointsize = 12, 
+    family = "sans", 
+    res = 300)
+DiscNuts_annual_plots
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "map_advisories_2022month.png"), width = 8, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
+map_advisories_month
+dev.off()
+
+
 plot(DiscNuts_annual_plots,
      height = 12,
      width = 10,

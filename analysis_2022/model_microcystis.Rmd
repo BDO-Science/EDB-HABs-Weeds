@@ -51,6 +51,7 @@ mic_region <- microcystis %>%
     # Convert Stratum to factor and rename it Region
 #    Region = factor(Stratum, levels = vec_strata_levels, labels = vec_strata_labels),
     Region = factor(Stratum2),
+    fYear = factor(Year),
     # Convert Microcystis to factor
 #    Microcystis = factor(Microcystis, labels = c("Absent", "Low", "Medium", "High", "Very High"))
 
@@ -62,6 +63,7 @@ mic_region <- microcystis %>%
     Longitude,
     Date,
     Month,
+    fYear,
     Year,
     Microcystis,
     MicroPA
@@ -99,19 +101,35 @@ ggplot(sampsize) + geom_tile(aes(x = fYear, y = Season, fill = n))
 
 ```{r}
 pa <- mic_data %>%
-  group_by(Season, fYear, MicroPA) %>%
-  summarize(n = n())
+  group_by(Season, fYear) %>%
+  dplyr::mutate(ntotal = n()) %>%
+  ungroup() %>%
+  dplyr::group_by(Season, fYear, MicroPA, ntotal) %>%
+  summarize(n = n(),
+            prop = n/ntotal)
 
 ggplot(pa) + geom_col(aes(x = fYear, y = n, fill = MicroPA)) + 
   facet_wrap(~Season) +
   scale_fill_manual(values = c("navy", "lightblue"))+
   theme_bw() + 
   theme(axis.text.x = element_text(angle = 90)) 
+
+pa2 <- pa %>%
+  dplyr::select(Season, fYear, MicroPA, prop) %>%
+  distinct()
+
+ggplot(pa2) + geom_col(aes(x = fYear, y = prop, fill = MicroPA)) + 
+  facet_wrap(~Season) +
+  scale_fill_manual(values = c("grey70","steelblue"))+
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 90)) 
+
+
 ```
 
 # Run model; check residuals
 ```{r}
-m1 <- glm(MicroPA ~ fYear + Season, family=binomial(link='logit'),data=mic_region)
+m1 <- glm(MicroPA ~ fYear + Season, family=binomial(link='logit'),data=mic_data)
 summary(m1)
 anova(m1)
 

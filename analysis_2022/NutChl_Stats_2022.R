@@ -59,7 +59,7 @@ ggplot(sampsize) + geom_tile(aes(x = fYear, y = Season, fill = n))
 
 # Nitrate ----------------------------------------------------------
 #First let's do nitrate. Heres's where the reporting limit thing could mess us up.
-nit = lmer(log(Nitrate+0.04) ~ fYear  * Stratum2 + (1|fMonth) ,  data = nuts_stats_sf)
+nit = lmer(log(Nitrate+0.04) ~ fYear  + Stratum2 + (1|fMonth) ,  data = nuts_stats_sf)
 summary(nit)
 plot(nit)
 

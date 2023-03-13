@@ -14,20 +14,28 @@ library(ggmap)
 library(ggspatial)
 library(deltamapr)
 library(viridis)
-here()
+library(here)
 data_root = "analysis_2022/data_raw/"
 
 # Read data ----------------
 
-fp_oct <- sf::st_read(here(data_root, "DeltaMappingOctober2022Shapefiles", "DeltaMapping_Oct2022_Bluegreen_Clip.shp")) %>%
+fp_oct <- sf::st_read(here::here(data_root, "DeltaMappingOctober2022Shapefiles", "DeltaMapping_Oct2022_Bluegreen_Clip.shp")) %>%
   mutate(Month = "October")
-fp_jul <- sf::st_read(here(data_root, "DeltaMappingJuly2022Shapefiles", "DeltaMapping_July2022_Bluegreen_Clip.shp"))%>%
+fp_jul <- sf::st_read(here::here(data_root, "DeltaMappingJuly2022Shapefiles", "DeltaMapping_July2022_Bluegreen_Clip.shp"))%>%
   mutate(Month = "July")
-fp_may <- sf::st_read(here(data_root, "DeltaMappingMay2022Shapefiles", "DeltaMapping_May2022_Bluegreen_Clip.shp")) %>%
+fp_may <- sf::st_read(here::here(data_root, "DeltaMappingMay2022Shapefiles", "DeltaMapping_May2022_Bluegreen_Clip.shp")) %>%
   mutate(Month = "May")
 
 fp_data <- rbind(fp_oct, fp_jul, fp_may) %>%
   mutate(Month = factor(Month, c("May", "July", "October")))
+
+
+# Summary stats ------------
+summary <- fp_data %>%
+  dplyr::group_by(Month) %>%
+  dplyr::summarize(max = max(ContourMax),
+            mean = mean(ContourMax))
+
 
 # Plots ---------------------
 

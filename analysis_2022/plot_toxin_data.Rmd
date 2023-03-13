@@ -21,6 +21,7 @@ library(readr)
 library(lubridate)
 library(sf)
 library(ggnewscale)
+library(viridis())
 
 root <- "analysis_2022/" # this is to tell here where to start
 ```
@@ -33,7 +34,7 @@ ct_all <- readRDS(here(root, "data_clean", "ct_all_2022.rds")) %>%
          !is.na(Stratum2))
 # 2021 and 2022 Data
 ct_all_years <- readRDS(here(root, "data_clean", "ct_all_years.rds")) %>%
-  select(-Month) %>%
+  dplyr::select(-Month) %>%
   mutate(Month = month(Date))
 
 # Spatt data
@@ -50,7 +51,7 @@ unique(ct_all$Analyte)
 # class(ct_all_years$geometry) <- "geometry"
   
 ct_stations <- ct_all %>%
-  select(Study, Station, StationName, geometry) %>%
+  dplyr::select(Study, Station, geometry) %>%
   distinct()
 load("./data/Regions.RData")
 
@@ -69,8 +70,8 @@ reg3crop = st_crop(reg3, xmin = -121.9, xmax = -121.2, ymin = 37.65, ymax = 38.4
 ```{r}
 #This is plot 2-4 in the report
 (map_cyano <- ggplot()+
-  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue", alpha = 0.5, lwd = 0.5)+
-  geom_sf(data =reg3crop, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.3)+
+  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue", alpha = 0.3, lwd = 0.5)+
+  geom_sf(data =reg3crop, aes(fill = Stratum2), inherit.aes = FALSE, alpha = 0.2)+
   geom_sf(data =ct_stations, aes(color = Study, shape = Study), inherit.aes = FALSE, size = 1.8)+
   viridis::scale_color_viridis(option = "turbo", discrete = TRUE)+
   scale_fill_manual(values = reg3crop$colors, name = NULL, guide = NULL)+
@@ -149,22 +150,33 @@ Divided by region (Figure 2-16)
 ### Health advisories
 
 Combine data to plot only data that is at advisory level
+2022 only
 ```{r}
+# If we don't want those with no advisories
 mic_only <- ct_all %>%
   filter(!is.na(Advisory)) 
 
-advis <- bind_rows(mic_only, incidents %>%filter(!Advisory == "No Advisory")) %>%
-  filter(Year > 2021)
+# If we want all detections
+toxins_all <- ct_all %>%
+  mutate(Advisory = ifelse(is.na(Advisory), "No Advisory", Advisory),
+         Advisory = factor(Advisory, levels = c("No Advisory", "Caution", "Warning")))
+
+# 2022 data
+advisories <- toxins_all %>%
+  filter(Year > 2021,
+         Month <12) %>%
+  mutate(fMonth = month(Date, label = TRUE))
+
+# 2021 and 2022 data
+ct_advis_allyears <- ct_all_years %>%
+  filter(Year > 2020) %>%
+  mutate(Advisory = ifelse(is.na(Advisory), "No Advisory", Advisory)) %>%
+  mutate(Advisory = factor(Advisory, levels = c("No Advisory",  "Caution", "Warning", "Danger")))
 ```
 
 ## Map of 2022 cyanotoxin data only (not incidents)
 This is in the report
 ```{r}
-advisories <- mic_only %>%
-  filter(Advisory != "No Advisory",
-         Year > 2021) %>%
-  mutate(fMonth = month(Date, label = TRUE))
-
 (map_advisories <- ggplot()+
   geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.3) +
   geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
@@ -175,7 +187,7 @@ advisories <- mic_only %>%
   annotate("text", x = -121.48, y = 37.95, label = "Mildred Island")+
   annotate("text", x = -121.3, y = 37.93, label = "Stockton")+
   annotate("text", x = -121.75, y = 37.99, label = "Big Break")+
-  scale_color_manual(values = c("yellow",  "orange"), labels = c("Caution", "Warning"), name = "Advisory Level")+
+  scale_color_manual(values = c("navy", "yellow",  "orange"), labels = c("No Advisory", "Caution", "Warning"), name = "Advisory Level")+
   theme_bw()+ 
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title = element_blank()) + 
@@ -188,48 +200,58 @@ advisories <- mic_only %>%
 ```
 
 ## 2021 and 2022
+(in report)
 ```{r}
-ct_advis_allyears <- ct_all_years%>%
-  filter(Advisory != "No Advisory",
-         Year > 2020)  %>%
-  mutate(Advisory = factor(Advisory, levels = c("Caution", "Warning", "Danger")))
+# ct_advis_allyears <- ct_all_years%>%
+#   filter(Advisory != "No Advisory",
+#          Year > 2020)  %>%
+#   mutate(Advisory = factor(Advisory, levels = c("Caution", "Warning", "Danger")))
 
 (map_advisories_allyears <- ggplot()+
-  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.3) +
-  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue", alpha= 0.5)+
-  scale_fill_manual(values = reg3$colors, guide = NULL)+
-   #scale_shape_manual(values = c(7, 2, 15, 3, 8, 18, 1, 6)) +
-    scale_shape_manual(values = c(16, 17, 15, 8, 6, 7, 18, 7)) +
+  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.1) +
+  geom_sf(data = WW_Delta, color = "grey", fill = "snow2", alpha= 0.5)+
+   geom_sf(data = ct_advis_allyears, aes(color = Advisory, shape = Study, size = Advisory))+
+   scale_fill_manual(values = reg3$colors, guide = NULL) +
+  scale_size_manual(values = c(2, 4, 4, 4)) +
+  scale_shape_manual(values = c(16, 17, 15, 8, 6, 7, 18, 7)) +
   theme_bw()+ylab("")+xlab("")+
-  geom_sf(data = ct_advis_allyears, aes(color = Advisory, shape = Study), size = 4)+
-    facet_wrap(~Year) + 
+  facet_wrap(~Year) + 
   annotate("text", x = -121.6, y = 37.8, label = "Clifton Court")+
   annotate("text", x = -121.48, y = 37.95, label = "Mildred Island")+
   annotate("text", x = -121.3, y = 37.93, label = "Stockton")+
   annotate("text", x = -121.75, y = 37.99, label = "Big Break")+
-  scale_color_manual(values = c("yellow",  "orange", "red"), labels = c("Caution", "Warning", "Danger"), name = "Advisory Level")+
-  theme_bw()+ 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          axis.title = element_blank()) + 
+  scale_color_manual(values = c("navy", "#7E03A8FF",  "#E16462FF", "#FCA636FF"), labels = c("No Advisory", "Caution", "Warning", "Danger"), name = "Advisory Level")+
   annotation_north_arrow(location = "tr", which_north = "true",
                              pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
                              style = north_arrow_fancy_orienteering) +
   annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
   scale_x_continuous(limits = c(-121.9, -121.2)) +
-  scale_y_continuous( limits = c(37.7, 38.4)))
+  scale_y_continuous( limits = c(37.7, 38.4)) +
+  theme_bw()+ 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.6),
+        strip.text = element_text(size = 12),
+        legend.position = "top",
+        axis.title = element_blank(),
+        legend.box = "vertical") +
+  guides(size = "none"))
 ```
 
 ## Plot of 2022 by month
 ```{r}
 (map_advisories_month_2022 <- ggplot()+
-  geom_sf(data = WW_Delta, color = "grey", fill = "lightblue")+
-  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.3, inherit.aes = FALSE) +
+  geom_sf(data = WW_Delta, color = "grey", fill = "snow2")+
+  geom_sf(data = reg3crop, aes(fill = Stratum2), alpha = 0.1, inherit.aes = FALSE) +
+  geom_sf(data = advisories, aes(color = Advisory, size = Advisory, shape = Study), inherit.aes = FALSE) +
   scale_fill_manual(values = reg3$colors, guide = NULL)+
-  geom_sf(data = advisories, aes(color = Advisory),  size = 2, inherit.aes = FALSE) +
-  scale_color_manual(values = c("yellow", "orange")) +
+  scale_color_manual(values = c("navy", "#7E03A8FF",  "#E16462FF"), labels = c("No Advisory", "Caution", "Warning"), name = "Advisory Level")+
+  #scale_color_manual(values = c("navy", "yellow",  "orange"), labels = c("No Advisory", "Caution", "Warning"), name = "Advisory Level")+
+  scale_shape_manual(values = c(16, 17, 15, 8, 6, 7, 18, 7)) +
+  scale_size_manual(values = c(2, 4, 4)) +
   facet_wrap(~factor(fMonth)) +
   annotation_north_arrow(location = "tr", which_north = "true",
-                          pad_x = unit(.1, "in"), pad_y = unit(0.2, "in"),
+                          pad_x = unit(0.3, "cm"), pad_y = unit(0.3, "cm"),
+                          height = unit(0.75, "cm"),
+                         width = unit(0.75, "cm"),
                           style = north_arrow_fancy_orienteering) +
   annotation_scale(location = "bl", bar_cols = c("black", "white", "black", "white"))  +
   scale_x_continuous(limits = c(-121.9, -121.2)) +
@@ -238,7 +260,9 @@ ct_advis_allyears <- ct_all_years%>%
   theme(axis.text.x = element_text(angle = 45, vjust = 0.6),
         strip.text = element_text(size = 12),
         legend.position = "top",
-        axis.title = element_blank()))
+        axis.title = element_blank(),
+        legend.box = "vertical") +
+  guides(size = "none"))
 ```
 
 ## Spatt plot
@@ -248,15 +272,20 @@ ct_advis_allyears <- ct_all_years%>%
 (tile_spatt <- ggplot(spatt_data) + geom_tile(aes(Month, Site_Name, fill = Result)) + facet_wrap(~Analyte) + theme_bw())
 
 
-spatt_summer_sf <- filter(spatt_data, Month > 4 & Month <12) %>%
+spatt_sum_sf <- filter(spatt_data, Month > 3 & Month <12) %>%
   mutate(ResPerDay = Result/as.numeric(Duration)) %>%
-  st_as_sf(coords =c("Longitude", "Latitude"), remove = FALSE, crs = 4269) %>%
+  group_by(Analyte) %>%
+  mutate(ResultNorm = (Result - min(Result))/ (max(Result)-min(Result))) %>%
+  ungroup() %>%
+  st_as_sf(coords =c("Longitude", "Latitude"), remove = FALSE, crs = 4269) 
+
+spatt_monthly_sf <- spatt_sum_sf %>%
   group_by(Month, fMonth, Analyte, Site_Name) %>%
   summarize(maxResult = max(Result, na.rm = TRUE),
+            maxNorm = round(max(ResultNorm, na.rm = TRUE),2),
             meanResPerDay = mean(ResPerDay, na.rm = TRUE)) %>%
   ungroup() %>%
   group_by(Analyte) %>%
-  mutate(scaledResult = scale(maxResult)) %>%
   mutate(Result = case_when(maxResult == 0 ~ "ND",
                               maxResult < 10 ~ "<10",
                                maxResult >= 10 & maxResult < 100 ~ "10-100",
@@ -266,34 +295,35 @@ spatt_summer_sf <- filter(spatt_data, Month > 4 & Month <12) %>%
                               meanResPerDay < 0.1 ~ "<0.1",
                                meanResPerDay >= 0.1 & meanResPerDay < 1 ~ "0.1-1",
                                meanResPerDay >= 1 & meanResPerDay < 10 ~ "1-10",
-                               meanResPerDay >= 10 ~ ">10"))
+                               meanResPerDay >= 10 ~ ">10"),
+         ResultNorm = ifelse(maxNorm == 0, NA, maxNorm))
+       
 
-ggplot(spatt_summer_sf) + geom_histogram(aes(maxResult), binwidth = 10)
-
-ggplot(spatt_summer_sf) + geom_tile(aes(Month, Analyte, fill = maxResult)) +
-  facet_wrap(~Site_Name) + theme_bw()
+ggplot(spatt_monthly_sf) + geom_histogram(aes(maxResult), binwidth = 10)
 ```
 
 Used this plot for spatt results
 ```{r}
 
-spatt_summer_sf$Result <- factor(spatt_summer_sf$Result, levels = c("ND", "<10", "10-100", "100-1000", ">1000"))
-spatt_summer_sf$ResultPerDay <- factor(spatt_summer_sf$ResultPerDay, levels = c("ND", "<0.1", "0.1-1", "1-10", ">10"))
+spatt_monthly_sf$Result <- factor(spatt_monthly_sf$Result, levels = c("ND", "<10", "10-100", "100-1000", ">1000"))
+spatt_monthly_sf$ResultPerDay <- factor(spatt_monthly_sf$ResultPerDay, levels = c("ND", "<0.1", "0.1-1", "1-10", ">10"))
 
 (map_spatt <- ggplot() + 
-    geom_sf(data = WW_Delta, color = "lightcyan1", fill = "lightcyan1", alpha = 0.9) +
-  geom_sf(data = spatt_summer_sf, aes(color = Result), inherit.aes = FALSE) + facet_grid(Analyte~fMonth)+ 
+    geom_sf(data = WW_Delta, color = "lightcyan3", fill = "lightcyan1", alpha = 0.4) +
+  geom_sf(data = spatt_monthly_sf, aes(color = Result), inherit.aes = FALSE) + facet_grid(Analyte~fMonth)+ 
   scale_colour_manual(values = c("gray65", viridis::viridis(5, option = "plasma")[1:4])) +
   scale_x_continuous(limits = c(-121.9, -121.1)) +
   scale_y_continuous(limits = c(37.6, 38.4)) +
   labs(color = "Max SPATT \nConcentration (ng/g)")+
   theme_bw() +
   theme(axis.text.x = element_text(size = 8, angle = 45, hjust = 1),
-        strip.text.y = element_text(size = 8)))
+        strip.text.y = element_text(size = 8),
+        legend.position = "top",
+        legend.spacing.x = unit(1.0, 'cm')))
 
 (map_spatt_pd <- ggplot() + 
-    geom_sf(data = WW_Delta, color = "lightcyan1", fill = "lightcyan1", alpha = 0.9) +
-  geom_sf(data = spatt_summer_sf, aes(color = ResultPerDay), inherit.aes = FALSE) + facet_grid(Analyte~fMonth)+ 
+    geom_sf(data = WW_Delta, color = "lightcyan3", fill = "lightcyan1", alpha = 0.9) +
+  geom_sf(data = spatt_monthly_sf, aes(color = ResultPerDay), inherit.aes = FALSE) + facet_grid(Analyte~fMonth)+ 
   scale_colour_manual(values = c("gray65", viridis::viridis(5, option = "plasma")[1:4])) +
   scale_x_continuous(limits = c(-121.9, -121.1)) +
   scale_y_continuous(limits = c(37.6, 38.4)) +
@@ -301,14 +331,43 @@ spatt_summer_sf$ResultPerDay <- factor(spatt_summer_sf$ResultPerDay, levels = c(
   theme_bw() +
   theme(axis.text.x = element_text(size = 8, angle = 45, hjust = 1),
         strip.text.y = element_text(size = 8)))
-
-
-
 ```
+
+Normalized 
+```{r}
+(map_spatt_norm <- ggplot() + 
+  geom_sf(data = WW_Delta, color = "lightcyan3", fill = "lightcyan1", alpha = 0.2) +
+  geom_sf(data = spatt_monthly_sf, aes(color = maxNorm), size = 1.5, inherit.aes = FALSE) + facet_grid(Analyte~fMonth)+ 
+  scale_colour_gradientn(colours = c("gray65", viridis::viridis(5, option = "plasma")[1:4])) + 
+  scale_x_continuous(limits = c(-121.9, -121.1)) +
+  scale_y_continuous(limits = c(37.6, 38.4)) +
+  labs(color = "Normalized \nMax SPATT \nConcentration")+
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 8, angle = 45, hjust = 1),
+        strip.text.y = element_text(size = 8), 
+        legend.position = "top",
+        legend.spacing.x = unit(1.0, 'cm')) +
+  guides(color = guide_colourbar(barwidth = 11)))
+```
+
+
 
 ```{r}
 ggplot(spatt_summer_sf) + geom_histogram(aes(maxResult)) + facet_wrap(~Analyte, scales= "free") +
   theme_bw()
+
+points <- spatt_monthly_sf %>%
+  dplyr::select(Site_Name) %>%
+  unique() 
+ggplot() + 
+   geom_sf(data = WW_Delta, color = "lightcyan3", fill = "lightcyan1", alpha = 0.2) +
+  geom_sf_label(data = points, aes(label = Site_Name), inherit.aes = FALSE)
+
+spatt_sum_sf %>%
+  group_by(Analyte) %>%
+  summarize(min = min(Result),
+            max = max(Result))
+  
 ```
 
 # Incident reports (did not use)
@@ -389,12 +448,16 @@ png(filename = here("analysis_2022", "figures", "map_advisories.png"), width = 6
 map_advisories
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "map_advisories_2021_2022.png"), width = 9, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here::here("analysis_2022", "figures", "map_advisories_2021_2022.png"), width = 7, height = 6, units = "in", pointsize = 12, family = "sans", res = 300)
 map_advisories_allyears
 dev.off()
 
 
-png(filename = here("analysis_2022", "figures", "spatt_map_2022.png"), width = 9, height = 7.5, units = "in", pointsize = 10, family = "sans", res = 300)
+png(filename = here::here("analysis_2022", "figures", "map_advisories_2022_month.png"), width = 8, height = 8, units = "in", pointsize = 12, family = "sans", res = 300)
+map_advisories_month_2022
+dev.off()
+
+png(filename = here("analysis_2022", "figures", "spatt_map_2022.png"), width = 7.5, height = 9, units = "in", pointsize = 10, family = "sans", res = 300)
 map_spatt
 dev.off()
 
@@ -402,9 +465,10 @@ png(filename = here("analysis_2022", "figures", "spatt_map_pd_2022.png"), width 
 map_spatt_pd
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "map_advisories_2022_month.png"), width = 8, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
-map_advisories_month_2022
+png(filename = here("analysis_2022", "figures", "spatt_map_norm_2022.png"), width = 7.5, height = 9, units = "in", pointsize = 10, family = "sans", res = 300)
+map_spatt_norm
 dev.off()
+
 
 
 

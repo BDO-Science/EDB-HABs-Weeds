@@ -31,7 +31,7 @@ org <- read_csv("analysis_2022/data_raw/Veg/SpeciesNameswithOrigin.csv") %>%
 
 cstars_2021 <- read_csv("https://raw.githubusercontent.com/InteragencyEcologicalProgram/AquaticVegetationPWT/main/MasterDataSet_SAV/Data_Formatted/CSTARS_2021_formatted.csv") %>%
   arrange(latitude_wgs84,longitude_wgs84) %>%
-  select(-depth_to_sav_m, -secchi_bottom, -secchi_depth_m) %>%
+  dplyr::select(-depth_to_sav_m, -secchi_bottom, -secchi_depth_m) %>%
   mutate(species = gsub("_", " ", species))
 
 # Format data -----------------------------------------
@@ -54,12 +54,12 @@ cstars_2021_zeros <- cstars_2021_format %>%
   pivot_longer(cols = c(`Egeria densa`: `Vallisneria australis`), names_to = "species", values_to = "rake_prop")%>%
   filter(species!="Nocatch") %>%
   rename(latin_name = species) %>%
-  left_join(org %>% select(species, latin_name))
+  left_join(org %>% dplyr::select(species, latin_name))
 
 cstars_2022<- read_csv(here("analysis_2022", "data_clean", "SAV_cstars_bb_frk_sj_2022.csv")) %>%
   arrange(latitude_wgs84,longitude_wgs84) %>%
   mutate(program = "CSTARS") %>%
-  select(program, latitude_wgs84, longitude_wgs84, date, time, survey_method, rake_teeth_corr, species, rake_prop)
+  dplyr::select(program, latitude_wgs84, longitude_wgs84, date, time, survey_method, rake_teeth_corr, species, rake_prop)
 
 cstars_2022_zeros <- cstars_2022 %>%
   pivot_wider(names_from= "species", values_from = "rake_prop", values_fill = 0,
@@ -68,7 +68,7 @@ cstars_2022_zeros <- cstars_2022 %>%
   mutate(species = case_when(grepl("Curlyleaf", species) ~ "CurlyLeaf",
                              grepl("Unknown", species) ~ "Unidentified",
                                    TRUE~ species))%>%
-  left_join(org %>% select(species, latin_name))
+  left_join(org %>% dplyr::select(species, latin_name))
 
 ## Combine 2021 and 2022 ---------------------------------
 cstars <- rbind(cstars_2022_zeros, cstars_2021_zeros) %>%
@@ -217,6 +217,10 @@ unique(fb_spp_cov$species)
           legend.position = "none"))
 
 
+# Look at data
+
+data <- fb_spp_cov %>%
+  arrange(year,latin_name)
 # Make maps of sampling sites ----------------------------------
 
 ## Create bounding boxes ---------------------------------------------

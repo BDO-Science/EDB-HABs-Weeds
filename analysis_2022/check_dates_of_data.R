@@ -22,8 +22,8 @@ ct_all_years <- readRDS(here(root, "data_clean", "ct_years_to_2022.rds")) %>%
 
 ct_dates <- ct_all %>%
   group_by(Study) %>%
-  summarize(first = first(Date),
-            last = last(Date))
+  summarize(first = min(Date),
+            last = max(Date))
 
 
 # WQ -----------------------------------------------------------------

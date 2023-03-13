@@ -135,6 +135,19 @@ anova(m1)
 
 par(mfrow = c(2,2))
 plot(m1)
+
+
+data_sumfall <- filter(mic_data, Season != "Spring")
+m2 <- glm(MicroPA ~fYear + Region + fYear:Region , family=binomial(link='logit'),data=data_sumfall)
+summary(m2)
+anova(m2)
+
+par(mfrow = c(2,4))
+plot(m2)
+resid_m2 = resid(m2, type = "pearson")
+plot(data_sumfall$Region, resid_m2)
+plot(data_sumfall$fYear, resid_m2)
+plot(data_sumfall$Season, resid_m2)
 ```
 
 # Look at posthoc pairwise comparisons
@@ -153,6 +166,30 @@ plot(fit.emm2, comparisons = TRUE)
 model_microcystis_season_results <- as.data.frame(resultsseason) %>%
   mutate(across(.cols = c(estimate:SE, z.ratio), ~round(.x, digits = 3)))
 ```
+
+```{r}
+confint(m2)
+
+fit.emm <- emmeans(m2, "fYear", data=mic_data)
+resultsyear <- pairs(fit.emm, adjust="tukey")
+plot(fit.emm, comparisons = TRUE)
+model_microcystis_year_results <- as.data.frame(resultsyear) %>%
+  mutate(across(.cols = c(estimate:SE, z.ratio), ~round(.x, digits = 3))) 
+
+fit.emm2 <- emmeans(m2, "Region", data=mic_data)
+resultsregion <- pairs(fit.emm2, adjust="tukey")
+plot(fit.emm2, comparisons = TRUE)
+model_microcystis_region_results <- as.data.frame(resultsregion) %>%
+  mutate(across(.cols = c(estimate:SE, z.ratio), ~round(.x, digits = 3)))
+
+library(sjPlot)
+plot_model(m2)
+```
+
+
+
+
+
 
 # Write results table to data_clean
 ```{r}

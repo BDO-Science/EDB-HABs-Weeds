@@ -252,7 +252,27 @@ ebparks = ct_eb0 %>%
 
 ## Nautilus
 ```{r}
-naut = ct_naut0 %>%
+# There were some issues with missing and incorrect coordinates, so fixing that below:
+naut_spatial <- ct_naut0 %>% filter(!is.na(Latitude)) %>%
+  mutate(Longitude = ifelse(Longitude > 0, Longitude * -1, Longitude)) 
+
+naut_latlon <- naut_spatial %>%
+  dplyr::select(Location, Latitude, Longitude) %>%
+  distinct() %>%
+  group_by(Location) %>%
+  summarize(Latitude = mean(Latitude),
+            Longitude = mean(Longitude)) %>%
+  ungroup()
+
+naut_missinglatlon <- ct_naut0 %>% filter(is.na(Latitude)) %>%
+  select(-Latitude, -Longitude) %>%
+  left_join(naut_latlon) %>%
+  dplyr::select(Location, `Sample Date`, `Sample Time`, Latitude, Longitude, everything())
+
+naut_amended <- rbind(naut_spatial, naut_missinglatlon)
+
+# Standardization code
+naut = naut_amended %>%
   janitor::clean_names(case = "upper_camel") %>%
   mutate(SampleID = paste0(SampleDate, SampleTime, Location),
          Site_Name = NA, Comments = NA,
@@ -261,6 +281,8 @@ naut = ct_naut0 %>%
   mutate(Result = case_when(Result == "ND" ~ 0,
                             TRUE ~ as.numeric(Result))) %>%
   dplyr::filter(!is.na(Result))
+
+
 ```
 
 ## USGS

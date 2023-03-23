@@ -595,20 +595,10 @@ dev.off()
 
 
 # Stacked P/A bar plot by Year for all data from 2014-2021
-jpeg("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/Microcystis_visindex_PA_by_Year_030323.jpg")
-plot(barplt_PA_year,
-     height = 4.5,
-     width = 6.5,
-     units = "in")
+png(filename = here::here("analysis_2022", "figures", "Microcystis_visindex_PA_by_Year_031023.png"), width = 9, height = 8, units = "in", pointsize = 10, family = "sans", res = 300)
+barplt_PA_year
 dev.off()
 
-ggsave(
-  here("analysis_2022/figures/Microcystis_visindex_PA_by_Year_030323.jpg"),
-  plot = barplt_PA_year,
-  height = 20,
-  width = 12,
-  units = "in"
-)
 
 
 # Stacked bar plot by Month and Region for 2021 and 2022

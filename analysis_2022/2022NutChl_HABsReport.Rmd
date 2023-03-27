@@ -173,8 +173,7 @@ nutssf = st_as_sf(Nuts_Long, coords = c("Longitude", "Latitude"), crs = 4326) %>
   mutate(Station = case_when(Source == "USGS_CAWSC" ~str_sub(Station, start = 6),
                              TRUE ~ Station))
 ```
-
-PLOT ANNUAL MEANS
+CALCULATE ANNUAL MEANS FOR EACH REGION
 
 Calculate April - November means for each analyte and region across sampling programs and stations
 
@@ -199,7 +198,79 @@ Load the final dataset to make plots
 ```{r}
 nuts_ann_mean <- read.csv(here::here("analysis_2022/data_clean/AllSources_DiscreteNuts_AnnualMeans_2014_2022.csv"))
 ```
-Plot annual means for each analyte (row) by region (column)
+PLOT ANNUAL MEANS FOR EACH YEAR, DELTA-WIDE
+
+First, calculate overall mean and standard error for each year
+
+```{r}
+
+nuts_ann_noStrata <- nuts_ann_mean %>%
+  dplyr::group_by(Year, analyte) %>%
+  dplyr::summarize(YearMean = mean(AnnMean, na.rm = TRUE),
+                   SEc = sd(AnnMean, na.rm = T)/sqrt(n()),
+                   YearMin = YearMean - SEc,
+                   YearMax = YearMean + SEc)
+```
+
+Next, create individual plots for each analyte: ammonium, nitrate, orthophosphate, chl a
+
+Last, put them together using patchwork
+
+```{r}
+
+Bar_Delta_amm <- nuts_ann_noStrata %>%
+  filter(analyte %in% "Ammonium")
+
+Plot_amm <- Bar_Delta_amm %>%
+  ggplot(aes(x=Year, y=YearMean)) +
+  geom_bar(stat = "identity", color = "dodgerblue4", fill  = "dodgerblue4") +
+  geom_errorbar(aes(ymin = YearMin, ymax = YearMax)) +
+  scale_x_continuous(n.breaks = 6)+
+  ylab("Ammonium (ug/L)")+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.2))
+
+Bar_Delta_nit <- nuts_ann_noStrata %>%
+  filter(analyte %in% "Nitrate")
+
+Plot_nit <- Bar_Delta_nit %>%
+  ggplot(aes(x=Year, y=YearMean)) +
+  geom_bar(stat = "identity", color = "cyan4", fill  = "cyan4") +
+  geom_errorbar(aes(ymin = YearMin, ymax = YearMax)) +
+  scale_x_continuous(n.breaks = 6)+
+  ylab("Nitrate (ug/L)")+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.2))
+
+Bar_Delta_phos <- nuts_ann_noStrata %>%
+  filter(analyte %in% "Phosphorus")
+
+Plot_phos <- Bar_Delta_phos %>%
+  ggplot(aes(x=Year, y=YearMean)) +
+  geom_bar(stat = "identity", color = "maroon4", fill  = "maroon4") +
+  geom_errorbar(aes(ymin = YearMin, ymax = YearMax)) +
+  scale_x_continuous(n.breaks = 6)+
+  ylab("Phosphorus (ug/L)")+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.2))
+
+
+Bar_Delta_chla <- nuts_ann_noStrata %>%
+  filter(analyte %in% "Chl")
+
+Plot_chla <- Bar_Delta_chla %>%
+  ggplot(aes(x=Year, y=YearMean)) +
+  geom_bar(stat = "identity", color = "seagreen4", fill  = "seagreen4") +
+  geom_errorbar(aes(ymin = YearMin, ymax = YearMax)) +
+  scale_x_continuous(n.breaks = 6)+
+  ylab("Chlorophyll a (ug/L)")+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.2))
+
+(Nuts_Delta_all = (Plot_amm + Plot_nit + Plot_phos + Plot_chla) + plot_layout(ncol = 2))
+
+```
+PLOT ANNUAL MEANS FOR EACH ANALYTE (row) BY REGION (column)
 
 First, specify the order you want Stratum2 to appear in the plots
 Second, specify the order you want the analytes to appear
@@ -255,17 +326,9 @@ Put plots together using patchwork
 (DiscNuts_annual_plots = plot_NEdelta_annNut / plot_SCdelta_annNut)
 ```
 
-Export plots
+EXPORT PLOTS
 
 ```{r}
-#png(filename = here("analysis_2022/figures/Mean_AnnNuts_2014_2022.png"), width = 10, #height = 12, units = "in", pointsize = 12, family = "sans", res = 300)
-#DiscNuts_annual_plots
-#dev.off()
-
-#ggsave(
-#  here("analysis_2022/figures/Mean_AnnNuts_2014_2022.jpg"),
-#  plot = DiscNuts_annual_plots, width = 15, height = 15, units = "in", pointsize = 12, #family = "sans")
-
 png(here::here("analysis_2022/figures/Mean_AnnNuts_2014_2022.png"),
     width = 9, 
     height = 10, 
@@ -290,8 +353,43 @@ plot(DiscNuts_annual_plots,
      res = 300)
 dev.off()
 
+png("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/figures/plot_DeltaNuts_All.png",
+  width = 9,
+  height = 8,
+  units = "in",
+  pointsize = 10,
+  family = "sans",
+  res = 300)
+Nuts_Delta_all
+dev.off()
+
 ```
 
+MANIPULATE and PLOT 2022 data for each site by region
+
+LOAD wide form data
+
+```{r}
+nuts_wide <- read.csv("C://Users/karend/Desktop/HABs_AqVeg/EDB-HABs-Weeds/analysis_2022/data_clean/AllSources_DiscreteNuts_WideForm_2014_2022.csv")
+```
+
+Change from wide to long form
+
+```{r}
+Nuts22_Long = dplyr::select(nuts_wide, Source, Station, Latitude, Longitude, Date, Month, Year, Nitrate, Phosphorus, Chl, Ammonium) %>%
+  gather(analyte,value, - c(Source, Station, Latitude, Longitude, Date, Month, Year))
+```
+
+Add the regional assignments
+
+```{r}
+nutssf22 = st_as_sf(Nuts22_Long, coords = c("Longitude", "Latitude"), crs = 4326) %>%
+  st_join(reg3) %>%
+  st_drop_geometry() %>%
+  # filter(!is.na(Region)) %>%
+  mutate(Station = case_when(Source == "USGS_CAWSC" ~str_sub(Station, start = 6),
+                             TRUE ~ Station))
+```
 Load TUCP dates
 
 ```{r}
@@ -308,7 +406,7 @@ Append TUCP dates to nutssf
 ```{r}
 tucp_dates <- dplyr::rename(tucp_dates, Year = 'WaterYear')
 
-nutssf_TUCP = nutssf %>%
+nutssf_TUCP = nutssf22 %>%
  filter(Year > 2014) %>%
   left_join(tucp_dates) %>%
   mutate(TUCP_in_effect = case_when(TUCP == "Yes" & Date >= TUCPStart & Date <= TUCPEnd ~ "Yes",
@@ -322,9 +420,11 @@ TUCP_22Dates <- as.Date(c(tucp_dates$TUCPStart[12],tucp_dates$TUCPEnd[12]))
 Barrier_22Dates <- as.Date(c(tucp_dates$BarrierStartDate[12], tucp_dates$BarrierEndDate[12]))
 ```
 Set analyte levels for plotting
+Make sure Date is formatted as date, not character
 
 ```{r}
 nutssf_TUCP$analyte = factor(nutssf_TUCP$analyte, levels=c("Chl", "Ammonium", "Nitrate", "Phosphorus"))
+nutssf_TUCP$Date = as.Date(nutssf_TUCP$Date)
 ```
 
 Subset data by stratum
@@ -367,7 +467,7 @@ LOAD REPORT DATA FILE
 
 ```{R}
 
-nutssf_TUCP <- read_csv("data_clean/DiscreteNuts_HABsReport_2014_2022.csv")
+#nutssf_TUCP <- read_csv("analysis_2022/data_clean/DiscreteNuts_HABsReport_2014_2022.csv")
 
 ```
 
@@ -555,7 +655,7 @@ Export plots
 #  here::here("analysis_2022/figures/2022_DiscNuts.jpg"),
 #  plot = Nuts_2022_plots, width = 15, height = 15, units = "in", pointsize = 12, family = "sans")
 
-png(filename = here::here("analysis_2022", "figures", "plot_nuts_2022.png"), width = 9, height = 8, units = "in", pointsize = 10, family = "sans", res = 300)
+png(filename = here::here("analysis_2022", "figures", "plot_nuts_2022.png"), width = 12, height = 15, units = "in", pointsize = 10, family = "sans", res = 300)
 Nuts_2022_plots
 dev.off()
 

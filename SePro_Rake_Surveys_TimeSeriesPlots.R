@@ -12,12 +12,13 @@ library(plotrix) #calcuate standard error
 library(RColorBrewer) #color palette for plot
 
 #read in the sample data
-cleandat <- read_csv("C:/Users/nbertrand/Desktop/Bertrand/GitHub/EDB-HABs-Weeds/analysis_2022/data_clean/FranksTractManagement_2014-2021_formatted.csv")
+cleandat <- read_csv(here::here("analysis_2022", "data_clean", "FranksTractManagement_2014-2021_formatted.csv"))
 #glimpse(cleandat) #looks good
 
 #appends the 2022 data to the historic datafile cleandat
 #run file below to generate sepro_clean object.
 #SePro_Rake_Surveys_2022DataReformat.R
+sepro_clean <- read_csv(here::here("analysis_2022/data_clean/sepro_clean_2022.csv"))
 
 cleandat <- rbind.data.frame(cleandat,sepro_clean)
 
@@ -28,7 +29,7 @@ cleandat <- rbind.data.frame(cleandat,sepro_clean)
 #write_csv(last,"Sepro_SAV_2021.csv")
 
 #read in the data showing species origin
-origin <- read_csv("C:/Users/nbertrand/Desktop/Bertrand/GitHub/EDB-HABs-Weeds/analysis_2022/data_clean/FranksTractManagement_SpeciesOrigin.csv")
+origin <- read_csv(here::here("analysis_2022", "data_clean", "FranksTractManagement_SpeciesOrigin.csv"))
 #View(origin)
 #combine sample and spp origin dfs
 dato <- left_join(cleandat,origin)
@@ -227,8 +228,8 @@ norare <- pcsn %>%
 #  ,"Stuckenia_pectinata" = "tan"
 #          )
 
-(plot_spp_avg_score_line <-ggplot(norareg
-                                  , aes(x=date, y= avg_score, group=species, color=species,shape=species, fill=species))+
+(plot_spp_avg_score_line <-ggplot(norareg,
+                                  aes(x=date, y= avg_score, group=species, color=species,shape=species, fill=species))+
     #2014 fluridone treatment
     geom_rect(aes(xmin = as.Date("2014-03-01", format = '%Y-%m-%d'),
                   xmax = as.Date("2014-11-01", format = '%Y-%m-%d'),
@@ -275,17 +276,23 @@ norare <- pcsn %>%
     geom_line(
       #linetype = rep(c(2, 1), each = 40)
     )+
-    geom_point()+
-    scale_shape_manual(values=c(25,21,23,22,24,25,21,23,22,24))+
+    geom_point(size = 2.5)+
+    scale_shape_manual(values=c(12,8,23,7,24,25,22,1,21,6))+
+    scale_color_viridis(option = "turbo", discrete = TRUE) +
+    scale_fill_viridis(option = "turbo", discrete = TRUE) +
     #scale_color_manual(values=scol, aesthetics = c("colour", "fill"))+
     #scale_color_brewer(palette = "Set3")+ #colors are fairly  distinctive but many too light to show up well
     ylab("Mean Abundance Score") + xlab("Date")+
     facet_wrap(~group,nrow=3)+
-    theme_bw()
+    theme_bw() +
+    theme(strip.text = element_text(size = 12))
 )
 #ggsave(file = "C:/Users/nbertrand/Desktop/Bertrand/GitHub/EDB-HABs-Weeds/analysis_2022/figures/SeProRakeMeanAbundance_2022.png")
 
 
+png(filename = here("analysis_2022", "figures", "SeProRakeMeanAbundance_2022.png"), width = 7.5, height = 5, units = "in", pointsize = 12, family = "sans", res = 300)
+plot_spp_avg_score_line
+dev.off()
 
 #could try to make a plot that has scores of all spp within samples summed and then calculate mean scores by year
 score_sum <- dato  %>%

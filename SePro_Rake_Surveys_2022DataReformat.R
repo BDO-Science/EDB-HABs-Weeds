@@ -10,7 +10,7 @@
 library(tidyverse)
 library(sf)
 
-data_hist <- read_csv("C:/Users/nbertrand/Desktop/Bertrand/GitHub/EDB-HABs-Weeds/analysis_2022/data_clean/FranksTractManagement_2014-2021_formatted.csv")
+data_hist <- read_csv(here::here("analysis_2022/data_clean/FranksTractManagement_2014-2021_formatted.csv"))
 #View(data_hist)
 library(readr)
 #I formatted the date in excel before importing.
@@ -96,3 +96,4 @@ sepro_clean <- sepro_almost %>%
   select(-ID)
 
 view(sepro_clean)
+write_csv(sepro_clean, here::here("analysis_2022/data_clean/sepro_clean_2022.csv"))

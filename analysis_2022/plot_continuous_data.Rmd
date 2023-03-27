@@ -180,14 +180,18 @@ unique(wq_data2$Region)
 wq_a <- wq_data2 %>% 
   filter(Analyte != "Flow",
          Analyte != "Velocity",
-         !Region %in% c("San Joaquin")) 
+         !Region %in% c("San Joaquin")) %>%
+  mutate(dailyvalo = dailyval,
+    dailyval = ifelse(Analyte %in% c("Turb", "Chl.a"), log(dailyval+1), dailyval))
 
 wq_summary2022 <- wq_a %>%
   dplyr::select(-Date2) %>%
   filter(!is.na(TUCPStart),
          Year == 2022) %>%
   group_by(Analyte, TUCPStart, TUCPEnd, BarrierStartDate, BarrierEndDate) %>%
-  summarize(max = max(dailyval)) %>%
+  summarize(max = max(dailyval),
+            min = min(dailyval),
+            maxo = max(dailyvalo)) %>%
   ungroup()
 
 wq_2022 <- wq_a %>%
@@ -203,7 +207,8 @@ wq_yearcomp <- wq_a %>%
 wq_yearcomp <- subset(wq_yearcomp, Year%in% c(2014, 2015, 2016, 2020, 2021, 2022))
 
 
-
+wq_yearcomp %>% group_by(Analyte, Year) %>%
+  summarize(maxo = max(dailyvalo))
 
 
 wq_EDB <- wq_data_summary_EDB %>%
@@ -237,9 +242,9 @@ templine <- data.frame(Analyte = c("Temp"), int = c(19))
               inherit.aes = FALSE) + 
     # facet all the panels
     facet_wrap(~Analyte, scales = "free_y", nrow = 6, strip.position = "left", 
-             labeller = as_labeller(c(Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)", 
+             labeller = as_labeller(c(Chl.a = "log \nChl a\n(µg/L)",DO.Conc = "DO \n(mg/L)", 
             #Flow = "Flow (cfs)", 
-    pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="log \nTurbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
@@ -293,7 +298,7 @@ str(wq_yearcomp)
    geom_vline(data = tucp.df, aes(xintercept = EDBEnd), linetype = "dotted") + 
   facet_grid(Analyte~fYear, scales = "free_y",  labeller = as_labeller(c(`2014` = "2014 (T)",
     `2016` = "2016", `2015` = "2015 (E/T)", `2020` = "2020", `2021` = "2021 (E/T)", `2022` = "2022 (E/T)",
-    Chl.a = "Chl a\n(mg/L)",DO.Conc = "DO \n(mg/L)",                                                          pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="Turbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    Chl.a = "log \nChl a\n(µg/L)",DO.Conc = "DO \n(mg/L)",                                                          pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="log \nTurbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
      scale_linetype_manual(values = c("longdash", "dotdash", "solid")) +

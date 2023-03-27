@@ -263,7 +263,7 @@ plot_allcyano <- ggplot(allcyano, aes(Date, OrgsPerMl, fill = Genus)) +
   scale_x_date(date_breaks = "month", date_labels = "%b")+
   scale_fill_viridis(option = 'H', discrete=TRUE)+
   theme(axis.text.x = element_text(angle = 90),
-        axis.title = element_blank())
+        axis.title.x = element_blank())
 #D19 has magnitudes greater abundance than other sites
 
 png(filename = here("analysis_2022", "figures", "plot_epiphytic_allcyano.png"), width = 8, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)
@@ -304,7 +304,7 @@ ggplot(toxsp, aes(Date, OrgsPerMl, fill = Genus)) +
   ylab("Organisms \nper mL")+
   facet_wrap(vars(Site), scales = "fixed") +
   scale_x_date(date_breaks = "month", date_labels = "%b") +
-  scale_fill_viridis( discrete=TRUE)
+  scale_fill_viridis( discrete=TRUE, option = "turbo")
 #ggsave("toxHABprop.tiff", device = "tiff", width = 9, height = 7)
 
 
@@ -316,10 +316,10 @@ plot_toxins <- ggplot(toxsp, aes(Date, OrgsPerMl, fill = Genus)) +
   ylab("Organisms \nper mL")+
   facet_wrap(~Site) +
   scale_x_date(date_breaks = "month", date_labels = "%b") +
-  scale_fill_viridis( discrete=TRUE) +
+  scale_fill_viridis( discrete=TRUE, option = "turbo") +
   theme(axis.text.x = element_text(angle =  90))+
   theme(axis.text.x = element_text(angle = 90),
-        axis.title = element_blank())
+        axis.title.x = element_blank())
 #ggsave("figures/toxHABprop.tiff", device = "tiff", width = 9, height = 7)
 
 png(filename = here("analysis_2022", "figures", "plot_epiphytic_toxins_prop.png"), width = 8, height = 7, units = "in", pointsize = 12, family = "sans", res = 300)

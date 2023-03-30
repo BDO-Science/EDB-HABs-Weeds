@@ -226,7 +226,7 @@ Plot_amm <- Bar_Delta_amm %>%
   geom_bar(stat = "identity", color = "dodgerblue4", fill  = "dodgerblue4") +
   geom_errorbar(aes(ymin = YearMin, ymax = YearMax)) +
   scale_x_continuous(n.breaks = 6)+
-  ylab("Ammonium (ug/L)")+
+  ylab("Ammonium (mg/L)")+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.2))
 
@@ -238,7 +238,7 @@ Plot_nit <- Bar_Delta_nit %>%
   geom_bar(stat = "identity", color = "cyan4", fill  = "cyan4") +
   geom_errorbar(aes(ymin = YearMin, ymax = YearMax)) +
   scale_x_continuous(n.breaks = 6)+
-  ylab("Nitrate (ug/L)")+
+  ylab("Nitrate (mg/L)")+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.2))
 
@@ -250,7 +250,7 @@ Plot_phos <- Bar_Delta_phos %>%
   geom_bar(stat = "identity", color = "maroon4", fill  = "maroon4") +
   geom_errorbar(aes(ymin = YearMin, ymax = YearMax)) +
   scale_x_continuous(n.breaks = 6)+
-  ylab("Phosphorus (ug/L)")+
+  ylab("Phosphorus (mg/L)")+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.2))
 

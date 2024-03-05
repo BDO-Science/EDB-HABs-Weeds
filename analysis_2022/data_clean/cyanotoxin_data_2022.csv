@@ -1,0 +1,1483 @@
+Station,Date,Year,Month,Analyte,Result,Study,Stratum2,Advisory,lon,lat
+375952121243601,2022-07-20,2022,7,Anabaenopeptins,0,USGS,South Delta,NA,-121.4100417,37.99765556
+375952121243601,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.4100417,37.99765556
+375952121243601,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.4100417,37.99765556
+375952121243601,2022-07-20,2022,7,Microcystins/Nodularins,0.04,USGS,South Delta,No Advisory,-121.4100417,37.99765556
+380232121241801,2022-05-17,2022,5,Anabaenopeptins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-05-17,2022,5,Anatoxins,0,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-05-17,2022,5,Anabaenopeptins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-05-17,2022,5,Anatoxins,0,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-07-20,2022,7,Anabaenopeptins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-07-20,2022,7,Anatoxins,0,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-07-20,2022,7,Microcystins/Nodularins,0.01,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-07-20,2022,7,Anabaenopeptins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-07-20,2022,7,Anatoxins,0,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-07-20,2022,7,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-10-17,2022,10,Anabaenopeptins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-10-17,2022,10,Anatoxins,0,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,East Delta,NA,-121.405,38.04221944
+380232121241801,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.405,38.04221944
+380232121241801,2022-10-17,2022,10,Saxitoxin,0,USGS,East Delta,NA,-121.405,38.04221944
+07BBkayaklaun,2022-01-20,2022,1,Microcystins/Nodularins,0,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+07BBkayaklaun,2022-02-08,2022,2,Microcystins/Nodularins,0,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+07BBkayaklaun,2022-02-14,2022,2,Microcystins/Nodularins,0.01,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+07BBkayaklaun,2022-03-15,2022,3,Microcystins/Nodularins,0,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+07BBkayaklaun,2022-04-19,2022,4,Microcystins/Nodularins,0,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+ALG-006,2022-05-10,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407068,37.991101
+ALG-006,2022-05-10,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407068,37.991101
+ALG-006,2022-05-10,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.407068,37.991101
+ALG-005,2022-05-10,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.373984,37.972003
+ALG-005,2022-05-10,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.373984,37.972003
+ALG-005,2022-05-10,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.373984,37.972003
+ALG-004,2022-05-10,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.369135,37.966144
+ALG-004,2022-05-10,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.369135,37.966144
+ALG-004,2022-05-10,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.369135,37.966144
+ALG-003,2022-05-10,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.364989,37.962973
+ALG-003,2022-05-10,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.364989,37.962973
+ALG-003,2022-05-10,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.364989,37.962973
+ALG-002,2022-05-10,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.34751,37.95546
+ALG-002,2022-05-10,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.34751,37.95546
+ALG-002,2022-05-10,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.34751,37.95546
+ALG-001,2022-05-10,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.336185,37.949111
+ALG-001,2022-05-10,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.336185,37.949111
+ALG-001,2022-05-10,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.336185,37.949111
+Franks Tract,2022-05-17,2022,5,Microcystins/Nodularins,0,Prop 1,Franks,No Advisory,-121.6207,38.0476
+Middle River @ Bacon Island,2022-05-19,2022,5,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.5286,37.9571
+Old River near Holland Tract,2022-05-19,2022,5,Microcystins/Nodularins,0,Prop 1,OMR,No Advisory,-121.5737,37.9641
+San Joaquin River near Turner Cut,2022-05-19,2022,5,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.4438,37.9961
+Dyer Res Outlet,2022-05-23,2022,5,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.674778,37.755639
+ALG-006,2022-05-24,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407011,37.991036
+ALG-006,2022-05-24,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407011,37.991036
+ALG-006,2022-05-24,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.407011,37.991036
+ALG-005,2022-05-24,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.373944,37.97198
+ALG-005,2022-05-24,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.373944,37.97198
+ALG-005,2022-05-24,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.373944,37.97198
+ALG-004,2022-05-24,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.369297,37.966009
+ALG-004,2022-05-24,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.369297,37.966009
+ALG-004,2022-05-24,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.369297,37.966009
+ALG-003,2022-05-24,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.364933,37.962918
+ALG-003,2022-05-24,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.364933,37.962918
+ALG-003,2022-05-24,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.364933,37.962918
+ALG-002,2022-05-24,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.34762,37.955465
+ALG-002,2022-05-24,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.34762,37.955465
+ALG-002,2022-05-24,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.34762,37.955465
+ALG-001,2022-05-24,2022,5,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.336268,37.949134
+ALG-001,2022-05-24,2022,5,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.336268,37.949134
+ALG-001,2022-05-24,2022,5,Saxitoxin,0,Nautilus,South Delta,NA,-121.336268,37.949134
+Clifton Court Forebay,2022-06-06,2022,6,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.556975,37.829636
+Middle River @ Bacon Island,2022-06-07,2022,6,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.5286,37.9571
+Old River near Holland Tract,2022-06-07,2022,6,Microcystins/Nodularins,0,Prop 1,OMR,No Advisory,-121.5737,37.9641
+San Joaquin River near Turner Cut,2022-06-07,2022,6,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.4438,37.9961
+Franks Tract,2022-06-09,2022,6,Microcystins/Nodularins,0,Prop 1,Franks,No Advisory,-121.6207,38.0476
+ALG-006,2022-06-14,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.406971,37.991033
+ALG-006,2022-06-14,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.406971,37.991033
+ALG-006,2022-06-14,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.406971,37.991033
+ALG-005,2022-06-14,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.373944,37.971991
+ALG-005,2022-06-14,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.373944,37.971991
+ALG-005,2022-06-14,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.373944,37.971991
+ALG-004,2022-06-14,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.369292,37.966024
+ALG-004,2022-06-14,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.369292,37.966024
+ALG-004,2022-06-14,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.369292,37.966024
+ALG-003,2022-06-14,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.365092,37.962857
+ALG-003,2022-06-14,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.365092,37.962857
+ALG-003,2022-06-14,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.365092,37.962857
+ALG-002,2022-06-14,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.347333,37.955453
+ALG-002,2022-06-14,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.347333,37.955453
+ALG-002,2022-06-14,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.347333,37.955453
+ALG-001,2022-06-14,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.336127,37.949125
+ALG-001,2022-06-14,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.336127,37.949125
+ALG-001,2022-06-14,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.336127,37.949125
+Middle River @ Bacon Island,2022-06-16,2022,6,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.5286,37.9571
+Old River near Holland Tract,2022-06-16,2022,6,Microcystins/Nodularins,0,Prop 1,OMR,No Advisory,-121.5737,37.9641
+San Joaquin River near Turner Cut,2022-06-16,2022,6,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.4438,37.9961
+Clifton Court Forebay,2022-06-20,2022,6,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.556975,37.829636
+ALG-001,2022-06-28,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.336168,37.94917
+ALG-001,2022-06-28,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.336168,37.94917
+ALG-001,2022-06-28,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.336168,37.94917
+ALG-006,2022-06-28,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407052,37.991013
+ALG-006,2022-06-28,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407052,37.991013
+ALG-006,2022-06-28,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.407052,37.991013
+ALG-005,2022-06-28,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.373903,37.971979
+ALG-005,2022-06-28,2022,6,Microcystins/Nodularins,2.38,Nautilus,South Delta,Caution,-121.373903,37.971979
+ALG-005,2022-06-28,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.373903,37.971979
+ALG-004,2022-06-28,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.369258,37.96607
+ALG-004,2022-06-28,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.369258,37.96607
+ALG-004,2022-06-28,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.369258,37.96607
+ALG-003,2022-06-28,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.364965,37.962842
+ALG-003,2022-06-28,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.364965,37.962842
+ALG-003,2022-06-28,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.364965,37.962842
+ALG-002,2022-06-28,2022,6,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.347479,37.955467
+ALG-002,2022-06-28,2022,6,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.347479,37.955467
+ALG-002,2022-06-28,2022,6,Saxitoxin,0,Nautilus,South Delta,NA,-121.347479,37.955467
+Franks Tract,2022-06-30,2022,6,Microcystins/Nodularins,0,Prop 1,Franks,No Advisory,-121.6207,38.0476
+ALG-006,2022-07-12,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407088,37.991037
+ALG-006,2022-07-12,2022,7,Microcystins/Nodularins,0.2,Nautilus,South Delta,No Advisory,-121.407088,37.991037
+ALG-006,2022-07-12,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.407088,37.991037
+ALG-005,2022-07-12,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.37391,37.97198
+ALG-005,2022-07-12,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.37391,37.97198
+ALG-005,2022-07-12,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.37391,37.97198
+ALG-004,2022-07-12,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.369247,37.96605
+ALG-004,2022-07-12,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.369247,37.96605
+ALG-004,2022-07-12,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.369247,37.96605
+ALG-003,2022-07-12,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.365149,37.963018
+ALG-003,2022-07-12,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.365149,37.963018
+ALG-003,2022-07-12,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.365149,37.963018
+ALG-002,2022-07-12,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.347313,37.955468
+ALG-002,2022-07-12,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.347313,37.955468
+ALG-002,2022-07-12,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.347313,37.955468
+ALG-001,2022-07-12,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.336166,37.949161
+ALG-001,2022-07-12,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.336166,37.949161
+ALG-001,2022-07-12,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.336166,37.949161
+07BBkayaklaun,2022-07-14,2022,7,Microcystins/Nodularins,10,East Bay Parks,Lower SJ,Warning,-121.7282,38.01245
+Middle River @ Bacon Island,2022-07-19,2022,7,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.5286,37.9571
+Old River near Holland Tract,2022-07-19,2022,7,Microcystins/Nodularins,0,Prop 1,OMR,No Advisory,-121.5737,37.9641
+San Joaquin River near Turner Cut,2022-07-19,2022,7,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.4438,37.9961
+Clifton Court Forebay,2022-07-25,2022,7,Anatoxins,0,SWP,CCF,No Advisory,-121.556975,37.829636
+Clifton Court Forebay,2022-07-25,2022,7,Cylindrospermopsins,0,SWP,CCF,NA,-121.556975,37.829636
+Clifton Court Forebay,2022-07-25,2022,7,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.556975,37.829636
+Clifton Court Forebay,2022-07-25,2022,7,Saxitoxin,0,SWP,CCF,NA,-121.556975,37.829636
+ALG-006,2022-07-26,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407035,37.991061
+ALG-006,2022-07-26,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407035,37.991061
+ALG-006,2022-07-26,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.407035,37.991061
+ALG-005,2022-07-26,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.373949,37.972005
+ALG-005,2022-07-26,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.373949,37.972005
+ALG-005,2022-07-26,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.373949,37.972005
+ALG-004,2022-07-26,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.369199,37.966083
+ALG-004,2022-07-26,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.369199,37.966083
+ALG-004,2022-07-26,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.369199,37.966083
+ALG-003,2022-07-26,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.36518,37.96288
+ALG-003,2022-07-26,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.36518,37.96288
+ALG-003,2022-07-26,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.36518,37.96288
+ALG-002,2022-07-26,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.347582,37.955497
+ALG-002,2022-07-26,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.347582,37.955497
+ALG-002,2022-07-26,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.347582,37.955497
+ALG-001,2022-07-26,2022,7,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.336153,37.949101
+ALG-001,2022-07-26,2022,7,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.336153,37.949101
+ALG-001,2022-07-26,2022,7,Saxitoxin,0,Nautilus,South Delta,NA,-121.336153,37.949101
+Franks Tract,2022-08-01,2022,8,Microcystins/Nodularins,0,Prop 1,Franks,No Advisory,-121.6207,38.0476
+Banks PP,2022-08-08,2022,8,Anatoxins,0,SWP,CCF,No Advisory,-121.620278,37.801944
+Banks PP,2022-08-08,2022,8,Cylindrospermopsins,0,SWP,CCF,NA,-121.620278,37.801944
+Banks PP,2022-08-08,2022,8,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.620278,37.801944
+Banks PP,2022-08-08,2022,8,Saxitoxin,0,SWP,CCF,NA,-121.620278,37.801944
+Clifton Court Forebay,2022-08-08,2022,8,Anatoxins,0,SWP,CCF,No Advisory,-121.556975,37.829636
+Clifton Court Forebay,2022-08-08,2022,8,Cylindrospermopsins,0,SWP,CCF,NA,-121.556975,37.829636
+Clifton Court Forebay,2022-08-08,2022,8,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.556975,37.829636
+Clifton Court Forebay,2022-08-08,2022,8,Saxitoxin,0,SWP,CCF,NA,-121.556975,37.829636
+Dyer Res Outlet,2022-08-08,2022,8,Anatoxins,0,SWP,CCF,No Advisory,-121.674778,37.755639
+Dyer Res Outlet,2022-08-08,2022,8,Cylindrospermopsins,0,SWP,CCF,NA,-121.674778,37.755639
+Dyer Res Outlet,2022-08-08,2022,8,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.674778,37.755639
+Dyer Res Outlet,2022-08-08,2022,8,Saxitoxin,0,SWP,CCF,NA,-121.674778,37.755639
+ALG-006,2022-08-09,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407031,37.991022
+ALG-006,2022-08-09,2022,8,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407031,37.991022
+ALG-006,2022-08-09,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.407031,37.991022
+ALG-005,2022-08-09,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.373942,37.971959
+ALG-005,2022-08-09,2022,8,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.373942,37.971959
+ALG-005,2022-08-09,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.373942,37.971959
+ALG-004,2022-08-09,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.3692,37.966116
+ALG-004,2022-08-09,2022,8,Microcystins/Nodularins,1.01,Nautilus,South Delta,Caution,-121.3692,37.966116
+ALG-004,2022-08-09,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.3692,37.966116
+ALG-003,2022-08-09,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.364939,37.962973
+ALG-003,2022-08-09,2022,8,Microcystins/Nodularins,0.14,Nautilus,South Delta,No Advisory,-121.364939,37.962973
+ALG-003,2022-08-09,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.364939,37.962973
+ALG-002,2022-08-09,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.347418,37.95547
+ALG-002,2022-08-09,2022,8,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.347418,37.95547
+ALG-002,2022-08-09,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.347418,37.95547
+ALG-001,2022-08-09,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.336152,37.949154
+ALG-001,2022-08-09,2022,8,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.336152,37.949154
+ALG-001,2022-08-09,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.336152,37.949154
+Middle River @ Bacon Island,2022-08-12,2022,8,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.5286,37.9571
+Old River near Holland Tract,2022-08-12,2022,8,Microcystins/Nodularins,0,Prop 1,OMR,No Advisory,-121.5737,37.9641
+San Joaquin River near Turner Cut,2022-08-12,2022,8,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.4438,37.9961
+Banks PP,2022-08-16,2022,8,Anatoxins,0,SWP,CCF,No Advisory,-121.620278,37.801944
+Banks PP,2022-08-16,2022,8,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.620278,37.801944
+Banks PP,2022-08-16,2022,8,Saxitoxin,0,SWP,CCF,NA,-121.620278,37.801944
+Dyer Res Outlet,2022-08-16,2022,8,Anatoxins,0,SWP,CCF,No Advisory,-121.674778,37.755639
+Dyer Res Outlet,2022-08-16,2022,8,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.674778,37.755639
+Dyer Res Outlet,2022-08-16,2022,8,Saxitoxin,0.05,SWP,CCF,NA,-121.674778,37.755639
+Franks Tract,2022-08-17,2022,8,Microcystins/Nodularins,0,Prop 1,Franks,No Advisory,-121.6207,38.0476
+Banks PP,2022-08-22,2022,8,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.620278,37.801944
+Dyer Res Outlet,2022-08-22,2022,8,Saxitoxin,0.08,SWP,CCF,NA,-121.674778,37.755639
+ALG-006,2022-08-23,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407037,37.990986
+ALG-006,2022-08-23,2022,8,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407037,37.990986
+ALG-006,2022-08-23,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.407037,37.990986
+ALG-005,2022-08-23,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.373949,37.972002
+ALG-005,2022-08-23,2022,8,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.373949,37.972002
+ALG-005,2022-08-23,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.373949,37.972002
+ALG-004,2022-08-23,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.369208,37.966024
+ALG-004,2022-08-23,2022,8,Microcystins/Nodularins,11.59,Nautilus,South Delta,Warning,-121.369208,37.966024
+ALG-004,2022-08-23,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.369208,37.966024
+ALG-003,2022-08-23,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.365029,37.962897
+ALG-003,2022-08-23,2022,8,Microcystins/Nodularins,0.17,Nautilus,South Delta,No Advisory,-121.365029,37.962897
+ALG-003,2022-08-23,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.365029,37.962897
+ALG-002,2022-08-23,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.347375,37.955458
+ALG-002,2022-08-23,2022,8,Microcystins/Nodularins,0.22,Nautilus,South Delta,No Advisory,-121.347375,37.955458
+ALG-002,2022-08-23,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.347375,37.955458
+ALG-001,2022-08-23,2022,8,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.336147,37.949157
+ALG-001,2022-08-23,2022,8,Microcystins/Nodularins,0.17,Nautilus,South Delta,No Advisory,-121.336147,37.949157
+ALG-001,2022-08-23,2022,8,Saxitoxin,0,Nautilus,South Delta,NA,-121.336147,37.949157
+McLeadLake,2022-08-24,2022,8,Anatoxins,0,SWB,South Delta,No Advisory,-121.293,37.9536
+McLeadLake,2022-08-24,2022,8,Cylindrospermopsins,0,SWB,South Delta,NA,-121.293,37.9536
+McLeadLake,2022-08-24,2022,8,Microcystins/Nodularins,8.63,SWB,South Delta,Warning,-121.293,37.9536
+McLeadLake,2022-08-24,2022,8,Saxitoxin,0,SWB,South Delta,NA,-121.293,37.9536
+SJR_StocktonGC,2022-08-24,2022,8,Anatoxins,0,SWB,South Delta,No Advisory,-121.34397,37.95416
+SJR_StocktonGC,2022-08-24,2022,8,Cylindrospermopsins,0,SWB,South Delta,NA,-121.34397,37.95416
+SJR_StocktonGC,2022-08-24,2022,8,Microcystins/Nodularins,0.4,SWB,South Delta,No Advisory,-121.34397,37.95416
+SJR_StocktonGC,2022-08-24,2022,8,Saxitoxin,0,SWB,South Delta,NA,-121.34397,37.95416
+Buckley,2022-08-24,2022,8,Anatoxins,0,SWB,South Delta,No Advisory,-121.37543,37.97717
+Buckley,2022-08-24,2022,8,Cylindrospermopsins,0,SWB,South Delta,NA,-121.37543,37.97717
+Buckley,2022-08-24,2022,8,Microcystins/Nodularins,0,SWB,South Delta,No Advisory,-121.37543,37.97717
+Buckley,2022-08-24,2022,8,Saxitoxin,0,SWB,South Delta,NA,-121.37543,37.97717
+Banks PP,2022-08-29,2022,8,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.620278,37.801944
+Banks PP,2022-08-29,2022,8,Saxitoxin,0,SWP,CCF,NA,-121.620278,37.801944
+Clifton Court Forebay,2022-08-29,2022,8,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.556975,37.829636
+Clifton Court Forebay,2022-08-29,2022,8,Saxitoxin,0,SWP,CCF,NA,-121.556975,37.829636
+Dyer Res Outlet,2022-08-29,2022,8,Microcystins/Nodularins,0,SWP,CCF,No Advisory,-121.674778,37.755639
+Dyer Res Outlet,2022-08-29,2022,8,Saxitoxin,0,SWP,CCF,NA,-121.674778,37.755639
+ALG-006,2022-09-13,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-09-13,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-09-13,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.407036625,37.991036125
+ALG-005,2022-09-13,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-09-13,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-09-13,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.37394062499999,37.971987375
+ALG-004,2022-09-13,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-09-13,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-09-13,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.3692295,37.966065
+ALG-003,2022-09-13,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-09-13,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-09-13,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.36503450000001,37.96291975
+ALG-002,2022-09-13,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-09-13,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-09-13,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.34745375,37.95546725
+ALG-001,2022-09-13,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-09-13,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-09-13,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.33617075000001,37.949139125
+07BBkayaklaun,2022-09-14,2022,9,Microcystins/Nodularins,0,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+07BBkayaklaun,2022-09-19,2022,9,Microcystins/Nodularins,0.61,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+Middle River @ Bacon Island,2022-09-23,2022,9,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.5286,37.9571
+Old River near Holland Tract,2022-09-23,2022,9,Microcystins/Nodularins,0,Prop 1,OMR,No Advisory,-121.5737,37.9641
+San Joaquin River near Turner Cut,2022-09-23,2022,9,Microcystins/Nodularins,0,Prop 1,South Delta,No Advisory,-121.4438,37.9961
+Franks Tract,2022-09-26,2022,9,Microcystins/Nodularins,0,Prop 1,Franks,No Advisory,-121.6207,38.0476
+ALG-006,2022-09-27,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-09-27,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-09-27,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.407036625,37.991036125
+ALG-005,2022-09-27,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-09-27,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-09-27,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.37394062499999,37.971987375
+ALG-004,2022-09-27,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-09-27,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-09-27,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.3692295,37.966065
+ALG-003,2022-09-27,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-09-27,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-09-27,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.36503450000001,37.96291975
+ALG-002,2022-09-27,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-09-27,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-09-27,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.34745375,37.95546725
+ALG-001,2022-09-27,2022,9,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-09-27,2022,9,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-09-27,2022,9,Saxitoxin,0,Nautilus,South Delta,NA,-121.33617075000001,37.949139125
+07BBkayaklaun,2022-10-06,2022,10,Microcystins/Nodularins,0,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+ALG-006,2022-10-11,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-10-11,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-10-11,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.407036625,37.991036125
+ALG-005,2022-10-11,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-10-11,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-10-11,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.37394062499999,37.971987375
+ALG-004,2022-10-11,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-10-11,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-10-11,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.3692295,37.966065
+ALG-003,2022-10-11,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-10-11,2022,10,Microcystins/Nodularins,0.15,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-10-11,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.36503450000001,37.96291975
+ALG-002,2022-10-11,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-10-11,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-10-11,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.34745375,37.95546725
+ALG-001,2022-10-11,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-10-11,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-10-11,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.33617075000001,37.949139125
+07BBkayaklaun,2022-10-17,2022,10,Microcystins/Nodularins,0,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+ALG-006,2022-10-25,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-10-25,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-10-25,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.407036625,37.991036125
+ALG-005,2022-10-25,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-10-25,2022,10,Microcystins/Nodularins,0.2,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-10-25,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.37394062499999,37.971987375
+ALG-004,2022-10-25,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-10-25,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-10-25,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.3692295,37.966065
+ALG-003,2022-10-25,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-10-25,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-10-25,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.36503450000001,37.96291975
+ALG-002,2022-10-25,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-10-25,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-10-25,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.34745375,37.95546725
+ALG-001,2022-10-25,2022,10,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-10-25,2022,10,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-10-25,2022,10,Saxitoxin,0,Nautilus,South Delta,NA,-121.33617075000001,37.949139125
+07BBkayaklaun,2022-10-25,2022,10,Microcystins/Nodularins,0,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+07BBkayaklaun,2022-10-31,2022,10,Microcystins/Nodularins,0,East Bay Parks,Lower SJ,No Advisory,-121.7282,38.01245
+ALG-006,2022-11-21,2022,11,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-11-21,2022,11,Microcystins/Nodularins,0.36,Nautilus,South Delta,No Advisory,-121.407036625,37.991036125
+ALG-006,2022-11-21,2022,11,Saxitoxin,0,Nautilus,South Delta,NA,-121.407036625,37.991036125
+ALG-005,2022-11-21,2022,11,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-11-21,2022,11,Microcystins/Nodularins,0.38,Nautilus,South Delta,No Advisory,-121.37394062499999,37.971987375
+ALG-005,2022-11-21,2022,11,Saxitoxin,0,Nautilus,South Delta,NA,-121.37394062499999,37.971987375
+ALG-004,2022-11-21,2022,11,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-11-21,2022,11,Microcystins/Nodularins,0.36,Nautilus,South Delta,No Advisory,-121.3692295,37.966065
+ALG-004,2022-11-21,2022,11,Saxitoxin,0,Nautilus,South Delta,NA,-121.3692295,37.966065
+ALG-003,2022-11-21,2022,11,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-11-21,2022,11,Microcystins/Nodularins,0.32,Nautilus,South Delta,No Advisory,-121.36503450000001,37.96291975
+ALG-003,2022-11-21,2022,11,Saxitoxin,0,Nautilus,South Delta,NA,-121.36503450000001,37.96291975
+ALG-002,2022-11-21,2022,11,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-11-21,2022,11,Microcystins/Nodularins,0.36,Nautilus,South Delta,No Advisory,-121.34745375,37.95546725
+ALG-002,2022-11-21,2022,11,Saxitoxin,0,Nautilus,South Delta,NA,-121.34745375,37.95546725
+ALG-001,2022-11-21,2022,11,Anatoxins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-11-21,2022,11,Microcystins/Nodularins,0,Nautilus,South Delta,No Advisory,-121.33617075000001,37.949139125
+ALG-001,2022-11-21,2022,11,Saxitoxin,0,Nautilus,South Delta,NA,-121.33617075000001,37.949139125
+380640121405701,2022-05-17,2022,5,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.682561,38.1111
+380640121405701,2022-05-17,2022,5,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.682561,38.1111
+380640121405701,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.682561,38.1111
+380640121405701,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.682561,38.1111
+BET,2022-07-26,2022,7,Anatoxins,0,EDB,Franks,No Advisory,-121.632187,38.041092
+BET,2022-07-26,2022,7,Cylindrospermopsins,0,EDB,Franks,NA,-121.632187,38.041092
+BET,2022-07-26,2022,7,Microcystins/Nodularins,0,EDB,Franks,No Advisory,-121.632187,38.041092
+BET,2022-07-26,2022,7,Saxitoxin,0,EDB,Franks,NA,-121.632187,38.041092
+BET,2022-07-26,2022,7,Anatoxins,0,EDB,Franks,No Advisory,-121.632187,38.041092
+BET,2022-07-26,2022,7,Cylindrospermopsins,0,EDB,Franks,NA,-121.632187,38.041092
+BET,2022-07-26,2022,7,Microcystins/Nodularins,0,EDB,Franks,No Advisory,-121.632187,38.041092
+BET,2022-07-26,2022,7,Saxitoxin,0,EDB,Franks,NA,-121.632187,38.041092
+11455385,2022-05-16,2022,5,Anabaenopeptins,0.03,USGS,Cache/Liberty,NA,-121.6580028,38.19395556
+11455385,2022-05-16,2022,5,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.6580028,38.19395556
+11455385,2022-05-16,2022,5,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.6580028,38.19395556
+11455385,2022-05-16,2022,5,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.6580028,38.19395556
+11455385,2022-07-18,2022,7,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.6580028,38.19395556
+11455385,2022-07-18,2022,7,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.6580028,38.19395556
+11455385,2022-07-18,2022,7,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.6580028,38.19395556
+11455385,2022-07-18,2022,7,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.6580028,38.19395556
+11455385,2022-10-18,2022,10,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.6580028,38.19395556
+11455385,2022-10-18,2022,10,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.6580028,38.19395556
+11455385,2022-10-18,2022,10,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.6580028,38.19395556
+11455385,2022-10-18,2022,10,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.6580028,38.19395556
+11455385,2022-10-18,2022,10,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.6580028,38.19395556
+380217121290301,2022-07-20,2022,7,Anabaenopeptins,0,USGS,South Delta,NA,-121.48415,38.03818056
+380217121290301,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.48415,38.03818056
+380217121290301,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.48415,38.03818056
+380217121290301,2022-07-20,2022,7,Microcystins/Nodularins,0.02,USGS,South Delta,No Advisory,-121.48415,38.03818056
+380217121290301,2022-10-17,2022,10,Anabaenopeptins,0,USGS,South Delta,NA,-121.48415,38.03818056
+380217121290301,2022-10-17,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.48415,38.03818056
+380217121290301,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.48415,38.03818056
+380217121290301,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.48415,38.03818056
+380217121290301,2022-10-17,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.48415,38.03818056
+HLT,2022-07-13,2022,7,Microcystins/Nodularins,0,EDB,South Delta,No Advisory,-121.511,38.00308
+HOL,2022-08-23,2022,8,Anatoxins,0,EDB,Franks,No Advisory,-121.582,38.01582
+HOL,2022-08-23,2022,8,Cylindrospermopsins,0,EDB,Franks,NA,-121.582,38.01582
+HOL,2022-08-23,2022,8,Microcystins/Nodularins,0,EDB,Franks,No Advisory,-121.582,38.01582
+HOL,2022-08-23,2022,8,Saxitoxin,0,EDB,Franks,NA,-121.582,38.01582
+11447650,2022-05-19,2022,5,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5013437,38.45601954
+11447650,2022-05-19,2022,5,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5013437,38.45601954
+11447650,2022-05-19,2022,5,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5013437,38.45601954
+11447650,2022-05-19,2022,5,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5013437,38.45601954
+11447650,2022-07-21,2022,7,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5013437,38.45601954
+11447650,2022-07-21,2022,7,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5013437,38.45601954
+11447650,2022-07-21,2022,7,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5013437,38.45601954
+11447650,2022-07-21,2022,7,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5013437,38.45601954
+11447650,2022-07-21,2022,7,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5013437,38.45601954
+11447650,2022-07-21,2022,7,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5013437,38.45601954
+11447650,2022-07-21,2022,7,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5013437,38.45601954
+11447650,2022-07-21,2022,7,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5013437,38.45601954
+11447650,2022-10-20,2022,10,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5013437,38.45601954
+11447650,2022-10-20,2022,10,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5013437,38.45601954
+11447650,2022-10-20,2022,10,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5013437,38.45601954
+11447650,2022-10-20,2022,10,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5013437,38.45601954
+11447650,2022-10-20,2022,10,Saxitoxin,0,USGS,Upper Sac,NA,-121.5013437,38.45601954
+380245121354801,2022-05-12,2022,5,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-05-12,2022,5,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-05-12,2022,5,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-05-12,2022,5,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-05-24,2022,5,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-05-24,2022,5,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-05-24,2022,5,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-05-24,2022,5,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-05-24,2022,5,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-05-24,2022,5,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-05-24,2022,5,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-05-24,2022,5,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-06-07,2022,6,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-06-07,2022,6,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-06-07,2022,6,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-06-07,2022,6,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-06-20,2022,6,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-06-20,2022,6,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-06-20,2022,6,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-06-20,2022,6,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-07-13,2022,7,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-07-13,2022,7,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-07-13,2022,7,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-07-13,2022,7,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-07-26,2022,7,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-07-26,2022,7,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-07-26,2022,7,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-07-26,2022,7,Microcystins/Nodularins,0.02,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-07-26,2022,7,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-07-26,2022,7,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-07-26,2022,7,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-07-26,2022,7,Microcystins/Nodularins,0.04,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Anabaenopeptins,0.03,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Microcystins/Nodularins,0.03,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Anabaenopeptins,0.02,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Microcystins/Nodularins,0.03,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-08-10,2022,8,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-08-23,2022,8,Anabaenopeptins,0.09,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-08-23,2022,8,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-08-23,2022,8,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-08-23,2022,8,Microcystins/Nodularins,0.02,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-08-23,2022,8,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-09-08,2022,9,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-09-08,2022,9,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-09-08,2022,9,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-09-08,2022,9,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-09-08,2022,9,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-09-20,2022,9,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-10-12,2022,10,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-10-26,2022,10,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-10-26,2022,10,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-10-26,2022,10,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-10-26,2022,10,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-10-26,2022,10,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Anabaenopeptins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Anatoxins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Cylindrospermopsins,0,USGS,Franks,NA,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.5981,38.04641944
+380245121354801,2022-11-30,2022,11,Saxitoxin,0,USGS,Franks,NA,-121.5981,38.04641944
+FRK,2022-07-26,2022,7,Anatoxins,0,EDB,Franks,No Advisory,-121.598,38.04642
+FRK,2022-07-26,2022,7,Cylindrospermopsins,0,EDB,Franks,NA,-121.598,38.04642
+FRK,2022-07-26,2022,7,Microcystins/Nodularins,0,EDB,Franks,No Advisory,-121.598,38.04642
+FRK,2022-07-26,2022,7,Saxitoxin,0,EDB,Franks,NA,-121.598,38.04642
+380749121344701,2022-05-16,2022,5,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5797,38.13028056
+380749121344701,2022-05-16,2022,5,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5797,38.13028056
+380749121344701,2022-05-16,2022,5,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5797,38.13028056
+380749121344701,2022-05-16,2022,5,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5797,38.13028056
+380749121344701,2022-10-18,2022,10,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5797,38.13028056
+380749121344701,2022-10-18,2022,10,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5797,38.13028056
+380749121344701,2022-10-18,2022,10,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5797,38.13028056
+380749121344701,2022-10-18,2022,10,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5797,38.13028056
+380749121344701,2022-10-18,2022,10,Saxitoxin,0,USGS,Upper Sac,NA,-121.5797,38.13028056
+HLT,2022-07-13,2022,7,Microcystins/Nodularins,0.85,EDB,South Delta,Caution,-121.511,38.00308
+HOL,2022-06-07,2022,6,Anatoxins,0,EDB,Franks,No Advisory,-121.582,38.01582
+HOL,2022-06-07,2022,6,Cylindrospermopsins,0,EDB,Franks,NA,-121.582,38.01582
+HOL,2022-06-07,2022,6,Microcystins/Nodularins,0,EDB,Franks,No Advisory,-121.582,38.01582
+HOL,2022-06-07,2022,6,Saxitoxin,0,EDB,Franks,NA,-121.582,38.01582
+HOL,2022-08-23,2022,8,Anatoxins,0,EDB,Franks,No Advisory,-121.582,38.01582
+HOL,2022-08-23,2022,8,Cylindrospermopsins,0,EDB,Franks,NA,-121.582,38.01582
+HOL,2022-08-23,2022,8,Microcystins/Nodularins,0,EDB,Franks,No Advisory,-121.582,38.01582
+HOL,2022-08-23,2022,8,Saxitoxin,0,EDB,Franks,NA,-121.582,38.01582
+382205121311300,2022-05-19,2022,5,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5213432,38.3679666
+382205121311300,2022-05-19,2022,5,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5213432,38.3679666
+382205121311300,2022-05-19,2022,5,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5213432,38.3679666
+382205121311300,2022-05-19,2022,5,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5213432,38.3679666
+382205121311300,2022-07-21,2022,7,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5213432,38.3679666
+382205121311300,2022-07-21,2022,7,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5213432,38.3679666
+382205121311300,2022-07-21,2022,7,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5213432,38.3679666
+382205121311300,2022-07-21,2022,7,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5213432,38.3679666
+382205121311300,2022-10-20,2022,10,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5213432,38.3679666
+382205121311300,2022-10-20,2022,10,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5213432,38.3679666
+382205121311300,2022-10-20,2022,10,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5213432,38.3679666
+382205121311300,2022-10-20,2022,10,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5213432,38.3679666
+382205121311300,2022-10-20,2022,10,Saxitoxin,0,USGS,Upper Sac,NA,-121.5213432,38.3679666
+381038121352501,2022-05-19,2022,5,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5902306,38.17715
+381038121352501,2022-05-19,2022,5,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5902306,38.17715
+381038121352501,2022-05-19,2022,5,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5902306,38.17715
+381038121352501,2022-05-19,2022,5,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5902306,38.17715
+381038121352501,2022-10-20,2022,10,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5902306,38.17715
+381038121352501,2022-10-20,2022,10,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5902306,38.17715
+381038121352501,2022-10-20,2022,10,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5902306,38.17715
+381038121352501,2022-10-20,2022,10,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5902306,38.17715
+381038121352501,2022-10-20,2022,10,Saxitoxin,0,USGS,Upper Sac,NA,-121.5902306,38.17715
+11337190,2022-01-05,2022,1,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-01-05,2022,1,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-01-05,2022,1,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-01-05,2022,1,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-01-05,2022,1,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-01-18,2022,1,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-01-18,2022,1,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-01-18,2022,1,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-01-18,2022,1,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-01-18,2022,1,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-02-16,2022,2,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-02-16,2022,2,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-02-16,2022,2,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-02-16,2022,2,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-02-16,2022,2,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-03-03,2022,3,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-03-03,2022,3,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-03-03,2022,3,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-03-03,2022,3,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-03-03,2022,3,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-04-04,2022,4,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-04-04,2022,4,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-04-04,2022,4,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-04-04,2022,4,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-04-21,2022,4,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-04-21,2022,4,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-04-21,2022,4,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-04-21,2022,4,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-05-17,2022,5,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-05-17,2022,5,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-05-19,2022,5,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-05-19,2022,5,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-05-19,2022,5,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-05-19,2022,5,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-06-01,2022,6,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-06-01,2022,6,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-06-01,2022,6,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-06-01,2022,6,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-06-14,2022,6,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-06-14,2022,6,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-06-14,2022,6,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-06-14,2022,6,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-06-14,2022,6,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-06-14,2022,6,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-06-14,2022,6,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-06-14,2022,6,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-06-29,2022,6,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-06-29,2022,6,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-06-29,2022,6,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-06-29,2022,6,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-07-12,2022,7,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-07-12,2022,7,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-07-12,2022,7,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-07-12,2022,7,Microcystins/Nodularins,0.02,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-07-20,2022,7,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-07-20,2022,7,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-07-20,2022,7,Microcystins/Nodularins,0.03,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-07-27,2022,7,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-07-27,2022,7,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-07-27,2022,7,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-07-27,2022,7,Microcystins/Nodularins,0.07,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-07-27,2022,7,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-08-11,2022,8,Anabaenopeptins,0.01,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-08-11,2022,8,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-08-11,2022,8,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-08-11,2022,8,Microcystins/Nodularins,0.02,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-08-11,2022,8,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-08-24,2022,8,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-08-24,2022,8,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-08-24,2022,8,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-08-24,2022,8,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-08-24,2022,8,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-09-07,2022,9,Anabaenopeptins,0.02,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-09-07,2022,9,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-09-07,2022,9,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-09-07,2022,9,Microcystins/Nodularins,0.02,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-09-07,2022,9,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-09-22,2022,9,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-09-22,2022,9,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-09-22,2022,9,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-09-22,2022,9,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-09-22,2022,9,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-10-04,2022,10,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-10-04,2022,10,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-10-04,2022,10,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-10-04,2022,10,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-10-04,2022,10,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-10-19,2022,10,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-10-19,2022,10,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-10-19,2022,10,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-11-02,2022,11,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-11-02,2022,11,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-11-02,2022,11,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-11-02,2022,11,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-11-02,2022,11,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-12-06,2022,12,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-12-06,2022,12,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-12-06,2022,12,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11337190,2022-12-06,2022,12,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.6888428,38.0521424
+11337190,2022-12-06,2022,12,Saxitoxin,0,USGS,Lower SJ,NA,-121.6888428,38.0521424
+11455315,2022-01-05,2022,1,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-01-05,2022,1,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-01-05,2022,1,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-01-05,2022,1,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-01-05,2022,1,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-01-18,2022,1,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-01-18,2022,1,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-01-18,2022,1,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-01-18,2022,1,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-01-18,2022,1,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-02-17,2022,2,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-02-17,2022,2,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-02-17,2022,2,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-02-17,2022,2,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-02-17,2022,2,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-03-22,2022,3,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-03-22,2022,3,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-03-22,2022,3,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-03-22,2022,3,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-04-25,2022,4,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-04-25,2022,4,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-04-25,2022,4,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-04-25,2022,4,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-05-10,2022,5,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-05-10,2022,5,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-05-10,2022,5,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-05-10,2022,5,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-05-16,2022,5,Anabaenopeptins,0.01,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-05-16,2022,5,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-05-16,2022,5,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-05-16,2022,5,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-05-31,2022,5,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-05-31,2022,5,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-05-31,2022,5,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-05-31,2022,5,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-06-15,2022,6,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-06-15,2022,6,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-06-15,2022,6,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-06-15,2022,6,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-06-15,2022,6,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-06-15,2022,6,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-06-15,2022,6,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-06-15,2022,6,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-06-28,2022,6,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-06-28,2022,6,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-06-28,2022,6,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-06-28,2022,6,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-07-18,2022,7,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-07-18,2022,7,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-07-18,2022,7,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-07-18,2022,7,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-07-28,2022,7,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-07-28,2022,7,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-07-28,2022,7,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-07-28,2022,7,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-08-09,2022,8,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-08-09,2022,8,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-08-09,2022,8,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-08-09,2022,8,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-08-09,2022,8,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-08-23,2022,8,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-08-23,2022,8,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-08-23,2022,8,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-08-23,2022,8,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-08-23,2022,8,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-09-09,2022,9,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-09-09,2022,9,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-09-09,2022,9,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-09-09,2022,9,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-09-09,2022,9,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-09-20,2022,9,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-09-20,2022,9,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-09-20,2022,9,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-09-20,2022,9,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-09-20,2022,9,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-10-05,2022,10,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-10-05,2022,10,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-10-05,2022,10,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-10-05,2022,10,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-10-05,2022,10,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-10-18,2022,10,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-11-03,2022,11,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-11-03,2022,11,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-11-03,2022,11,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-11-03,2022,11,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-11-03,2022,11,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-12-06,2022,12,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-12-06,2022,12,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-12-06,2022,12,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11455315,2022-12-06,2022,12,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.684286,38.2430111
+11455315,2022-12-06,2022,12,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.684286,38.2430111
+11336790,2022-05-18,2022,5,Anabaenopeptins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-05-18,2022,5,Anatoxins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-05-18,2022,5,Anabaenopeptins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-05-18,2022,5,Anatoxins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-07-19,2022,7,Anabaenopeptins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-07-19,2022,7,Anatoxins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-07-19,2022,7,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-07-19,2022,7,Anabaenopeptins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-07-19,2022,7,Anatoxins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-07-19,2022,7,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-10-17,2022,10,Anabaenopeptins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-10-17,2022,10,Anatoxins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,East Delta,NA,-121.496111,38.09638889
+11336790,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.496111,38.09638889
+11336790,2022-10-17,2022,10,Saxitoxin,0,USGS,East Delta,NA,-121.496111,38.09638889
+11312676,2022-01-21,2022,1,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-01-21,2022,1,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-01-21,2022,1,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-01-21,2022,1,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-01-21,2022,1,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-02-24,2022,2,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-02-24,2022,2,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-02-24,2022,2,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-02-24,2022,2,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-02-24,2022,2,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-03-24,2022,3,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-03-24,2022,3,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-03-24,2022,3,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-03-24,2022,3,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-03-24,2022,3,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-04-22,2022,4,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-04-22,2022,4,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-04-22,2022,4,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-04-22,2022,4,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-04-22,2022,4,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-05-04,2022,5,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-05-04,2022,5,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-05-04,2022,5,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-05-04,2022,5,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-05-04,2022,5,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-05-18,2022,5,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-05-18,2022,5,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-05-24,2022,5,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-05-24,2022,5,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-05-24,2022,5,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-05-24,2022,5,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-05-24,2022,5,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-06-02,2022,6,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-06-02,2022,6,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-06-02,2022,6,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-06-02,2022,6,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-06-02,2022,6,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-06-16,2022,6,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-06-16,2022,6,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-06-16,2022,6,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-06-16,2022,6,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-06-16,2022,6,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-06-29,2022,6,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-06-29,2022,6,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-06-29,2022,6,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-06-29,2022,6,Microcystins/Nodularins,0.02,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-06-29,2022,6,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-07-19,2022,7,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-07-19,2022,7,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-07-19,2022,7,Microcystins/Nodularins,0.04,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-07-27,2022,7,Anabaenopeptins,0.01,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-07-27,2022,7,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-07-27,2022,7,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-07-27,2022,7,Microcystins/Nodularins,0.04,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-07-27,2022,7,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-08-08,2022,8,Anabaenopeptins,0.07,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-08-08,2022,8,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-08-08,2022,8,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-08-08,2022,8,Microcystins/Nodularins,0.03,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-08-08,2022,8,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-08-23,2022,8,Anabaenopeptins,0.01,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-08-23,2022,8,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-08-23,2022,8,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-08-23,2022,8,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-08-23,2022,8,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-09-06,2022,9,Anabaenopeptins,0.01,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-09-06,2022,9,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-09-06,2022,9,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-09-06,2022,9,Microcystins/Nodularins,0.02,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-09-06,2022,9,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-09-22,2022,9,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-09-22,2022,9,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-09-22,2022,9,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-09-22,2022,9,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-09-22,2022,9,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-10-03,2022,10,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-10-03,2022,10,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-10-03,2022,10,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-10-03,2022,10,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-10-03,2022,10,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-10-19,2022,10,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-11-01,2022,11,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-11-01,2022,11,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-11-01,2022,11,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-11-01,2022,11,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-11-01,2022,11,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-12-06,2022,12,Anabaenopeptins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-12-06,2022,12,Anatoxins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-12-06,2022,12,Cylindrospermopsins,0,USGS,OMR,NA,-121.5341175,37.9427017
+11312676,2022-12-06,2022,12,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5341175,37.9427017
+11312676,2022-12-06,2022,12,Saxitoxin,0,USGS,OMR,NA,-121.5341175,37.9427017
+383340121310601,2022-05-19,2022,5,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.518461,38.5610611
+383340121310601,2022-05-19,2022,5,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.518461,38.5610611
+383340121310601,2022-05-19,2022,5,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.518461,38.5610611
+383340121310601,2022-05-19,2022,5,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.518461,38.5610611
+383340121310601,2022-07-21,2022,7,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.518461,38.5610611
+383340121310601,2022-07-21,2022,7,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.518461,38.5610611
+383340121310601,2022-07-21,2022,7,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.518461,38.5610611
+383340121310601,2022-07-21,2022,7,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.518461,38.5610611
+ML,2022-05-16,2022,5,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.293092,37.953618
+ML,2022-05-16,2022,5,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.293092,37.953618
+ML,2022-05-16,2022,5,Microcystins/Nodularins,1.03,Restore the Delta,South Delta,Caution,-121.293092,37.953618
+MP,2022-05-16,2022,5,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.30646,37.95301
+MP,2022-05-16,2022,5,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.30646,37.95301
+MP,2022-05-16,2022,5,Microcystins/Nodularins,0.27,Restore the Delta,South Delta,No Advisory,-121.30646,37.95301
+11312674,2022-05-18,2022,5,Anabaenopeptins,0,USGS,OMR,NA,-121.4899492,37.89159208
+11312674,2022-05-18,2022,5,Anatoxins,0,USGS,OMR,No Advisory,-121.4899492,37.89159208
+11312674,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,OMR,NA,-121.4899492,37.89159208
+11312674,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.4899492,37.89159208
+11312674,2022-07-19,2022,7,Anabaenopeptins,0,USGS,OMR,NA,-121.4899492,37.89159208
+11312674,2022-07-19,2022,7,Anatoxins,0,USGS,OMR,No Advisory,-121.4899492,37.89159208
+11312674,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,OMR,NA,-121.4899492,37.89159208
+11312674,2022-07-19,2022,7,Microcystins/Nodularins,0.04,USGS,OMR,No Advisory,-121.4899492,37.89159208
+11312674,2022-10-19,2022,10,Anabaenopeptins,0,USGS,OMR,NA,-121.4899492,37.89159208
+11312674,2022-10-19,2022,10,Anatoxins,0,USGS,OMR,No Advisory,-121.4899492,37.89159208
+11312674,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,OMR,NA,-121.4899492,37.89159208
+11312674,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.4899492,37.89159208
+11312674,2022-10-19,2022,10,Saxitoxin,0,USGS,OMR,NA,-121.4899492,37.89159208
+11312685,2022-05-18,2022,5,Anabaenopeptins,0,USGS,South Delta,NA,-121.5108333,38.00305556
+11312685,2022-05-18,2022,5,Anatoxins,0,USGS,South Delta,No Advisory,-121.5108333,38.00305556
+11312685,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,South Delta,NA,-121.5108333,38.00305556
+11312685,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.5108333,38.00305556
+11312685,2022-07-19,2022,7,Anabaenopeptins,0,USGS,South Delta,NA,-121.5108333,38.00305556
+11312685,2022-07-19,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.5108333,38.00305556
+11312685,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.5108333,38.00305556
+11312685,2022-07-19,2022,7,Microcystins/Nodularins,0.04,USGS,South Delta,No Advisory,-121.5108333,38.00305556
+11312685,2022-10-19,2022,10,Anabaenopeptins,0,USGS,South Delta,NA,-121.5108333,38.00305556
+11312685,2022-10-19,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.5108333,38.00305556
+11312685,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.5108333,38.00305556
+11312685,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.5108333,38.00305556
+11312685,2022-10-19,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.5108333,38.00305556
+MS,2022-05-16,2022,5,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.304373,37.951842
+MS,2022-05-16,2022,5,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.304373,37.951842
+MS,2022-05-16,2022,5,Microcystins/Nodularins,0.8,Restore the Delta,South Delta,NA,-121.304373,37.951842
+11336685,2022-05-18,2022,5,Anabaenopeptins,0,USGS,East Delta,NA,-121.5072222,38.2233333
+11336685,2022-05-18,2022,5,Anatoxins,0,USGS,East Delta,No Advisory,-121.5072222,38.2233333
+11336685,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5072222,38.2233333
+11336685,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5072222,38.2233333
+11336685,2022-07-19,2022,7,Anabaenopeptins,0,USGS,East Delta,NA,-121.5072222,38.2233333
+11336685,2022-07-19,2022,7,Anatoxins,0,USGS,East Delta,No Advisory,-121.5072222,38.2233333
+11336685,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5072222,38.2233333
+11336685,2022-07-19,2022,7,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Anabaenopeptins,0,USGS,East Delta,NA,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Anatoxins,0,USGS,East Delta,No Advisory,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Saxitoxin,0,USGS,East Delta,NA,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Anabaenopeptins,0,USGS,East Delta,NA,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Anatoxins,0,USGS,East Delta,No Advisory,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5072222,38.2233333
+11336685,2022-10-17,2022,10,Saxitoxin,0,USGS,East Delta,NA,-121.5072222,38.2233333
+380837121333401,2022-05-18,2022,5,Anabaenopeptins,0,USGS,East Delta,NA,-121.5595389,38.14366944
+380837121333401,2022-05-18,2022,5,Anatoxins,0,USGS,East Delta,No Advisory,-121.5595389,38.14366944
+380837121333401,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5595389,38.14366944
+380837121333401,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5595389,38.14366944
+380837121333401,2022-07-19,2022,7,Anabaenopeptins,0,USGS,East Delta,NA,-121.5595389,38.14366944
+380837121333401,2022-07-19,2022,7,Anatoxins,0,USGS,East Delta,No Advisory,-121.5595389,38.14366944
+380837121333401,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5595389,38.14366944
+380837121333401,2022-07-19,2022,7,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5595389,38.14366944
+380837121333401,2022-10-17,2022,10,Anabaenopeptins,0,USGS,East Delta,NA,-121.5595389,38.14366944
+380837121333401,2022-10-17,2022,10,Anatoxins,0,USGS,East Delta,No Advisory,-121.5595389,38.14366944
+380837121333401,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5595389,38.14366944
+380837121333401,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5595389,38.14366944
+380837121333401,2022-10-17,2022,10,Saxitoxin,0,USGS,East Delta,NA,-121.5595389,38.14366944
+11313405,2022-05-18,2022,5,Anabaenopeptins,0,USGS,OMR,NA,-121.572174,37.96992306
+11313405,2022-05-18,2022,5,Anatoxins,0,USGS,OMR,No Advisory,-121.572174,37.96992306
+11313405,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,OMR,NA,-121.572174,37.96992306
+11313405,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.572174,37.96992306
+11313405,2022-07-19,2022,7,Anabaenopeptins,0.01,USGS,OMR,NA,-121.572174,37.96992306
+11313405,2022-07-19,2022,7,Anatoxins,0,USGS,OMR,No Advisory,-121.572174,37.96992306
+11313405,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,OMR,NA,-121.572174,37.96992306
+11313405,2022-07-19,2022,7,Microcystins/Nodularins,0.05,USGS,OMR,No Advisory,-121.572174,37.96992306
+11313405,2022-10-19,2022,10,Anabaenopeptins,0,USGS,OMR,NA,-121.572174,37.96992306
+11313405,2022-10-19,2022,10,Anatoxins,0,USGS,OMR,No Advisory,-121.572174,37.96992306
+11313405,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,OMR,NA,-121.572174,37.96992306
+11313405,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.572174,37.96992306
+11313405,2022-10-19,2022,10,Saxitoxin,0,USGS,OMR,NA,-121.572174,37.96992306
+11313250,2022-05-18,2022,5,Anabaenopeptins,0,USGS,South Delta,NA,-121.5524492,37.82437145
+11313250,2022-05-18,2022,5,Anatoxins,0,USGS,South Delta,No Advisory,-121.5524492,37.82437145
+11313250,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,South Delta,NA,-121.5524492,37.82437145
+11313250,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.5524492,37.82437145
+11313250,2022-07-19,2022,7,Anabaenopeptins,0.01,USGS,South Delta,NA,-121.5524492,37.82437145
+11313250,2022-07-19,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.5524492,37.82437145
+11313250,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.5524492,37.82437145
+11313250,2022-07-19,2022,7,Microcystins/Nodularins,0.05,USGS,South Delta,No Advisory,-121.5524492,37.82437145
+11313250,2022-10-19,2022,10,Anabaenopeptins,0.01,USGS,South Delta,NA,-121.5524492,37.82437145
+11313250,2022-10-19,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.5524492,37.82437145
+11313250,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.5524492,37.82437145
+11313250,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.5524492,37.82437145
+11313250,2022-10-19,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.5524492,37.82437145
+380300121344801,2022-05-18,2022,5,Anabaenopeptins,0,USGS,Franks,NA,-121.58,38.05
+380300121344801,2022-05-18,2022,5,Anatoxins,0,USGS,Franks,No Advisory,-121.58,38.05
+380300121344801,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,Franks,NA,-121.58,38.05
+380300121344801,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.58,38.05
+380300121344801,2022-07-19,2022,7,Anabaenopeptins,0,USGS,Franks,NA,-121.58,38.05
+380300121344801,2022-07-19,2022,7,Anatoxins,0,USGS,Franks,No Advisory,-121.58,38.05
+380300121344801,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,Franks,NA,-121.58,38.05
+380300121344801,2022-07-19,2022,7,Microcystins/Nodularins,0.05,USGS,Franks,No Advisory,-121.58,38.05
+380300121344801,2022-10-19,2022,10,Anabaenopeptins,0,USGS,Franks,NA,-121.58,38.05
+380300121344801,2022-10-19,2022,10,Anatoxins,0,USGS,Franks,No Advisory,-121.58,38.05
+380300121344801,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,Franks,NA,-121.58,38.05
+380300121344801,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,Franks,No Advisory,-121.58,38.05
+380300121344801,2022-10-19,2022,10,Saxitoxin,0,USGS,Franks,NA,-121.58,38.05
+11313325,2022-05-18,2022,5,Anabaenopeptins,0,USGS,OMR,NA,-121.5655064,37.914369
+11313325,2022-05-18,2022,5,Anatoxins,0,USGS,OMR,No Advisory,-121.5655064,37.914369
+11313325,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,OMR,NA,-121.5655064,37.914369
+11313325,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5655064,37.914369
+11313325,2022-07-19,2022,7,Anabaenopeptins,0,USGS,OMR,NA,-121.5655064,37.914369
+11313325,2022-07-19,2022,7,Anatoxins,0,USGS,OMR,No Advisory,-121.5655064,37.914369
+11313325,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,OMR,NA,-121.5655064,37.914369
+11313325,2022-07-19,2022,7,Microcystins/Nodularins,0.03,USGS,OMR,No Advisory,-121.5655064,37.914369
+11313325,2022-10-19,2022,10,Anabaenopeptins,0.01,USGS,OMR,NA,-121.5655064,37.914369
+11313325,2022-10-19,2022,10,Anatoxins,0,USGS,OMR,No Advisory,-121.5655064,37.914369
+11313325,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,OMR,NA,-121.5655064,37.914369
+11313325,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,OMR,No Advisory,-121.5655064,37.914369
+11313325,2022-10-19,2022,10,Saxitoxin,0,USGS,OMR,NA,-121.5655064,37.914369
+380412121344001,2022-07-19,2022,7,Anabaenopeptins,0,USGS,Franks,NA,-121.5778389,38.07010556
+380412121344001,2022-07-19,2022,7,Anatoxins,0,USGS,Franks,No Advisory,-121.5778389,38.07010556
+380412121344001,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,Franks,NA,-121.5778389,38.07010556
+380412121344001,2022-07-19,2022,7,Microcystins/Nodularins,0.03,USGS,Franks,No Advisory,-121.5778389,38.07010556
+375841121225601,2022-01-07,2022,1,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-01-07,2022,1,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-02-09,2022,2,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-03-11,2022,3,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-03-11,2022,3,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-03-11,2022,3,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-03-11,2022,3,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-04-22,2022,4,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-04-22,2022,4,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-04-22,2022,4,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-04-22,2022,4,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-04-22,2022,4,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-04-22,2022,4,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-04-22,2022,4,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-04-22,2022,4,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-05-23,2022,5,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-05-23,2022,5,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-05-23,2022,5,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-05-23,2022,5,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-06-22,2022,6,Anabaenopeptins,0.01,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-06-22,2022,6,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-06-22,2022,6,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-06-22,2022,6,Microcystins/Nodularins,0.02,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-07-20,2022,7,Anabaenopeptins,0.01,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-07-20,2022,7,Microcystins/Nodularins,0.14,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-07-20,2022,7,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-07-20,2022,7,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Anabaenopeptins,0.01,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Microcystins/Nodularins,0.03,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Microcystins/Nodularins,0.02,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-08-17,2022,8,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Anabaenopeptins,0.02,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Microcystins/Nodularins,0.02,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-09-15,2022,9,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-10-14,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Anabaenopeptins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Anatoxins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3822222,37.97805556
+375841121225601,2022-11-15,2022,11,Saxitoxin,0,USGS,South Delta,NA,-121.3822222,37.97805556
+11313460,2022-05-17,2022,5,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.5572222,38.05944444
+11313460,2022-05-17,2022,5,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.5572222,38.05944444
+11313460,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.5572222,38.05944444
+11313460,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.5572222,38.05944444
+11313460,2022-07-20,2022,7,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.5572222,38.05944444
+11313460,2022-07-20,2022,7,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.5572222,38.05944444
+11313460,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.5572222,38.05944444
+11313460,2022-07-20,2022,7,Microcystins/Nodularins,0.02,USGS,Lower SJ,No Advisory,-121.5572222,38.05944444
+11313460,2022-10-17,2022,10,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.5572222,38.05944444
+11313460,2022-10-17,2022,10,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.5572222,38.05944444
+11313460,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.5572222,38.05944444
+11313460,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,Lower SJ,No Advisory,-121.5572222,38.05944444
+11313460,2022-10-17,2022,10,Saxitoxin,0,USGS,Lower SJ,NA,-121.5572222,38.05944444
+11455420,2022-07-21,2022,7,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.6889444,38.14904444
+11455420,2022-07-21,2022,7,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.6889444,38.14904444
+11455420,2022-07-21,2022,7,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.6889444,38.14904444
+11455420,2022-07-21,2022,7,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.6889444,38.14904444
+375747121215401,2022-05-05,2022,5,Anabaenopeptins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-05-05,2022,5,Anatoxins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-05-05,2022,5,Cylindrospermopsins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-05-05,2022,5,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-06-06,2022,6,Anabaenopeptins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-06-06,2022,6,Anatoxins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-06-06,2022,6,Cylindrospermopsins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-06-06,2022,6,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-07-05,2022,7,Anabaenopeptins,0.02,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-07-05,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-07-05,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-07-05,2022,7,Microcystins/Nodularins,0.03,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-08-02,2022,8,Anabaenopeptins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-08-02,2022,8,Anatoxins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-08-02,2022,8,Cylindrospermopsins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-08-02,2022,8,Microcystins/Nodularins,0.04,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-08-02,2022,8,Saxitoxin,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-08-30,2022,8,Anabaenopeptins,0.03,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-08-30,2022,8,Anatoxins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-08-30,2022,8,Cylindrospermopsins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-08-30,2022,8,Microcystins/Nodularins,0.02,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-08-30,2022,8,Saxitoxin,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-09-26,2022,9,Anabaenopeptins,0.02,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-09-26,2022,9,Anatoxins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-09-26,2022,9,Cylindrospermopsins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-09-26,2022,9,Microcystins/Nodularins,0.03,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-09-26,2022,9,Saxitoxin,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-10-27,2022,10,Anabaenopeptins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-10-27,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-10-27,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.365,37.96305556
+375747121215401,2022-10-27,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.365,37.96305556
+375747121215401,2022-10-27,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.365,37.96305556
+BC,2022-07-12,2022,7,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.37531,37.976819
+BC,2022-07-12,2022,7,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.37531,37.976819
+BC,2022-07-12,2022,7,Microcystins/Nodularins,0,Restore the Delta,South Delta,No Advisory,-121.37531,37.976819
+BC,2022-09-20,2022,9,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.37531,37.976819
+BC,2022-09-20,2022,9,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.37531,37.976819
+BC,2022-09-20,2022,9,Microcystins/Nodularins,0.32944332,Restore the Delta,South Delta,No Advisory,-121.37531,37.976819
+ML,2022-06-13,2022,6,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.293092,37.953618
+ML,2022-06-13,2022,6,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.293092,37.953618
+ML,2022-06-13,2022,6,Microcystins/Nodularins,0.29,Restore the Delta,South Delta,No Advisory,-121.293092,37.953618
+ML,2022-07-11,2022,7,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.293092,37.953618
+ML,2022-07-11,2022,7,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.293092,37.953618
+ML,2022-07-11,2022,7,Microcystins/Nodularins,0,Restore the Delta,South Delta,No Advisory,-121.293092,37.953618
+ML,2022-08-15,2022,8,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.293092,37.953618
+ML,2022-08-15,2022,8,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.293092,37.953618
+ML,2022-08-15,2022,8,Microcystins/Nodularins,8.0204428415,Restore the Delta,South Delta,Warning,-121.293092,37.953618
+ML,2022-09-21,2022,9,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.293092,37.953618
+ML,2022-09-21,2022,9,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.293092,37.953618
+ML,2022-09-21,2022,9,Microcystins/Nodularins,5.77427976,Restore the Delta,South Delta,Caution,-121.293092,37.953618
+MP,2022-06-13,2022,6,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.30646,37.95301
+MP,2022-06-13,2022,6,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.30646,37.95301
+MP,2022-06-13,2022,6,Microcystins/Nodularins,0.26,Restore the Delta,South Delta,No Advisory,-121.30646,37.95301
+MP,2022-07-11,2022,7,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.30646,37.95301
+MP,2022-07-11,2022,7,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.30646,37.95301
+MP,2022-07-11,2022,7,Microcystins/Nodularins,0,Restore the Delta,South Delta,No Advisory,-121.30646,37.95301
+MP,2022-08-15,2022,8,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.30646,37.95301
+MP,2022-08-15,2022,8,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.30646,37.95301
+MP,2022-08-15,2022,8,Microcystins/Nodularins,0.8888199654,Restore the Delta,South Delta,Caution,-121.30646,37.95301
+MP,2022-09-21,2022,9,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.30646,37.95301
+MP,2022-09-21,2022,9,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.30646,37.95301
+MP,2022-09-21,2022,9,Microcystins/Nodularins,0.8188622799999999,Restore the Delta,South Delta,Caution,-121.30646,37.95301
+MS,2022-06-13,2022,6,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.304373,37.951842
+MS,2022-06-13,2022,6,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.304373,37.951842
+MS,2022-06-13,2022,6,Microcystins/Nodularins,0.19,Restore the Delta,South Delta,No Advisory,-121.304373,37.951842
+MS,2022-07-11,2022,7,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.304373,37.951842
+MS,2022-07-11,2022,7,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.304373,37.951842
+MS,2022-07-11,2022,7,Microcystins/Nodularins,0,Restore the Delta,South Delta,No Advisory,-121.304373,37.951842
+MS,2022-08-15,2022,8,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.304373,37.951842
+MS,2022-08-15,2022,8,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.304373,37.951842
+MS,2022-08-15,2022,8,Microcystins/Nodularins,7.3293393689999995,Restore the Delta,South Delta,Warning,-121.304373,37.951842
+MS,2022-09-21,2022,9,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.304373,37.951842
+MS,2022-09-21,2022,9,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.304373,37.951842
+MS,2022-09-21,2022,9,Microcystins/Nodularins,1.5352070599999998,Restore the Delta,South Delta,Caution,-121.304373,37.951842
+SC,2022-09-21,2022,9,Anatoxins,0,Restore the Delta,East Delta,No Advisory,-121.306876,37.967074
+SC,2022-09-21,2022,9,Cylindrospermopsins,0,Restore the Delta,East Delta,NA,-121.306876,37.967074
+SC,2022-09-21,2022,9,Microcystins/Nodularins,0,Restore the Delta,East Delta,No Advisory,-121.306876,37.967074
+SJ,2022-09-21,2022,9,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.344139,37.954319
+SJ,2022-09-21,2022,9,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.344139,37.954319
+SJ,2022-09-21,2022,9,Microcystins/Nodularins,0,Restore the Delta,South Delta,No Advisory,-121.344139,37.954319
+BC,2022-06-14,2022,6,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.37531,37.976819
+BC,2022-06-14,2022,6,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.37531,37.976819
+BC,2022-06-14,2022,6,Microcystins/Nodularins,0.15,Restore the Delta,South Delta,No Advisory,-121.37531,37.976819
+WC,2022-06-14,2022,6,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.416229,37.994311
+WC,2022-06-14,2022,6,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.416229,37.994311
+WC,2022-06-14,2022,6,Microcystins/Nodularins,0.15,Restore the Delta,South Delta,No Advisory,-121.416229,37.994311
+SC,2022-06-15,2022,6,Anatoxins,0,Restore the Delta,East Delta,No Advisory,-121.306876,37.967074
+SC,2022-06-15,2022,6,Cylindrospermopsins,0,Restore the Delta,East Delta,NA,-121.306876,37.967074
+SC,2022-06-15,2022,6,Microcystins/Nodularins,0.16,Restore the Delta,East Delta,No Advisory,-121.306876,37.967074
+SJ,2022-06-15,2022,6,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.344139,37.954319
+SJ,2022-06-15,2022,6,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.344139,37.954319
+SJ,2022-06-15,2022,6,Microcystins/Nodularins,0.13,Restore the Delta,South Delta,No Advisory,-121.344139,37.954319
+WC,2022-07-12,2022,7,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.416229,37.994311
+WC,2022-07-12,2022,7,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.416229,37.994311
+WC,2022-07-12,2022,7,Microcystins/Nodularins,0,Restore the Delta,South Delta,No Advisory,-121.416229,37.994311
+BC,2022-08-16,2022,8,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.37531,37.976819
+BC,2022-08-16,2022,8,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.37531,37.976819
+BC,2022-08-16,2022,8,Microcystins/Nodularins,0,Restore the Delta,South Delta,No Advisory,-121.37531,37.976819
+WC,2022-08-16,2022,8,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.416229,37.994311
+WC,2022-08-16,2022,8,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.416229,37.994311
+WC,2022-08-16,2022,8,Microcystins/Nodularins,0,Restore the Delta,South Delta,No Advisory,-121.416229,37.994311
+SC,2022-08-17,2022,8,Anatoxins,0,Restore the Delta,East Delta,No Advisory,-121.306876,37.967074
+SC,2022-08-17,2022,8,Cylindrospermopsins,0,Restore the Delta,East Delta,NA,-121.306876,37.967074
+SC,2022-08-17,2022,8,Microcystins/Nodularins,0,Restore the Delta,East Delta,No Advisory,-121.306876,37.967074
+SJ,2022-08-17,2022,8,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.344139,37.954319
+SJ,2022-08-17,2022,8,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.344139,37.954319
+SJ,2022-08-17,2022,8,Microcystins/Nodularins,0,Restore the Delta,South Delta,No Advisory,-121.344139,37.954319
+WC,2022-09-20,2022,9,Anatoxins,0,Restore the Delta,South Delta,No Advisory,-121.416229,37.994311
+WC,2022-09-20,2022,9,Cylindrospermopsins,0,Restore the Delta,South Delta,NA,-121.416229,37.994311
+WC,2022-09-20,2022,9,Microcystins/Nodularins,0.16661646,Restore the Delta,South Delta,No Advisory,-121.416229,37.994311
+375711121182001,2022-07-20,2022,7,Anabaenopeptins,0.25,USGS,South Delta,NA,-121.30553,37.95318
+375711121182001,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.30553,37.95318
+375711121182001,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.30553,37.95318
+375711121182001,2022-07-20,2022,7,Microcystins/Nodularins,0.66,USGS,South Delta,No Advisory,-121.30553,37.95318
+375709121190301,2022-07-20,2022,7,Anabaenopeptins,0.6599999999999999,USGS,South Delta,NA,-121.3175,37.9524
+375709121190301,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.3175,37.9524
+375709121190301,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3175,37.9524
+375709121190301,2022-07-20,2022,7,Microcystins/Nodularins,1.14,USGS,South Delta,Caution,-121.3175,37.9524
+375831121223701,2022-05-17,2022,5,Anabaenopeptins,0,USGS,South Delta,NA,-121.3769444,37.97527778
+375831121223701,2022-05-17,2022,5,Anatoxins,0,USGS,South Delta,No Advisory,-121.3769444,37.97527778
+375831121223701,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3769444,37.97527778
+375831121223701,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3769444,37.97527778
+375831121223701,2022-07-20,2022,7,Anabaenopeptins,0,USGS,South Delta,NA,-121.3769444,37.97527778
+375831121223701,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.3769444,37.97527778
+375831121223701,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3769444,37.97527778
+375831121223701,2022-07-20,2022,7,Microcystins/Nodularins,0.04,USGS,South Delta,No Advisory,-121.3769444,37.97527778
+375831121223701,2022-10-17,2022,10,Anabaenopeptins,0,USGS,South Delta,NA,-121.3769444,37.97527778
+375831121223701,2022-10-17,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.3769444,37.97527778
+375831121223701,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3769444,37.97527778
+375831121223701,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3769444,37.97527778
+375831121223701,2022-10-17,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.3769444,37.97527778
+375706121201001,2022-07-20,2022,7,Anabaenopeptins,0.11,USGS,South Delta,NA,-121.3361694,37.95173889
+375706121201001,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.3361694,37.95173889
+375706121201001,2022-07-20,2022,7,Cylindrospermopsins,0.02,USGS,South Delta,NA,-121.3361694,37.95173889
+375706121201001,2022-07-20,2022,7,Microcystins/Nodularins,0.12,USGS,South Delta,No Advisory,-121.3361694,37.95173889
+375649121202101,2022-05-17,2022,5,Anabaenopeptins,0,USGS,South Delta,NA,-121.3402249,37.94686848
+375649121202101,2022-05-17,2022,5,Anatoxins,0,USGS,South Delta,No Advisory,-121.3402249,37.94686848
+375649121202101,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3402249,37.94686848
+375649121202101,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3402249,37.94686848
+375649121202101,2022-07-20,2022,7,Anabaenopeptins,0.03,USGS,South Delta,NA,-121.3402249,37.94686848
+375649121202101,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.3402249,37.94686848
+375649121202101,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3402249,37.94686848
+375649121202101,2022-07-20,2022,7,Microcystins/Nodularins,0.04,USGS,South Delta,No Advisory,-121.3402249,37.94686848
+375649121202101,2022-07-20,2022,7,Anabaenopeptins,0.03,USGS,South Delta,NA,-121.3402249,37.94686848
+375649121202101,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.3402249,37.94686848
+375649121202101,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3402249,37.94686848
+375649121202101,2022-07-20,2022,7,Microcystins/Nodularins,0.03,USGS,South Delta,No Advisory,-121.3402249,37.94686848
+375649121202101,2022-10-17,2022,10,Anabaenopeptins,0,USGS,South Delta,NA,-121.3402249,37.94686848
+375649121202101,2022-10-17,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.3402249,37.94686848
+375649121202101,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.3402249,37.94686848
+375649121202101,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.3402249,37.94686848
+375649121202101,2022-10-17,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.3402249,37.94686848
+380536121342901,2022-07-19,2022,7,Anabaenopeptins,0,USGS,Lower SJ,NA,-121.57470000000001,38.09333056
+380536121342901,2022-07-19,2022,7,Anatoxins,0,USGS,Lower SJ,No Advisory,-121.57470000000001,38.09333056
+380536121342901,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,Lower SJ,NA,-121.57470000000001,38.09333056
+380536121342901,2022-07-19,2022,7,Microcystins/Nodularins,0.03,USGS,Lower SJ,No Advisory,-121.57470000000001,38.09333056
+380131121280501,2022-05-17,2022,5,Anabaenopeptins,0,USGS,South Delta,NA,-121.4927778,38.03908889
+380131121280501,2022-05-17,2022,5,Anatoxins,0,USGS,South Delta,No Advisory,-121.4927778,38.03908889
+380131121280501,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,South Delta,NA,-121.4927778,38.03908889
+380131121280501,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.4927778,38.03908889
+380131121280501,2022-05-17,2022,5,Anabaenopeptins,0,USGS,South Delta,NA,-121.4927778,38.03908889
+380131121280501,2022-05-17,2022,5,Anatoxins,0,USGS,South Delta,No Advisory,-121.4927778,38.03908889
+380131121280501,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,South Delta,NA,-121.4927778,38.03908889
+380131121280501,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.4927778,38.03908889
+380131121280501,2022-07-20,2022,7,Anabaenopeptins,0,USGS,South Delta,NA,-121.4927778,38.03908889
+380131121280501,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.4927778,38.03908889
+380131121280501,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.4927778,38.03908889
+380131121280501,2022-07-20,2022,7,Microcystins/Nodularins,0.02,USGS,South Delta,No Advisory,-121.4927778,38.03908889
+380131121280501,2022-10-17,2022,10,Anabaenopeptins,0,USGS,South Delta,NA,-121.4927778,38.03908889
+380131121280501,2022-10-17,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.4927778,38.03908889
+380131121280501,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.4927778,38.03908889
+380131121280501,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.4927778,38.03908889
+380131121280501,2022-10-17,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.4927778,38.03908889
+380831121301301,2022-05-18,2022,5,Anabaenopeptins,0,USGS,East Delta,NA,-121.5036889,38.1419611
+380831121301301,2022-05-18,2022,5,Anatoxins,0,USGS,East Delta,No Advisory,-121.5036889,38.1419611
+380831121301301,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5036889,38.1419611
+380831121301301,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5036889,38.1419611
+380831121301301,2022-07-19,2022,7,Anabaenopeptins,0,USGS,East Delta,NA,-121.5036889,38.1419611
+380831121301301,2022-07-19,2022,7,Anatoxins,0,USGS,East Delta,No Advisory,-121.5036889,38.1419611
+380831121301301,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5036889,38.1419611
+380831121301301,2022-07-19,2022,7,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5036889,38.1419611
+380831121301301,2022-10-17,2022,10,Anabaenopeptins,0,USGS,East Delta,NA,-121.5036889,38.1419611
+380831121301301,2022-10-17,2022,10,Anatoxins,0,USGS,East Delta,No Advisory,-121.5036889,38.1419611
+380831121301301,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,East Delta,NA,-121.5036889,38.1419611
+380831121301301,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.5036889,38.1419611
+380831121301301,2022-10-17,2022,10,Saxitoxin,0,USGS,East Delta,NA,-121.5036889,38.1419611
+11455276,2022-05-16,2022,5,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.6924278,38.3078583
+11455276,2022-05-16,2022,5,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.6924278,38.3078583
+11455276,2022-05-16,2022,5,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.6924278,38.3078583
+11455276,2022-05-16,2022,5,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.6924278,38.3078583
+11455276,2022-07-18,2022,7,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.6924278,38.3078583
+11455276,2022-07-18,2022,7,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.6924278,38.3078583
+11455276,2022-07-18,2022,7,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.6924278,38.3078583
+11455276,2022-07-18,2022,7,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.6924278,38.3078583
+11455276,2022-10-18,2022,10,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.6924278,38.3078583
+11455276,2022-10-18,2022,10,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.6924278,38.3078583
+11455276,2022-10-18,2022,10,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.6924278,38.3078583
+11455276,2022-10-18,2022,10,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.6924278,38.3078583
+11455276,2022-10-18,2022,10,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.6924278,38.3078583
+382010121402301,2022-05-16,2022,5,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.672925,38.33616667
+382010121402301,2022-05-16,2022,5,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.672925,38.33616667
+382010121402301,2022-05-16,2022,5,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.672925,38.33616667
+382010121402301,2022-05-16,2022,5,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.672925,38.33616667
+382010121402301,2022-07-18,2022,7,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.672925,38.33616667
+382010121402301,2022-07-18,2022,7,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.672925,38.33616667
+382010121402301,2022-07-18,2022,7,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.672925,38.33616667
+382010121402301,2022-07-18,2022,7,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.672925,38.33616667
+382010121402301,2022-10-18,2022,10,Anabaenopeptins,0,USGS,Cache/Liberty,NA,-121.672925,38.33616667
+382010121402301,2022-10-18,2022,10,Anatoxins,0,USGS,Cache/Liberty,No Advisory,-121.672925,38.33616667
+382010121402301,2022-10-18,2022,10,Cylindrospermopsins,0,USGS,Cache/Liberty,NA,-121.672925,38.33616667
+382010121402301,2022-10-18,2022,10,Microcystins/Nodularins,0,USGS,Cache/Liberty,No Advisory,-121.672925,38.33616667
+382010121402301,2022-10-18,2022,10,Saxitoxin,0,USGS,Cache/Liberty,NA,-121.672925,38.33616667
+380831121281201,2022-05-18,2022,5,Anabaenopeptins,0,USGS,East Delta,NA,-121.47,38.142
+380831121281201,2022-05-18,2022,5,Anatoxins,0,USGS,East Delta,No Advisory,-121.47,38.142
+380831121281201,2022-05-18,2022,5,Cylindrospermopsins,0,USGS,East Delta,NA,-121.47,38.142
+380831121281201,2022-05-18,2022,5,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.47,38.142
+380831121281201,2022-07-19,2022,7,Anabaenopeptins,0,USGS,East Delta,NA,-121.47,38.142
+380831121281201,2022-07-19,2022,7,Anatoxins,0,USGS,East Delta,No Advisory,-121.47,38.142
+380831121281201,2022-07-19,2022,7,Cylindrospermopsins,0,USGS,East Delta,NA,-121.47,38.142
+380831121281201,2022-07-19,2022,7,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.47,38.142
+380831121281201,2022-10-17,2022,10,Anabaenopeptins,0,USGS,East Delta,NA,-121.47,38.142
+380831121281201,2022-10-17,2022,10,Anatoxins,0,USGS,East Delta,No Advisory,-121.47,38.142
+380831121281201,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,East Delta,NA,-121.47,38.142
+380831121281201,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,East Delta,No Advisory,-121.47,38.142
+380831121281201,2022-10-17,2022,10,Saxitoxin,0,USGS,East Delta,NA,-121.47,38.142
+11455485,2022-01-05,2022,1,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-01-05,2022,1,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-01-05,2022,1,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-01-05,2022,1,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-01-05,2022,1,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-02-16,2022,2,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-02-16,2022,2,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-02-16,2022,2,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-02-16,2022,2,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-02-16,2022,2,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-03-03,2022,3,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-03-03,2022,3,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-03-03,2022,3,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-03-03,2022,3,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-03-03,2022,3,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-04-04,2022,4,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-04-04,2022,4,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-04-04,2022,4,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-04-04,2022,4,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-04-21,2022,4,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-04-21,2022,4,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-04-21,2022,4,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-04-21,2022,4,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-05-11,2022,5,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-05-11,2022,5,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-05-11,2022,5,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-05-11,2022,5,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-05-17,2022,5,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-05-17,2022,5,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-05-19,2022,5,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-05-19,2022,5,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-05-19,2022,5,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-05-19,2022,5,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-06-01,2022,6,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-06-01,2022,6,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-06-01,2022,6,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-06-01,2022,6,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-06-14,2022,6,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-06-14,2022,6,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-06-14,2022,6,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-06-14,2022,6,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-06-29,2022,6,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-06-29,2022,6,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-06-29,2022,6,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-06-29,2022,6,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-07-12,2022,7,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-07-12,2022,7,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-07-12,2022,7,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-07-12,2022,7,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-07-20,2022,7,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-07-20,2022,7,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-07-20,2022,7,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-07-27,2022,7,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-07-27,2022,7,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-07-27,2022,7,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-07-27,2022,7,Microcystins/Nodularins,0.01,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-08-11,2022,8,Anabaenopeptins,0.02,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-08-11,2022,8,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-08-11,2022,8,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-08-11,2022,8,Microcystins/Nodularins,0.02,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-08-11,2022,8,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-08-24,2022,8,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-08-24,2022,8,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-08-24,2022,8,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-08-24,2022,8,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-08-24,2022,8,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-09-07,2022,9,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-09-07,2022,9,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-09-07,2022,9,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-09-07,2022,9,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-09-07,2022,9,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-09-22,2022,9,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-09-22,2022,9,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-09-22,2022,9,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-09-22,2022,9,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-09-22,2022,9,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-10-04,2022,10,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-10-04,2022,10,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-10-04,2022,10,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-10-04,2022,10,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-10-04,2022,10,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-10-19,2022,10,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-10-19,2022,10,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-10-19,2022,10,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-10-19,2022,10,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-10-19,2022,10,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-11-01,2022,11,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-11-01,2022,11,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-11-01,2022,11,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-11-01,2022,11,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-11-01,2022,11,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-12-06,2022,12,Anabaenopeptins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-12-06,2022,12,Anatoxins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-12-06,2022,12,Cylindrospermopsins,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11455485,2022-12-06,2022,12,Microcystins/Nodularins,0,USGS,Lower Sac,No Advisory,-121.767286,38.0778083
+11455485,2022-12-06,2022,12,Saxitoxin,0,USGS,Lower Sac,NA,-121.767286,38.0778083
+11311300,2022-05-17,2022,5,Anabaenopeptins,0,USGS,South Delta,NA,-121.4538889,37.9925
+11311300,2022-05-17,2022,5,Anatoxins,0,USGS,South Delta,No Advisory,-121.4538889,37.9925
+11311300,2022-05-17,2022,5,Cylindrospermopsins,0,USGS,South Delta,NA,-121.4538889,37.9925
+11311300,2022-05-17,2022,5,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.4538889,37.9925
+11311300,2022-07-20,2022,7,Anabaenopeptins,0,USGS,South Delta,NA,-121.4538889,37.9925
+11311300,2022-07-20,2022,7,Anatoxins,0,USGS,South Delta,No Advisory,-121.4538889,37.9925
+11311300,2022-07-20,2022,7,Cylindrospermopsins,0,USGS,South Delta,NA,-121.4538889,37.9925
+11311300,2022-07-20,2022,7,Microcystins/Nodularins,0.03,USGS,South Delta,No Advisory,-121.4538889,37.9925
+11311300,2022-10-17,2022,10,Anabaenopeptins,0,USGS,South Delta,NA,-121.4538889,37.9925
+11311300,2022-10-17,2022,10,Anatoxins,0,USGS,South Delta,No Advisory,-121.4538889,37.9925
+11311300,2022-10-17,2022,10,Cylindrospermopsins,0,USGS,South Delta,NA,-121.4538889,37.9925
+11311300,2022-10-17,2022,10,Microcystins/Nodularins,0,USGS,South Delta,No Advisory,-121.4538889,37.9925
+11311300,2022-10-17,2022,10,Saxitoxin,0,USGS,South Delta,NA,-121.4538889,37.9925
+11447890,2022-05-19,2022,5,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-05-19,2022,5,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-05-19,2022,5,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-05-19,2022,5,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-07-21,2022,7,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-07-21,2022,7,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-07-21,2022,7,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-07-21,2022,7,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-07-21,2022,7,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-07-21,2022,7,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-07-21,2022,7,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-07-21,2022,7,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Saxitoxin,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.5182865,38.25769218
+11447890,2022-10-20,2022,10,Saxitoxin,0,USGS,Upper Sac,NA,-121.5182865,38.25769218
+381330121332401,2022-05-19,2022,5,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-05-19,2022,5,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-05-19,2022,5,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-05-19,2022,5,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-05-19,2022,5,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-05-19,2022,5,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-05-19,2022,5,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-05-19,2022,5,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-07-21,2022,7,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-07-21,2022,7,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-07-21,2022,7,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-07-21,2022,7,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-10-18,2022,10,Anabaenopeptins,1.15,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-10-18,2022,10,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-10-18,2022,10,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-10-18,2022,10,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-10-18,2022,10,Saxitoxin,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-10-20,2022,10,Anabaenopeptins,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-10-20,2022,10,Anatoxins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-10-20,2022,10,Cylindrospermopsins,0,USGS,Upper Sac,NA,-121.556725,38.22488056
+381330121332401,2022-10-20,2022,10,Microcystins/Nodularins,0,USGS,Upper Sac,No Advisory,-121.556725,38.22488056
+381330121332401,2022-10-20,2022,10,Saxitoxin,0,USGS,Upper Sac,NA,-121.556725,38.22488056

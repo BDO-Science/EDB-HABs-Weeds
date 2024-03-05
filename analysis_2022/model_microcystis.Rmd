@@ -83,8 +83,10 @@ mic_data <- mic_region %>%
                             Month %in% c(3,4,5)~ "Spring",
                             Month %in% c(6,7,8)~ "Summer"),
          Season = factor(Season, levels = c("Spring", "Summer", "Fall")),
-         MicroPA = factor(MicroPA)) %>%
-  filter(Season %in% c("Spring", "Summer", "Fall"),
+         MicroPA = factor(MicroPA),
+         fMonth = factor(Month)) %>%
+  filter(#Season %in% c("Spring", "Summer", "Fall"),
+        fMonth %in% c(4,5,6,7,8,9,10,11),
          Source!= "USGS",
          Year>2016)
 ```
@@ -93,68 +95,221 @@ mic_data <- mic_region %>%
 A little less data in 2017, esp spring
 ```{r}
 sampsize <- mic_data %>%
-  group_by(Season, fYear) %>%
+  group_by(Region, fYear, Season, fMonth) %>%
   summarize(n = n())
 
 ggplot(sampsize) + geom_tile(aes(x = fYear, y = Season, fill = n))
+ggplot(sampsize) + geom_tile(aes(x = fYear, y = fMonth, fill = n))
+ggplot(sampsize) + geom_tile(aes(x = fYear, y = fMonth, fill = n)) + facet_wrap(~Region)
 ```
 
 ```{r}
 pa <- mic_data %>%
-  group_by(Season, fYear) %>%
+  filter(Month %in% c(6,7,8,9,10)) %>%
+  group_by(Region, fMonth, fYear) %>%
   dplyr::mutate(ntotal = n()) %>%
   ungroup() %>%
-  dplyr::group_by(Season, fYear, MicroPA, ntotal) %>%
-  summarize(n = n(),
+  dplyr::group_by(Region, fMonth, fYear, MicroPA, ntotal) %>%
+  dplyr::summarize(n = n(),
             prop = n/ntotal)
 
 ggplot(pa) + geom_col(aes(x = fYear, y = n, fill = MicroPA)) + 
-  facet_wrap(~Season) +
+  facet_grid(Region~fMonth, scales = "free_y") +
   scale_fill_manual(values = c("navy", "lightblue"))+
   theme_bw() + 
   theme(axis.text.x = element_text(angle = 90)) 
 
 pa2 <- pa %>%
-  dplyr::select(Season, fYear, MicroPA, prop) %>%
+  dplyr::select(Region, fMonth, fYear, MicroPA, prop) %>%
   distinct()
 
 ggplot(pa2) + geom_col(aes(x = fYear, y = prop, fill = MicroPA)) + 
-  facet_wrap(~Season) +
+  facet_grid(Region~fMonth) +
   scale_fill_manual(values = c("grey70","steelblue"))+
   theme_bw() + 
   theme(axis.text.x = element_text(angle = 90)) 
-
-
 ```
 
 # Run model; check residuals
+
+* Year filtered to Franks, Lower Sac, Lower SJ, OMR, South 
+* Region filtered to 2022
+
+## Recent Models (separate region and year)
 ```{r}
+# filter to central and south delta
+data_year <- dplyr::filter(mic_data, Region %in% c("Lower Sac", "Lower SJ","OMR", "South Delta", "Franks"), (fYear!="2017"))
+
+datayear_sum <- data_year %>%
+  group_by(fYear, fMonth) %>%
+  summarize(n = n())
+ggplot(datayear_sum) + geom_tile(aes(x = fYear, y = fMonth, fill = n)) + geom_text(aes(label = n, y = fMonth, x = fYear), color = "white")
+
+
+datayear_sum2 <- data_year %>%
+  group_by(fYear, fMonth, Source) %>%
+  summarize(n = n())
+
+pa <- data_year %>%
+  group_by(fYear) %>%
+  dplyr::mutate(ntotal = n()) %>%
+  ungroup() %>%
+  dplyr::group_by(fYear, MicroPA, ntotal) %>%
+  dplyr::summarize(n = n(),
+            prop = n/ntotal) %>%
+  distinct() %>%
+  filter(MicroPA == "1")
+
+
+ggplot(datayear_sum) + geom_tile(aes(x = fYear, y = fMonth, fill = n)) + geom_text(aes(label = n, y = fMonth, x = fYear), color = "white")
+
+# filter to 2022
+data_2022 <- dplyr::filter(mic_data, fYear == "2022", !fMonth %in% c("4", "5"))
+
+data2022_sum <- data_2022 %>%
+  group_by(Region, Season) %>%
+  summarize(n = n())
+ggplot(data2022_sum) + geom_tile(aes(x = Region, y = Season, fill = n)) + geom_text(aes(label = n, y = Season, x = Region), color = "white")
+
+```
+
+```{r}
+# Year only -------------------------
+
+# glm
+m0 <- glm(MicroPA ~ fYear , family = binomial(link = 'logit'), data = data_year)
+summary(m0)
+par(mfrow = c(2,4))
+plot(m0)
+resid_m0 = resid(m0, type = "pearson")
+hist(resid_m0)
+plot(data_year$fYear, resid_m0)
+
+# glmer
+m0a <- glmer(MicroPA ~ fYear + (1|fMonth), family = binomial, data = data_year)
+summary(m0a)
+anova(m0a)
+plot(m0a)
+
+par(mfrow = c(2,4))
+resid0a = resid(m0a, type = "pearson")
+#df1 = nuts_stats_sf %>% filter(!is.na(Nitrate), !is.na(fMonth), !is.na(Stratum2), !is.na(fYear))
+lev0a = hatvalues(m0a)
+plot(m0a)
+qqnorm(resid0a)
+qqline(resid0a)
+plot(lev0a, y = resid0a)
+hist(resid0a)
+plot(resid0a)
+plot(data_year$fYear, resid0a)
+acf(resid0a)
+
+# Region only -----------------------
+
+# glm
+mr <- glm(MicroPA ~ Region + fMonth, family = binomial(link = 'logit'), data = data_2022)
+summary(mr)
+par(mfrow = c(2,4))
+plot(mr)
+resid_mr = resid(mr, type = "pearson")
+plot(data_2022$Region, resid_mr)
+plot(data_2022$fMonth, resid_mr)
+
+# random effect
+ggplot()
+mra <- glmer(MicroPA ~ Region + (1|Season), family = binomial, data = data_2022)
+summary(mra)
+plot(mra)
+
+par(mfrow = c(2,4))
+residra = resid(mra, type = "pearson")
+#df1 = nuts_stats_sf %>% filter(!is.na(Nitrate), !is.na(fMonth), !is.na(Stratum2), !is.na(fYear))
+lev0a = hatvalues(mra)
+plot(mra)
+qqnorm(residra)
+qqline(residra)
+plot(lev0a, y = residra)
+hist(residra)
+plot(residra)
+plot(data_2022$Season, residra)
+plot(data_2022$Region, residra)
+acf(residra)
+
+
+kruskal.test(MicroPA)
+```
+
+
+
+
+
+
+## Older models
+```{r}
+library(lmerTest)
+library(lme4)
+
+data_sumfall <- dplyr::filter(mic_data, !fMonth %in% c("4", "5", "11"))
+
+# Year and Season ---------------------
 m1 <- glm(MicroPA ~ fYear + Season, family=binomial(link='logit'),data=mic_data)
 summary(m1)
 anova(m1)
 
-par(mfrow = c(2,2))
+par(mfrow = c(2,4))
 plot(m1)
+resid_m1 = resid(m1, type = "pearson")
+plot(mic_data$Region, resid_m1)
+plot(mic_data$fYear, resid_m1)
+plot(mic_data$Season, resid_m1)
 
-
-data_sumfall <- filter(mic_data, Season != "Spring")
-m2 <- glm(MicroPA ~fYear + Region + fYear:Region , family=binomial(link='logit'),data=data_sumfall)
+# Year and Region -----------------
+m2 <- glm(MicroPA ~ fYear + Region, family = binomial(link = 'logit'), data = data_sumfall)
 summary(m2)
-anova(m2)
-
 par(mfrow = c(2,4))
 plot(m2)
 resid_m2 = resid(m2, type = "pearson")
 plot(data_sumfall$Region, resid_m2)
 plot(data_sumfall$fYear, resid_m2)
-plot(data_sumfall$Season, resid_m2)
+plot(data_sumfall$fMonth, resid_m2)
+
+m2a <- glmer(MicroPA ~ fYear + Region + (1|Season), family = binomial, data = mic_data)
+summary(m2a)
+plot(m2a)
+
+par(mfrow = c(2,4))
+resid2a = resid(m2a, type = "pearson")
+#df1 = nuts_stats_sf %>% filter(!is.na(Nitrate), !is.na(fMonth), !is.na(Stratum2), !is.na(fYear))
+lev2a = hatvalues(m2a)
+plot(m2a)
+qqnorm(resid2a)
+qqline(resid2a)
+plot(lev2a, y = resid2a)
+hist(resid2a)
+plot(resid2a)
+plot(mic_data$fYear, resid2a)
+plot(mic_data$Region, resid2a)
+acf(resid2a)
+
+
+# Year * Region -------------
+m3 <- glm(MicroPA ~ fYear * Region, family = binomial(link = 'logit'), data = data_sumfall)
+summary(m3)
+par(mfrow = c(2,4))
+plot(m3)
+  
+# this one doesn't run
+m3a <- glmer(MicroPA ~ fYear * Region + (1|fMonth), family=binomial, data=data_sumfall)
+summary(m3a)
+anova(m3a)
 ```
 
 # Look at posthoc pairwise comparisons
 ```{r}
+library(emmeans)
 confint(m1)
 
-fit.emm <- emmeans(m1, "fYear", data=pa)
+fit.emm <- emmeans(m1, "fYear", data=mic_data)
 resultsyear <- pairs(fit.emm, adjust="tukey")
 plot(fit.emm, comparisons = TRUE)
 model_microcystis_year_results <- as.data.frame(resultsyear) %>%
@@ -170,13 +325,13 @@ model_microcystis_season_results <- as.data.frame(resultsseason) %>%
 ```{r}
 confint(m2)
 
-fit.emm <- emmeans(m2, "fYear", data=mic_data)
+fit.emm <- emmeans(m2, "fYear", data=data_sumfall)
 resultsyear <- pairs(fit.emm, adjust="tukey")
 plot(fit.emm, comparisons = TRUE)
 model_microcystis_year_results <- as.data.frame(resultsyear) %>%
   mutate(across(.cols = c(estimate:SE, z.ratio), ~round(.x, digits = 3))) 
 
-fit.emm2 <- emmeans(m2, "Region", data=mic_data)
+fit.emm2 <- emmeans(m2, "Region", data=data_sumfall)
 resultsregion <- pairs(fit.emm2, adjust="tukey")
 plot(fit.emm2, comparisons = TRUE)
 model_microcystis_region_results <- as.data.frame(resultsregion) %>%
@@ -184,8 +339,47 @@ model_microcystis_region_results <- as.data.frame(resultsregion) %>%
 
 library(sjPlot)
 plot_model(m2)
+plot_model(m2a)
 ```
 
+
+## Recent
+
+```{r}
+library(effects)
+effects <- effects::effect(term = "fYear", mod = m0a)
+summary(effects)
+
+Effect(focal.predictors = "fYear", mod =  m0a)
+eff.max <- allEffects(m0a, fixed.predictors = c("fYear"))
+eff.max
+```
+
+```{r}
+fit.emm <- emmeans(m0a, "fYear", data=data_year)
+resultsyear <- pairs(fit.emm, adjust="tukey")
+plot(fit.emm, comparisons = TRUE,type = "response")
+(model_microcystis_year_results <- as.data.frame(resultsyear) %>%
+  mutate(across(.cols = c(estimate:SE, z.ratio), ~round(.x, digits = 3))) )
+
+confint_year <- confint(m0a)
+
+plot_model(m0a)
+(year_sj <- tab_model(m0a))
+
+write_csv(year_sj, here("analysis_2022", "data_clean", "model_microcystis_results_sjplot_year.csv"))
+
+fit.emm2 <- emmeans(mra, "Region", data=data_2022)
+resultsregion <- pairs(fit.emm2, adjust="tukey")
+plot(fit.emm2, comparisons = TRUE)
+model_microcystis_region_results <- as.data.frame(resultsregion) %>%
+  mutate(across(.cols = c(estimate:SE, z.ratio), ~round(.x, digits = 3)))
+
+library(sjPlot)
+plot_model(mra)
+
+multcomp::cld(fit.emm2)
+```
 
 
 
@@ -193,7 +387,7 @@ plot_model(m2)
 
 # Write results table to data_clean
 ```{r}
-model_microcystis_results <- rbind(model_microcystis_year_results, model_microcystis_season_results)
-write_csv(model_microcystis_results, here("analysis_2022", "data_clean", "model_microcystis_results_emmeans.csv"))
+model_microcystis_results <- rbind(model_microcystis_year_results, model_microcystis_region_results)
+write_csv(model_microcystis_results, here("analysis_2022", "data_clean", "model_microcystis_results_emmeans_year_region_sep_models.csv"))
 ```
 

@@ -223,7 +223,8 @@ wq_EDB <- wq_data_summary_EDB %>%
 ### 2022 
 Individual stations - 2022
 ```{r}
-templine <- data.frame(Analyte = c("Temp"), int = c(19))
+log(10 + 1)
+templine <- data.frame(Analyte = c("Temp", "Chl.a"), int = c(19, 2.397895))
 
 (plot_cont_2022 <- ggplot() +
     # shaded box
@@ -242,7 +243,7 @@ templine <- data.frame(Analyte = c("Temp"), int = c(19))
               inherit.aes = FALSE) + 
     # facet all the panels
     facet_wrap(~Analyte, scales = "free_y", nrow = 6, strip.position = "left", 
-             labeller = as_labeller(c(Chl.a = "log \nChl a\n(µg/L)",DO.Conc = "DO \n(mg/L)", 
+             labeller = as_labeller(c(Chl.a = "log Chl a\n(µg/L)",DO.Conc = "DO \n(mg/L)", 
             #Flow = "Flow (cfs)", 
     pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="log \nTurbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
     
@@ -250,7 +251,7 @@ templine <- data.frame(Analyte = c("Temp"), int = c(19))
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
     scale_color_viridis(option = "turbo", discrete = TRUE) +
     scale_x_date(breaks = "month", date_labels = "%b", expand = c(0,0)) + 
-    scale_linetype_manual(values = c("longdash", "dotdash", "solid")) +
+    scale_linetype_manual(values = c("dotted", "dotdash", "solid")) +
     labs(y = "Daily Mean Value") +
     theme_bw() +
     theme(strip.text = element_text(size = 12),
@@ -298,10 +299,10 @@ str(wq_yearcomp)
    geom_vline(data = tucp.df, aes(xintercept = EDBEnd), linetype = "dotted") + 
   facet_grid(Analyte~fYear, scales = "free_y",  labeller = as_labeller(c(`2014` = "2014 (T)",
     `2016` = "2016", `2015` = "2015 (E/T)", `2020` = "2020", `2021` = "2021 (E/T)", `2022` = "2022 (E/T)",
-    Chl.a = "log \nChl a\n(µg/L)",DO.Conc = "DO \n(mg/L)",                                                          pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="log \nTurbidity \n(FNU)", Temp="Water Temp \n(°C)")))+
+    Chl.a = "log Chl a\n(µg/L)",DO.Conc = "DO \n(mg/L)",                                                          pH = "pH",SpCond="SpCnd \n(mS/cm)", Turb="log Turb \n(FNU)", Temp="Water Temp \n(°C)")))+
     theme(strip.background = element_rect(fill="White", color = "White"),
           strip.placement = "outside", axis.title.y = element_blank(), legend.position = "top")+
-     scale_linetype_manual(values = c("longdash", "dotdash", "solid")) +
+     scale_linetype_manual(values = c("dotted", "dotdash", "solid")) +
   scale_color_viridis(option = "turbo", discrete = TRUE) +
    scale_x_date(breaks = "2 months", date_labels = "%b", expand = c(0,0)) + 
   labs(y = "Daily Mean Value", color = "Station") + 
@@ -323,7 +324,7 @@ png(filename = here("analysis_2022", "figures", "plot_cont_2022.png"), width = 9
 plot_cont_2022
 dev.off()
 
-png(filename = here("analysis_2022", "figures", "plot_wq_years.png"), width = 8, height = 8.5, units = "in", pointsize = 12, family = "sans", res = 300)
+png(filename = here("analysis_2022", "figures", "plot_wq_years.png"), width = 9.5, height = 8.5, units = "in", pointsize = 12, family = "sans", res = 300)
 plot_cont_jday
 dev.off()
 ```
